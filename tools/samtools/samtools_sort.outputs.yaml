@@ -1,0 +1,2 @@
+samtools_sort.sort:
+  - sorted_bam

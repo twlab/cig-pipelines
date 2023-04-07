@@ -1,0 +1,7 @@
+{
+    "samtools_sort.bam": "{{BAM}}",
+    "samtools_sort.docker": "ebelter/samtools:1.15.1",
+    "samtools_sort.cpu": 1,
+    "samtools_sort.memory": 4,
+    "samtools_sort.disk": 20
+}
