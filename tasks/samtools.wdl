@@ -1,5 +1,7 @@
 version development
 
+# these tasks require samtools
+
 import "structs/runenv.wdl"
 
 task merge_sams {
@@ -22,6 +24,30 @@ task merge_sams {
 
     output {
         File sam = output_sam
+    }
+
+    runtime {
+        docker: runenv.docker
+        cpu: runenv.cpu
+        memory: "~{runenv.memory} GB"
+    }
+}
+
+task index {
+    input {
+        File bam
+        RunEnv runenv
+    }
+
+    Int samtools_cpu = runenv.cpu - 1
+
+    command <<<
+        set -x
+        samtools index -b -@~{samtools_cpu} ~{bam}
+    >>>
+
+    output {
+        File bai = "~{bam}.bai"
     }
 
     runtime {
