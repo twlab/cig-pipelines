@@ -2,8 +2,8 @@ version development
 
 # Picard Metrics for RNA Seq
 
-import "structs/runenv.wdl"
-import "tasks/picard/collect_rna_seq_metrics.wdl"
+import "../../structs/runenv.wdl"
+import "../../tasks/picard/collect_rna_seq_metrics.wdl"
 
 workflow collect_rna_seq_metrics {
     input {
@@ -29,7 +29,7 @@ workflow collect_rna_seq_metrics {
     call collect_rna_seq_metrics.create_refflat { input:
         annotation=annotation,
         runenv=runenv,
-		}
+    }
 
     # RNA Seq Metrics
     call collect_rna_seq_metrics.run_collect_rnaseq_metrics { input:

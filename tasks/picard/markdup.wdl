@@ -3,7 +3,7 @@ version development
 # Picard Mark Dups
 # these tasks require picard
 
-import "structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task run_markdup {
     input {

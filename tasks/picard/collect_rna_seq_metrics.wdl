@@ -3,7 +3,7 @@ version development
 # Picard Metrics for RNA Seq with helper tools
 # these tasks require picard
 
-import "structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task create_ribosomal_intervals {
     input {
@@ -18,7 +18,7 @@ task create_ribosomal_intervals {
             ~{alignments} \
             ~{annotation} \
             ~{intervals}
-    }
+    >>>
 
     output {
         File intervals = "${intervals}"
@@ -37,15 +37,14 @@ task create_refflat {
         RunEnv runenv
     }
 
-    String refflat = "refflat"
     command <<<
         create_refflat \
             ~{annotation} \
-            ~{refflat}
+            refflat
     >>>
 
     output {
-        File refflat = "${refflat}"
+        File refflat = "refflat"
     }
 
     runtime {
