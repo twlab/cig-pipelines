@@ -1,0 +1,5 @@
+{
+  "collect_rna_seq_metrics.alignments": "{{BAM}}",
+  "collect_rna_seq_metrics.annotation": "{{ANNO}}",
+  "collect_rna_seq_metrics.docker": "ebelter/picard:2.27.4"
+}
