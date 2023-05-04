@@ -2,8 +2,8 @@ version development
 
 # Picard Metrics for RNA Seq
 
-import "wdl/structs/runenv.wdl"
-import "wdl/tasks/picard/collect_rna_seq_metrics.wdl"
+import "../../structs/runenv.wdl"
+import "../../tasks/picard/collect_rna_seq_metrics.wdl"
 
 workflow collect_rna_seq_metrics {
     input {
