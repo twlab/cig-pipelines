@@ -2,8 +2,8 @@ version development
 
 # Picard Metrics for RNA Seq
 
-import "../../structs/runenv.wdl"
-import "../../tasks/picard/collect_rna_seq_metrics.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/picard/collect_rna_seq_metrics.wdl"
 
 workflow collect_rna_seq_metrics {
     input {
@@ -14,8 +14,9 @@ workflow collect_rna_seq_metrics {
 
     RunEnv runenv = {
       "docker": docker,
-      "cpu": "4",
-      "memory": "20",
+      "cpu": 4,
+      "memory": 20,
+      "disks": 20,
     }
 
     # Ribosomal Intervals

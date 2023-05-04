@@ -2,8 +2,8 @@ version development
 
 # Picard Mark Dups
 
-import "../../structs/runenv.wdl"
-import "../../tasks/picard/markdup.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/picard/markdup.wdl"
 
 workflow markdup {
     input {
