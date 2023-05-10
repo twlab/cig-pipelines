@@ -3,7 +3,7 @@ version development
 import "../../structs/runenv.wdl"
 import "../../tasks/samtools.wdl"
 
-workflow samtools_stat {
+workflow index {
     input {
         File bam
         String docker = "ebelter/samtools:1.15.1"
