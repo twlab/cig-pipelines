@@ -27,5 +27,6 @@ workflow collect_insert_size_metrics {
 
     output {
         File metrics = run_collect_insert_size_metrics.metrics
+        File histogram = run_collect_insert_size_metrics.histogram
     }
 }
