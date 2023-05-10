@@ -1,0 +1,8 @@
+{
+  "bwa_align.name": "{{NAME}}",
+  "bwa_align.fastqs": ["{{FQ1}}", "{{FQ2}}"],
+  "bwa_align.idx": "{{IDX}}",
+  "bwa_align.docker": "ebelter/bwa:0.7.17",
+  "bwa_align.cpu": 4,
+  "bwa_align.memory": 20
+}

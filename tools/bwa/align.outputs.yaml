@@ -1,0 +1,2 @@
+bwa_align.run_bwa_mem:
+- bam 
