@@ -1,0 +1,6 @@
+{
+  "collect_insert_size_metrics.alignments": "{{BAM}}",
+  "collect_insert_size_metrics.docker": "ebelter/picard:2.27.4",
+  "collect_insert_size_metrics.cpu": 4,
+  "collect_insert_size_metrics.memory": 20
+}
