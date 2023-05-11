@@ -1,0 +1,2 @@
+gatk_haplotype_caller.run_haplotype_caller:
+  - vcf

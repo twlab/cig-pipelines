@@ -1,0 +1,7 @@
+{
+  "gatk_haplotype_caller.bam": "{{BAM}}",
+  "gatk_haplotype_caller.reference": "{{REF_FASTA}}",
+  "gatk_haplotype_caller.docker": "broadinstitute/gatk:4.3.0.0",
+  "gatk_haplotype_caller.cpu": 4,
+  "gatk_haplotype_caller.memory": 20
+}
