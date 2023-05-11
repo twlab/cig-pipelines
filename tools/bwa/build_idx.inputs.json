@@ -1,0 +1,7 @@
+{
+  "build_bwa_idx.name": "{{NAME}}",
+  "build_bwa_idx.fasta_gz": "{{FASTA_GZ}}",
+  "build_bwa_idx.docker": "ebelter/bwa:0.7.17",
+  "build_bwa_idx.cpu": 2,
+  "build_bwa_idx.memory": 8
+}
