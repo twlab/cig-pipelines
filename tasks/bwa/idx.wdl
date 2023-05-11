@@ -28,3 +28,29 @@ task run_build_idx {
         File idx_tar = "${name}.tar"
     }
 }
+
+task run_untar_idx {
+    input {
+        File idx
+        RunEnv runenv
+		}
+
+    command <<<
+        mkdir ref
+        cd ref
+        tar -xvf ~{idx}
+		>>>
+
+    output {
+        Directory path = glob("ref/*.fasta")[0]
+        File fasta = glob("ref/*.fasta")[0]
+        File fai = glob("ref/*.fasta.fai")[0]
+        File dict = glob("ref/*.fasta.dict")[0]
+		}
+
+    runtime {
+        docker: runenv.docker
+        cpu : runenv.cpu
+        memory : runenv.memory +" GB"
+    }
+}

@@ -5,27 +5,29 @@ version development
 import "../../structs/runenv.wdl"
 import "../../tasks/picard/markdup.wdl"
 
-workflow markdup {
+workflow picard_markdup {
     input {
         String name
         File bam
         String docker
+        Int cpu = 4
+        Int memory = 20
     }
 
     RunEnv runenv = {
       "docker": docker,
-      "cpu": 4,
-      "memory": 20,
+      "cpu": cpu,
+      "memory": memory,
     }
 
-    call picard.run_markdup { input:
+    call markdup.run_markdup { input:
         name=name,
         bam=bam,
         runenv=runenv,
     }
 
     output {
-        File bam = run_markdup.dedup_bam
+        File dedup_bam = run_markdup.dedup_bam
         File metrics = run_markdup.metrics
     }
 }

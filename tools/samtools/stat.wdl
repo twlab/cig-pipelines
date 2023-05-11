@@ -1,7 +1,7 @@
 version development
 
-import "struct/runenv.wdl"
-import "tools/samtools.wdl"
+import "../../structs/runenv.wdl"
+import "../../tasks/samtools.wdl"
 
 workflow samtools_stat {
     input {
@@ -25,6 +25,6 @@ workflow samtools_stat {
     }
 
     output {
-        File stat_file = stat.stat_file
+        File stats = stat.stat_file
     }
 }

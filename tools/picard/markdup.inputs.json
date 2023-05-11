@@ -1,5 +1,5 @@
 {
-  "markdup.name": "{{NAME}}",
-  "markdup.bam": "{{BAM}}",
-  "markdup.docker": "ebelter/picard:2.27.4"
+  "picard.markdup.name": "{{NAME}}",
+  "picard.markdup.bam": "{{BAM}}",
+  "picard.markdup.docker": "ebelter/picard:2.27.4"
 }

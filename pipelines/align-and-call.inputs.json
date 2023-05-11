@@ -1,0 +1,6 @@
+{
+  "align_and_call.name": "{{NAME}}",
+  "align_and_call.fastqs": ["{{FQ1}}", "{{FQ2}}"],
+  "align_and_call.reference": "{{REF}}",
+  "align_and_call.known_sites": "{{KNOWN_SITES}}"
+}

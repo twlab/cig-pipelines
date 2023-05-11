@@ -11,7 +11,7 @@ version development
 # CHM13v2.0.fasta.sa    bwa index
 
 import "../../structs/runenv.wdl"
-import "../../tasks/bwa/build_idx.wdl"
+import "../../tasks/bwa/idx.wdl"
 
 workflow build_idx {
     meta {

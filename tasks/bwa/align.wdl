@@ -6,26 +6,20 @@ task run_bwa_mem {
     input {
         String name
         Array[File] fastqs
-        File idx
+        Directory reference
         RunEnv runenv
     }
 
-    String bam = "${name}.bam"
+    String bam = "~{name}.bam"
+    Int bwa_cpu = runenv.cpu - 1
     command <<<
-        mkdir reference
-        cd reference
-        tar -xvf ~{idx}
-        index_folder=$(ls)
-        reference_fasta=$(ls | head -1)
-        reference_folder=$(pwd)
-        reference_index_path=$reference_folder/$reference_fasta
-        cd ..
-
+        reference_fasta=$(find ~{reference} -name \*.fasta)
         bwa \
             mem \
-            -t ~{runenv.cpu} \
+            -t ~{bwa_cpu} \
             -K 320000000 \
-            $reference_index_path \
+            -R '@RG\tID:~{name}-lib1\tSM:~{name}' \
+            $reference_fasta \
             ~{fastqs[0]} \
             ~{default="" fastqs[1]} | \
             samtools view -hbS - > ~{bam}
@@ -34,10 +28,10 @@ task run_bwa_mem {
     runtime {
         docker: runenv.docker
         cpu : runenv.cpu
-        memory : "${runenv.memory} GB"
+        memory : "~{runenv.memory} GB"
     }
 
     output {
-        File bam = "${bam}"
+        File bam = "~{bam}"
     }
 }

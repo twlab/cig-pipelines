@@ -1,7 +1,7 @@
 version development
 
-import "struct/runenv.wdl"
-import "tools/samtools.wdl"
+import "../../structs/runenv.wdl"
+import "../../tasks/samtools.wdl"
 
 workflow samtools_sort {
     input {
@@ -25,6 +25,6 @@ workflow samtools_sort {
     }
 
     output {
-        File sorted_bam = sort.sorted_bam,
+        File sorted_bam = sort.sorted_bam
     }
 }

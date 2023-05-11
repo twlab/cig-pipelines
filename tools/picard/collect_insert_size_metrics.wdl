@@ -8,9 +8,9 @@ import "../../tasks/picard/collect_insert_size_metrics.wdl"
 workflow collect_insert_size_metrics {
     input {
         File alignments
-        String docker
-        Int memory
-        Int cpu
+        String docker = "ebelter/picard:2.27.4"
+        Int memory = 4 
+        Int cpu = 20
     }
 
     RunEnv runenv = {

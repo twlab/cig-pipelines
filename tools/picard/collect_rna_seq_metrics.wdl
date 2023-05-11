@@ -9,13 +9,15 @@ workflow collect_rna_seq_metrics {
     input {
         File alignments     # [bam]
         File annotation     # [GTF GZ]
-        String docker
+        String docker = "ebelter/picard:2.27.4"
+        Int memory = 4 
+        Int cpu = 20
     }
 
     RunEnv runenv = {
       "docker": docker,
-      "cpu": 4,
-      "memory": 20,
+      "cpu": cpu,
+      "memory": memory,
       "disks": 20,
     }
 

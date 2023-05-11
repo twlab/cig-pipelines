@@ -10,7 +10,7 @@ task run_bqsr {
         RunEnv runenv
     }
 
-    # TODO
+    # TODO?
     # known_sites needs a TBI, currently generated in this task. Could be passed in.
 
     String bqsr_table = "recal_data.table"

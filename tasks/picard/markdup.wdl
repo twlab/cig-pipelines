@@ -22,7 +22,7 @@ task run_markdup {
             --METRICS_FILE ~{output_metrics} \
             --QUIET true \
             --VALIDATION_STRINGENCY LENIENT
-    }
+    >>>
 
     output {
         File dedup_bam = "${output_bam}"
@@ -32,6 +32,6 @@ task run_markdup {
     runtime {
         docker: runenv.docker
         cpu: runenv.cpu
-        memory: "~{runenv.memory} GB"
+        memory: runenv.memory + " GB"
     }
 }

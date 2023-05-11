@@ -3,7 +3,7 @@ version development
 import "../../structs/runenv.wdl"
 import "../../tasks/gatk/haplotype_caller.wdl"
 
-workflow haplotype_caller {
+workflow gatk_haplotype_caller {
     meta {
         author: "Eddie Belter"
         version: "0.1"
@@ -12,7 +12,7 @@ workflow haplotype_caller {
 
     input {
         File bam 
-        Directory reference
+        Directory reference  # dir w/ fasta, fai, dict
         String docker = "broadinstitute/gatk:4.3.0.0"
         Int cpu = 4
         Int memory = 20

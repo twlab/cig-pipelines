@@ -12,23 +12,24 @@ workflow bwa_align {
 
     input {
         String name
-        Array[File] fastqs  # read fastqs
-        File idx            # tarred BWA index
+        Array[File] fastqs
+        Directory reference
         String docker = "ebelter/bwa:0.7.17"
-        Int cpu = 4
-        Int memory = 20
+        Int cpu = 8
+        Int memory = 48
     }
 
     RunEnv runenv = {
       "docker": docker,
       "cpu": cpu,
       "memory": memory,
+      "disks": 20,
     }
 
-    call run_bwa_mem { input:
+    call align.run_bwa_mem { input:
         name=name,
         fastqs=fastqs,
-        idx=idx,
+        reference=reference,
         runenv=runenv
     }
 

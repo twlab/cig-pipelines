@@ -3,7 +3,7 @@ version development
 import "../../structs/runenv.wdl"
 import "../../tasks/gatk/bqsr.wdl"
 
-workflow bqsr {
+workflow gatk_bqsr {
     meta {
         author: "Eddie Belter"
         version: "0.1"
