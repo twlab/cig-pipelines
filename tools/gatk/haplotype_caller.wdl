@@ -1,7 +1,7 @@
 version development
 
-import "../../structs/runenv.wdl"
-import "../../tasks/gatk/haplotype_caller.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/gatk/haplotype_caller.wdl"
 
 workflow gatk_haplotype_caller {
     meta {
@@ -22,6 +22,7 @@ workflow gatk_haplotype_caller {
       "docker": docker,
       "cpu": cpu,
       "memory": memory,
+      "disks": 20,
     }
 
     call haplotype_caller.run_haplotype_caller { input:

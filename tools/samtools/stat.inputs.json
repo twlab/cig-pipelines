@@ -3,5 +3,5 @@
     "samtools_stat.docker": "ebelter/samtools:1.15.1",
     "samtools_stat.cpu": 1,
     "samtools_stat.memory": 4,
-    "samtools_stat.disk": 20
+    "samtools_stat.disks": 20
 }

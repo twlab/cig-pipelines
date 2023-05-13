@@ -1,7 +1,7 @@
 version development
 
-import "../../structs/runenv.wdl"
-import "../../tasks/samtools.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/samtools.wdl"
 
 workflow index {
     input {

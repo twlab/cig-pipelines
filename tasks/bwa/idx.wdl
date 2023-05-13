@@ -12,7 +12,7 @@ task run_build_idx {
     String fasta = "${name}.fasta"
     command <<<
         gunzip -c ~{fasta_gz} > ~{fasta}
-        samtools dict ~{fasta} -o ~{fasta}.dict
+        samtools dict ~{fasta} -o ~{name}.dict
         samtools faidx ~{fasta} -o ~{fasta}.fai
         bwa index -p ~{fasta} ~{fasta}
         tar cvvf ~{name}.tar ~{name + ".*"}
@@ -25,7 +25,7 @@ task run_build_idx {
     }
 
     output {
-        File idx_tar = "${name}.tar"
+        File idx = "${name}.tar"
     }
 }
 
@@ -42,7 +42,7 @@ task run_untar_idx {
 		>>>
 
     output {
-        Directory path = glob("ref/*.fasta")[0]
+        Directory path = "ref"
         File fasta = glob("ref/*.fasta")[0]
         File fai = glob("ref/*.fasta.fai")[0]
         File dict = glob("ref/*.fasta.dict")[0]

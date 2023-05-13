@@ -1,0 +1,6 @@
+{
+  "untar_idx.idx": "{{IDX}}",
+  "untar_idx.docker": "ebelter/linux-tk:latest",
+  "untar_idx.cpu": 1,
+  "untar_idx.memory": 4
+}

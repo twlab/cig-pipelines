@@ -1,7 +1,7 @@
 version development
 
-import "../../structs/runenv.wdl"
-import "../../tasks/bwa/idx.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/bwa/idx.wdl"
 
 workflow untar_idx {
     meta {
@@ -34,5 +34,5 @@ workflow untar_idx {
         File fasta = untarred_idx.fasta
         File fai = untarred_idx.fai
         File dict = untarred_idx.dict
-		}
+    }
 }

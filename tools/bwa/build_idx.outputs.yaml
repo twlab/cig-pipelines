@@ -1,2 +1,2 @@
-build_bwa_idx.run_build_idx:
+bwa_build_idx.run_build_idx:
 - idx

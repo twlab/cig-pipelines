@@ -2,8 +2,8 @@ version development
 
 # Picard Collect Insert Metrics
 
-import "../../structs/runenv.wdl"
-import "../../tasks/picard/collect_insert_size_metrics.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/picard/collect_insert_size_metrics.wdl"
 
 workflow collect_insert_size_metrics {
     input {

@@ -1,19 +1,19 @@
 version development
 
 # Create an BWA index TAR with support files.
+# CHM13v2.0.dict        samtools dict
 # CHM13v2.0.fasta       unzipped fasta
 # CHM13v2.0.fasta.amb   bwa index
 # CHM13v2.0.fasta.ann   bwa index
 # CHM13v2.0.fasta.bwt   bwa index
-# CHM13v2.0.fasta.dict  samtools dict
 # CHM13v2.0.fasta.fai   samtools fai
 # CHM13v2.0.fasta.pac   bwa index
 # CHM13v2.0.fasta.sa    bwa index
 
-import "../../structs/runenv.wdl"
-import "../../tasks/bwa/idx.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/bwa/idx.wdl"
 
-workflow build_idx {
+workflow bwa_build_idx {
     meta {
         author: "Eddie Belter"
         version: "0.1"
@@ -35,7 +35,7 @@ workflow build_idx {
       "disks": 20,
     }
 
-    call build_idx.run_build_idx { input:
+    call idx.run_build_idx { input:
         name=name,
         fasta_gz=fasta_gz,
         runenv=runenv

@@ -1,7 +1,7 @@
 version development
 
-import "../../structs/runenv.wdl"
-import "../../tasks/samtools.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/samtools.wdl"
 
 workflow samtools_stat {
     input {
@@ -19,9 +19,9 @@ workflow samtools_stat {
       "disks": disks,
     }
 
-    call samtools.stat as stat { input:
-            bam=bam,
-            runenv=runenv
+    call samtools.stat { input:
+        bam=bam,
+        runenv=runenv
     }
 
     output {

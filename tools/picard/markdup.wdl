@@ -2,22 +2,24 @@ version development
 
 # Picard Mark Dups
 
-import "../../structs/runenv.wdl"
-import "../../tasks/picard/markdup.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/picard/markdup.wdl"
 
 workflow picard_markdup {
     input {
         String name
         File bam
-        String docker
+        String docker = "ebelter/picard:2.27.4"
         Int cpu = 4
         Int memory = 20
+        Int disks = 20
     }
 
     RunEnv runenv = {
       "docker": docker,
       "cpu": cpu,
       "memory": memory,
+      "disks": disks,
     }
 
     call markdup.run_markdup { input:

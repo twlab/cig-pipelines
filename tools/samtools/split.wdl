@@ -2,8 +2,8 @@ version development
 
 # Split BAM into SAMS by CHRs
 
-import "../../structs/runenv.wdl"
-import "../../tasks/samtools.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/samtools.wdl"
 
 workflow samtools_stat {
     input {

@@ -18,7 +18,7 @@ task run_bwa_mem {
             mem \
             -t ~{bwa_cpu} \
             -K 320000000 \
-            -R '@RG\tID:~{name}-lib1\tSM:~{name}' \
+            -R '@RG\tID:~{name}-lib1\tLB:~{name}-lib1\tSM:~{name}\tPL:illumina' \
             $reference_fasta \
             ~{fastqs[0]} \
             ~{default="" fastqs[1]} | \

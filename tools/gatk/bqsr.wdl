@@ -1,7 +1,7 @@
 version development
 
-import "../../structs/runenv.wdl"
-import "../../tasks/gatk/bqsr.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/gatk/bqsr.wdl"
 
 workflow gatk_bqsr {
     meta {

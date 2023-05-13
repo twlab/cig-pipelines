@@ -1,12 +1,12 @@
 version development
 
-import "../tools/bwa/align.wdl"
-import "../tools/bwa/untar_idx.wdl"
-import "../tools/gatk/bqsr.wdl"
-import "../tools/gatk/haplotype_caller.wdl"
-import "../tools/picard/markdup.wdl"
-import "../tools/samtools/sort.wdl"
-import "../tools/samtools/stat.wdl"
+import "wdl/tools/bwa/align.wdl"
+import "wdl/tools/bwa/untar_idx.wdl"
+import "wdl/tools/gatk/bqsr.wdl"
+import "wdl/tools/gatk/haplotype_caller.wdl"
+import "wdl/tools/picard/markdup.wdl"
+import "wdl/tools/samtools/sort.wdl"
+import "wdl/tools/samtools/stat.wdl"
 
 workflow align_and_call {
     meta {
