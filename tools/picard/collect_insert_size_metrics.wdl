@@ -9,8 +9,8 @@ workflow collect_insert_size_metrics {
     input {
         File alignments
         String docker = "ebelter/picard:2.27.4"
-        Int memory = 4 
-        Int cpu = 20
+        Int cpu = 4
+        Int memory = 20
     }
 
     RunEnv runenv = {

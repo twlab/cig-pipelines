@@ -1,7 +1,6 @@
 version development
 
 # Picard Collect Insert Size Metrics
-# these tasks require picard
 
 import "../../structs/runenv.wdl"
 
@@ -13,8 +12,9 @@ task run_collect_insert_size_metrics {
 
     String metrics_fn = basename(alignments) + ".insert-size.metrics.txt"
     String hist_fn = basename(alignments) +  ".insert-size.hist.pdf"
+    Int javamem = runenv.memory - 2
     command <<<
-        java -jar /usr/picard/picard.jar CollectInsertSizeMetrics
+        java -Xmx~{javamem}g -jar /usr/picard/picard.jar CollectInsertSizeMetrics \
             --INPUT ~{alignments} \
             --MINIMUM_PCT 0.05 \
             --OUTPUT ~{metrics_fn} \

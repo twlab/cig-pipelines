@@ -1,7 +1,6 @@
 version development
 
 # Picard Metrics for RNA Seq with helper tools
-# these tasks require picard
 
 import "../../structs/runenv.wdl"
 
@@ -63,8 +62,9 @@ task run_collect_rnaseq_metrics {
     }
 
     String metrics = basename(alignments) + ".metrics"
+    Int javamem = runenv.memory - 2
     command <<<
-        java -jar /usr/picard/picard.jar CollectRnaSeqMetrics \
+        java -Xmx~{javamem}g -jar /usr/picard/picard.jar CollectRnaSeqMetrics \
             --INPUT ~{alignments} \
             --STRAND NONE \
             --REF_FLAT ~{refflat} \
