@@ -39,8 +39,7 @@ task index {
         RunEnv runenv
     }
 
-    Int samtools_cpu = runenv.cpu - 1
-
+    Int samtools_cpu = runenv.cpu
     command <<<
         set -x
         samtools index -b -@~{samtools_cpu} ~{bam}
