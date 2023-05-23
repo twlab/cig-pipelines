@@ -63,30 +63,3 @@ workflow align_and_call {
         File stats = samtools_stat.stats
     }
 }
-
-task untar_reference {
-    input {
-        File idx
-		}
-
-    command {
-        mkdir ref
-        cd ref
-        tar -xvf ${idx}
-        index_folder=$(ls)
-        reference_fasta=$(ls | head -1)
-        reference_folder=$(pwd)
-        reference_index_path=$reference_folder/$reference_fasta
-        cd ..
-		}
-
-    output {
-        File fasta = glob("ref/*.fasta")[0]
-		}
-
-    runtime {
-        docker: "ebelter/linux-tk:latest"
-        cpu : 1
-        memory : "4 GB"
-    }
-}
