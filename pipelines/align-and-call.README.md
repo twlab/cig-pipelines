@@ -2,6 +2,12 @@
 
 Align WGS and call variants.  This pipeline is a standard for aligning WGS data to a reference using bwa-mem, then calling variants with GATK haplocaller.
 
+## Files
+* align-and-call.wdl - WDL pipeline
+* align-and-call.inputs.json - pipeline inputs with place holders
+* align-and-call.outputs.yaml - steps and outputs to be copied after pipeline run
+* align-and-call.imports.zip - imports used in the WDL
+
 ## Inputs
 
 * name [String] - base name for outputs
