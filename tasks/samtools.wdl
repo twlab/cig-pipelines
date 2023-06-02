@@ -4,6 +4,30 @@ version development
 
 import "../structs/runenv.wdl"
 
+task faidx {
+    input {
+        File fasta
+        RunEnv runenv
+    }
+
+    String bn = basename(fasta)
+    command {
+        samtools faidx ${fasta} --fai-idx ${bn + ".fai"} --gzi-idx ${bn + ".gzi"}
+    }
+
+    output {
+        File fai = "${bn}.fai"
+				File gzi = "${bn}.gzi"
+    }
+
+    runtime {
+        docker: runenv.docker
+        cpu: runenv.cpu
+        memory: runenv.memory + " GB"
+        #disks : select_first([runenv.disks,"local-disk 100 SSD"])
+    }
+}
+
 task merge_sams {
     input {
         String prefix
@@ -91,7 +115,7 @@ task stat {
     >>>
 
     output {
-        File stat_file = "${stat_fn}"
+        File stats = "${stat_fn}"
     }
 
     runtime {

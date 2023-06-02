@@ -10,20 +10,18 @@ task run_bqsr {
         RunEnv runenv
     }
 
-    # TODO?
-    # known_sites needs a TBI, currently generated in this task. Could be passed in.
-
     String bqsr_table = "recal_data.table"
     Int javamem = runenv.memory - 2
     command <<<
         reference_fasta=$(find "~{reference}" -name \*.fasta | head -1)
         reference_dict=$(find "~{reference}" -name \*.dict | head -1)
-        /gatk/gatk --java-options -Xmx4g IndexFeatureFile -I ~{known_sites}
+        gunzip -c ~{known_sites} > known_sites.vcf
+        /gatk/gatk --java-options -Xmx4g IndexFeatureFile -I known_sites.vcf
         /gatk/gatk --java-options -Xmx~{javamem}g BaseRecalibrator \
            -I ~{bam} \
            -R $reference_fasta \
            --sequence-dictionary $reference_dict \
-           --known-sites ~{known_sites} \
+           --known-sites known_sites.vcf \
            -O ~{bqsr_table}
     >>>
 
