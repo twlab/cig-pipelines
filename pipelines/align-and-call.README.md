@@ -4,7 +4,7 @@ Align WGS and call variants.  This pipeline is a standard for aligning WGS data 
 
 ## Inputs
 
-* name [String] - 
+* name [String] - base name for outputs
 * fastqs [File] - read fastqs
 * idx [File] - tarred BWA index (made from build_idx workflow)
 * known_sites - gzipped VCF of known sites like dbSNP
@@ -53,7 +53,7 @@ The bam needs to be sorted by coordinate to call variants
 * reference [output from untar idx]
 * known_sites [workflow input]
 #### output
-* recal_bam
+* recalibrated bam
  
 ### Haplotype Caller for SNPs and INDELs
 [GATK Haplotype Caller doc](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller)
