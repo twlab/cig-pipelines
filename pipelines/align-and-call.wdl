@@ -1,12 +1,12 @@
 version development
 
-import "wdl/tools/bwa/align.wdl"
-import "wdl/tools/bwa/untar_idx.wdl"
-import "wdl/tools/gatk/bqsr.wdl"
-import "wdl/tools/gatk/haplotype_caller.wdl"
-import "wdl/tools/picard/markdup.wdl"
-import "wdl/tools/samtools/sort.wdl"
-import "wdl/tools/samtools/stat.wdl"
+import "wdl/structs/runenv.wdl"
+import "wdl/tasks/bwa/align.wdl"
+import "wdl/tasks/bwa/idx.wdl"
+import "wdl/tasks/gatk/bqsr.wdl"
+import "wdl/tasks/gatk/haplotype_caller.wdl"
+import "wdl/tasks/picard/markdup.wdl"
+import "wdl/tasks/samtools.wdl"
 
 workflow align_and_call {
     meta {
@@ -22,44 +22,92 @@ workflow align_and_call {
         File known_sites    # vcf 
     }
 
-    call untar_idx.untar_idx as reference { input:
+    RunEnv runenv_idx = {
+      "docker": "ebelter/linux-tk:latest",
+      "cpu": 1,
+      "memory": 4,
+      "disks": 20,
+
+    }
+    call idx.run_untar_idx as reference { input:
         idx=idx,
+        runenv=runenv_idx,
     }
 
-    call align.bwa_align { input:
+    RunEnv runenv_bwa = {
+      "docker": "ebelter/bwa:0.7.17",
+      "cpu": 8,
+      "memory": 48,
+      "disks": 20,
+    }
+
+    call align.run_bwa_mem as align { input:
         name=name,
         fastqs=fastqs,
         reference=reference.path,
+        runenv=runenv_bwa,
     }
 
-    call stat.samtools_stat { input:
-        bam=bwa_align.bam,
+    RunEnv runenv_samtools = {
+      "docker": "ebelter/samtools:1.15.1",
+      "cpu": 1,
+      "memory": 4,
+      "disks": 20,
+    }
+    call samtools.stat as samtools_stat { input:
+        bam=align.bam,
+        runenv=runenv_samtools,
     } 
 
-    call sort.samtools_sort { input:
-        bam=bwa_align.bam,
+    call samtools.sort as samtools_sort { input:
+        bam=align.bam,
+        runenv=runenv_samtools,
     } 
 
-    call markdup.picard_markdup { input:
+    RunEnv runenv_picard = {
+      "docker": "ebelter/picard:2.27.4",
+      "cpu": 4,
+      "memory": 20,
+      "disks": 20,
+    }
+
+    call markdup.run_markdup { input:
         name=name,
         bam=samtools_sort.sorted_bam,
+        runenv=runenv_picard,
     }
 
-    call bqsr.gatk_bqsr { input:
-        bam=picard_markdup.dedup_bam,
-        reference=reference.path,
-        known_sites=known_sites,
+    RunEnv runenv_gatk = {
+      "docker": "broadinstitute/gatk:4.3.0.0",
+      "cpu": 4,
+      "memory": 20,
+      "disks": 20,
     }
  
-    call haplotype_caller.gatk_haplotype_caller as hc { input:
-        bam=gatk_bqsr.recal_bam,
+    call bqsr.run_bqsr { input:
+        bam=run_markdup.dedup_bam,
         reference=reference.path,
+        known_sites=known_sites,
+        runenv=runenv_gatk,
+    }
+
+    call bqsr.apply_bqsr as bqsr { input:
+        bam=run_markdup.dedup_bam,
+        reference=reference.path,
+        table=run_bqsr.table,
+        runenv=runenv_gatk,
+    }
+
+    call haplotype_caller.run_haplotype_caller as hc { input:
+        bam=bqsr.recal_bam,
+        reference=reference.path,
+        runenv=runenv_gatk,
     }
 
     output {
-        File bam = gatk_bqsr.recal_bam
+        File bam = bqsr.recal_bam
         File vcf = hc.vcf
-        File dedup_metrics = picard_markdup.metrics
+        File dedup_metrics = run_markdup.metrics
         File stats = samtools_stat.stats
     }
 }
