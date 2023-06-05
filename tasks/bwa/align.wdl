@@ -4,13 +4,14 @@ import "../../structs/runenv.wdl"
 
 task run_bwa_mem {
     input {
-        String name
+        String sample
+        String library
         Array[File] fastqs
         Directory reference
         RunEnv runenv
     }
 
-    String bam = "~{name}.bam"
+    String bam = "~{library}.bam"
     Int bwa_cpu = runenv.cpu - 1
     command <<<
         reference_fasta=$(find ~{reference} -name \*.fasta)
@@ -18,7 +19,7 @@ task run_bwa_mem {
             mem \
             -t ~{bwa_cpu} \
             -K 320000000 \
-            -R '@RG\tID:~{name}-lib1\tLB:~{name}-lib1\tSM:~{name}\tPL:illumina' \
+            -R '@RG\tID:~{library}\tLB:~{library}\tSM:~{sample}\tPL:illumina' \
             $reference_fasta \
             ~{fastqs[0]} \
             ~{default="" fastqs[1]} | \

@@ -12,6 +12,7 @@ workflow bwa_align {
 
     input {
         String name
+        String library
         Array[File] fastqs
         Directory reference
         String docker = "ebelter/bwa:0.7.17"
@@ -28,6 +29,7 @@ workflow bwa_align {
 
     call align.run_bwa_mem { input:
         name=name,
+        library=library,
         fastqs=fastqs,
         reference=reference,
         runenv=runenv

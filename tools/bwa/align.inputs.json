@@ -1,5 +1,6 @@
 {
   "bwa_align.name": "{{NAME}}",
+  "bwa_align.library": "{{LIBRARY}}",
   "bwa_align.fastqs": ["{{FQ1}}", "{{FQ2}}"],
   "bwa_align.reference": "{{REF}}",
   "bwa_align.docker": "ebelter/bwa:0.7.17",

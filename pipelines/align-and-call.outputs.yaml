@@ -1,8 +1,8 @@
 align_and_call.samtools_stat:
   - stats
-align_and_call.picard_markdup:
+align_and_call.run_markdup:
   - metrics
-align_and_call.gatk_bqsr:
+align_and_call.bqsr:
   - recal_bam
 align_and_call.hc:
   - vcf

@@ -17,7 +17,7 @@ workflow align_and_call {
 
     input {
         String name
-        Array[File] fastqs  # read fastqs
+        Array[Array[File]] fastqs  # read fastqs
         File idx            # tarred BWA index
         File known_sites    # vcf 
     }
@@ -36,16 +36,31 @@ workflow align_and_call {
 
     RunEnv runenv_bwa = {
       "docker": "ebelter/bwa:0.7.17",
-      "cpu": 8,
-      "memory": 48,
+      "cpu": 6,
+      "memory": 36,
       "disks": 20,
     }
 
-    call align.run_bwa_mem as align { input:
+    scatter (i in range(length(fastqs))) {
+        call align.run_bwa_mem as align { input:
+            sample=name,
+            library=name+"-lib"+i,
+            fastqs=fastqs[i],
+            reference=reference.path,
+            runenv=runenv_bwa,
+        }
+    }
+
+    RunEnv runenv_merge = {
+      "docker": "ebelter/samtools:1.15.1",
+      "cpu": 4,
+      "memory": 20,
+      "disks": 20,
+    }
+    call samtools.merge_bams as merge { input:
         name=name,
-        fastqs=fastqs,
-        reference=reference.path,
-        runenv=runenv_bwa,
+        bams=align.bam,
+        runenv=runenv_merge,
     }
 
     RunEnv runenv_samtools = {
@@ -55,12 +70,12 @@ workflow align_and_call {
       "disks": 20,
     }
     call samtools.stat as samtools_stat { input:
-        bam=align.bam,
+        bam=merge.merged_bam,
         runenv=runenv_samtools,
     } 
 
     call samtools.sort as samtools_sort { input:
-        bam=align.bam,
+        bam=merge.merged_bam,
         runenv=runenv_samtools,
     } 
 
