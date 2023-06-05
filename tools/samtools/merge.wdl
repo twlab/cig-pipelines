@@ -3,9 +3,10 @@ version development
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/samtools.wdl"
 
-workflow samtools_stat {
+workflow samtools_merge {
     input {
-        File bam
+        String name
+        Array[File] bams
         String docker = "ebelter/samtools:1.15.1"
         Int cpu = 1
         Int memory = 4
@@ -19,12 +20,13 @@ workflow samtools_stat {
       "disks": disks,
     }
 
-    call samtools.stat as stat { input:
-            bam=bam,
-            runenv=runenv
+    call samtools.merge_bams as merge { input:
+        name=name,
+        bams=bams,
+        runenv=runenv,
     }
 
     output {
-        File stat_file = stat.stat_file
+        File merged_bam = merge.merged_bam
     }
 }

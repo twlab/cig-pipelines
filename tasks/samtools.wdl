@@ -57,6 +57,30 @@ task merge_sams {
     }
 }
 
+task merge_bams {
+    input {
+        String name
+        Array[File] bams
+        RunEnv runenv
+    }
+
+    String output_bam = name+".bam"
+    Int merge_cpu = if runenv.cpu > 1 then runenv.cpu - 1 else 1
+    command <<<
+        samtools merge -n -r -@ ~{merge_cpu} -o ~{output_bam} ~{sep=" " bams}
+    >>>
+
+    output {
+        File merged_bam = output_bam
+    }
+
+    runtime {
+        docker: runenv.docker
+        cpu: runenv.cpu
+        memory: "~{runenv.memory} GB"
+    }
+}
+
 task index {
     input {
         File bam

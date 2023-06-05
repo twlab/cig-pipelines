@@ -1,0 +1,2 @@
+samtools_merge.merge:
+  - merged_bam

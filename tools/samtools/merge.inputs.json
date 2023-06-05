@@ -1,0 +1,8 @@
+{
+    "samtools_merge.name": "{{NAME}}",
+    "samtools_merge.bams": ["{{BAMS}}"],
+    "samtools_merge.docker": "ebelter/samtools:1.15.1",
+    "samtools_merge.cpu": 4,
+    "samtools_merge.memory": 20,
+    "samtools_merge.disks": 20
+}
