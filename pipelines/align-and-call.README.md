@@ -2,15 +2,20 @@
 
 Align WGS and call variants.  This pipeline is a standard for aligning WGS data to a reference using bwa-mem, then calling variants with GATK haplocaller.
 
-## Inputs
+## Pipeline Files
+* align-and-call.wdl - WDL pipeline
+* align-and-call.inputs.json - pipeline inputs with place holders
+* align-and-call.outputs.yaml - steps and outputs to be copied after pipeline run
+* align-and-call.imports.zip - imports used in the WDL
+* align-and-call.imports.README - this file, documenting the pipeline
 
-* name [String] - 
-* fastqs [File] - read fastqs
+## Inputs
+* name [String] - base name for outputs
+* fastqs [File] - an array of an 2 arrays, one each for read1 and read2 fastqs
 * idx [File] - tarred BWA index (made from build_idx workflow)
 * known_sites - gzipped VCF of known sites like dbSNP
 
 ## Steps
-
 ### Untar the BWA Reference
 #### input
 * idx [inputs.idx]
@@ -18,12 +23,20 @@ Align WGS and call variants.  This pipeline is a standard for aligning WGS data 
 * reference - untarred BWA idx
 
 ### Align with BWA MEM
+Align sets of read 1 & 2 fastqs
 #### input
 * name [workflow inputs]
 * fastqs [workflow inputs]
 * reference [output from untar idx]
 ####output:
 * bam
+
+### Merge Bams
+#### input
+* name [workflow inputs]
+* bams [output from align]
+####output:
+* merged_bam
 
 ### Collect Samtools Stat
 #### input
@@ -34,7 +47,7 @@ Align WGS and call variants.  This pipeline is a standard for aligning WGS data 
 ### Sort the BAM by Coordinates
 The bam needs to be sorted by coordinate to call variants
 #### input
-* bam [output from align]
+* bam [output from merge]
 #### output
 * sorted_bam
 
@@ -53,7 +66,7 @@ The bam needs to be sorted by coordinate to call variants
 * reference [output from untar idx]
 * known_sites [workflow input]
 #### output
-* recal_bam
+* recalibrated bam
  
 ### Haplotype Caller for SNPs and INDELs
 [GATK Haplotype Caller doc](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller)
