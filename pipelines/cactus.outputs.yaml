@@ -1,2 +1,11 @@
-pangenome_graph.run_minigraphjoin:
-  - outs
+pangenome_graph.minigraphjoin:
+  - dist
+  - gbz
+  - gfa
+  - hal
+  - min
+  - stats
+  - raw_vcf
+  - raw_vcf_tbi
+  - vcf
+  - vcf_tbi

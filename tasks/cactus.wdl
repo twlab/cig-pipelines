@@ -179,16 +179,16 @@ task minigraphjoin {
         # test.gfa.gz
         # test.raw.vcf.gz test.raw.vcf.gz.tbi
         # test.vcf.gz test.vcf.gz.tbi
-        File dist = glob(out_name +"*dist")
-        File gbz = glob(out_name +"*gbz")
-        File gfa = glob(out_name +"*.gfa.gz")
-        File hal = glob(out_name +"*hal")
-        File min = glob(out_name +"*min")
-        File stats = glob(out_name +"*stats.tgz")
-        File raw_vcf = glob(out_name +".raw.vcf.gz")
-        File raw_vcf_tbi = glob(out_name +".raw.vcf.gz.tbi")
-        File vcf = glob(out_name +".vcf.gz")
-        File vcf_tbi = glob(out_name +".vcf.gz.tbi")
+        File dist = glob(out_name +"*dist")[0]
+        File gbz = glob(out_name +"*gbz")[0]
+        File gfa = glob(out_name +"*.gfa.gz")[0]
+        File hal = glob(out_name +"*hal")[0]
+        File min = glob(out_name +"*min")[0]
+        File stats = glob(out_name +"*stats.tgz")[0]
+        File raw_vcf = glob(out_name +".raw.vcf.gz")[0]
+        File raw_vcf_tbi = glob(out_name +".raw.vcf.gz.tbi")[0]
+        File vcf = glob(out_name +".vcf.gz")[0]
+        File vcf_tbi = glob(out_name +".vcf.gz.tbi")[0]
     }
 
     runtime {
