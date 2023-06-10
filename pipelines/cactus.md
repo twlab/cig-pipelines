@@ -1,6 +1,6 @@
-# Cactus Pangeome Grpah Builder Pipeline
+# Cactus Pangeome Graph Builder Pipeline
 
-Given some sequence assemblies, build a pangenome grpah with cactus and minigraph.
+Given some sequence assemblies, build a pangenome graph with cactus and minigraph.
 
 ## Pipeline Files
 * cactus.wdl - WDL pipeline
@@ -14,7 +14,7 @@ Given some sequence assemblies, build a pangenome grpah with cactus and minigrap
 * reference_name [String] - the name of the sequence to use as the reference
 * out_name [String] - base name for the outputs
 
-### Resource Inputs
+#### Resource Inputs
 These resource inputs can also be given: docker, cpu, memory, and disks
 
 ## Steps
@@ -25,6 +25,7 @@ Construct a minigraph in gfa format.
 * reference_name [workflow input]
 * out_name [workflow input]
 #### output
+* gfa [graph]
 
 ### Graphmap
 Map each input assembly back to the graph with minigraph.
