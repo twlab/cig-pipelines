@@ -1,0 +1,4 @@
+deep_variant.deep_variant:
+  - vcf 
+  - vcf_tbi
+  - report 
