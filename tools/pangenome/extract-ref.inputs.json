@@ -1,0 +1,6 @@
+{
+    "pangenome_extract_ref.name": "{{NAME}}",
+    "pangenome_extract_ref.gbz": "{{GBZ}}",
+    "pangenome_extract_ref.cpu": 4,
+    "pangenome_extract_ref.memory": 24
+}
