@@ -1,0 +1,15 @@
+{
+    "giraffe_pipeline.sample": "{{SAMPLE}}",
+    "giraffe_pipeline.fastqs": [
+        "{{FQ1}}",
+        "{{FQ2}}"
+    ],
+    "giraffe_pipeline.gbz": "{{GBZ}}",
+    "giraffe_pipeline.dist": "{{DIST}}",
+    "giraffe_pipeline.min": "{{MIN}}",
+    "giraffe_pipeline.reference": "{{REF}}",
+    "giraffe_pipeline.run_vg_stats": true,
+    "giraffe_pipeline.run_deep_variant": true,
+    "giraffe_pipeline.cpu": 18,
+    "giraffe_pipeline.memory": 96
+}
