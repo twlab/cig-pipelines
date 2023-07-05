@@ -89,12 +89,12 @@ task index {
 
     Int samtools_cpu = runenv.cpu
     command <<<
-        set -x
-        samtools index -b -@~{samtools_cpu} ~{bam}
+        ln ~{bam} ~{basename(bam)}
+        samtools index -b -@~{samtools_cpu} ~{basename(bam)}
     >>>
 
     output {
-        File bai = "~{bam}.bai"
+        File bai = "~{basename(bam)}.bai"
     }
 
     runtime {
@@ -105,26 +105,26 @@ task index {
 }
 
 task sort {
-    input {
-        File bam
-        String output_fmt = "BAM"
-        RunEnv runenv
-    }
+  input {
+    File bam
+    String output_fmt = "BAM"
+    RunEnv runenv
+  }
 
-    String output_bam = basename(bam)
-    command <<<
-        samtools sort ~{bam} -O ~{output_fmt} -o ~{output_bam}
-    >>>
+  String output_bam = basename(bam)
+  command <<<
+    samtools sort ~{bam} -O ~{output_fmt} -o ~{output_bam}
+  >>>
 
-    output {
-        File sorted_bam = output_bam
-    }
+  output {
+    File sorted_bam = output_bam
+  }
 
-    runtime {
-        docker: runenv.docker
-        cpu: runenv.cpu
-        memory: "~{runenv.memory} GB"
-    }
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: "~{runenv.memory} GB"
+  }
 }
 
 task stat {
