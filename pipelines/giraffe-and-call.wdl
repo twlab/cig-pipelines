@@ -11,10 +11,11 @@ workflow giraffe_pipeline {
 
   input {
     String sample
-    Array[File] fastqs 
+    Array[File] fastqs
     File min
     File dist
     File gbz
+    Directory reference
     String docker = "quay.io/vgteam/vg:v1.48.0" #"quay.io/vgteam/vg@sha256:62a1177ab6feb76de6a19af7ad34352bea02cab8aa2996470d9d2b40b3190fe8"
     Int cpu = 32
     Int memory = 500
@@ -51,6 +52,7 @@ workflow giraffe_pipeline {
   call surject.run_surject { input:
     gam=run_giraffe.gam,
     sample=sample,
+    library=sample+"-lib1",
     gbz=gbz,
     runenv=runenv_vg,
   }
@@ -67,6 +69,11 @@ workflow giraffe_pipeline {
     runenv=runenv_samtools,
   }
 
+  call samtools.index as samtools_index { input:
+      bam=bqsr.recal_bam,
+      runenv=runenv_samtools,
+  } 
+
   call samtools.stat as samtools_stat { input:
     bam=samtools_stat.bam,
     runenv=runenv_samtools,
@@ -79,10 +86,10 @@ workflow giraffe_pipeline {
     "disks": 20,
   }
 
-  call deepvariant.deep_variant { input:
+  call deepvariant.deep_variant as dv { input:
     name=name,
     bam=samtools_sort.sorted_bam,
-    bai=surject.bai,
+    bai=samtools_index.bai,
     reference=reference,
     runenv=runenv,
   }
@@ -91,8 +98,8 @@ workflow giraffe_pipeline {
     File gam = run_giraffe.gam
     File gam_stats = run_stats.stats
     File bam = samtools_sort.bam
-    File bai = surject.bai
+    File bai = samtools_index.bai
     File bam_stats = samtools_stat.stats
-    File vcf = deep_variant.vcf
+    File vcf = dv.vcf
   }
 }
