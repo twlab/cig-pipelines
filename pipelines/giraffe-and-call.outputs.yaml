@@ -1,8 +1,8 @@
-giraffe_pipeline.run_giraffe:
+giraffe_and_call.run_giraffe:
 - gam
-giraffe_pipeline.run_stats:
+giraffe_and_call.run_stats:
 - stats
-giraffe_pipeline.run_surject:
+giraffe_and_call.run_surject:
 - bam
-giraffe_pipeline.samtools_stat:
+giraffe_and_call.samtools_stat:
 - stats

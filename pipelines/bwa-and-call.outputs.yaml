@@ -1,10 +1,10 @@
-align_and_call.samtools_stat:
+bwa_and_call.samtools_stat:
   - stats
-align_and_call.run_markdup:
+bwa_and_call.run_markdup:
   - metrics
-align_and_call.bqsr:
+bwa_and_call.bqsr:
   - recal_bam
-align_and_call.samtools_index:
+bwa_and_call.samtools_index:
   - bai
-align_and_call.dv:
+bwa_and_call.dv:
   - vcf

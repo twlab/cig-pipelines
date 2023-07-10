@@ -1,0 +1,6 @@
+calll.samtools_sort:
+  - sorted_bam
+calll.samtools_index:
+  - bai
+calll.deep_variant:
+  - vcf

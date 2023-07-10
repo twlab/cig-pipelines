@@ -1,15 +1,15 @@
 {
-    "giraffe_pipeline.sample": "{{SAMPLE}}",
-    "giraffe_pipeline.fastqs": [
+    "giraffe_and_call.sample": "{{SAMPLE}}",
+    "giraffe_and_call.fastqs": [
         "{{FQ1}}",
         "{{FQ2}}"
     ],
-    "giraffe_pipeline.gbz": "{{GBZ}}",
-    "giraffe_pipeline.dist": "{{DIST}}",
-    "giraffe_pipeline.min": "{{MIN}}",
-    "giraffe_pipeline.reference": "{{REF}}",
-    "giraffe_pipeline.run_vg_stats": true,
-    "giraffe_pipeline.run_deep_variant": true,
-    "giraffe_pipeline.cpu": 18,
-    "giraffe_pipeline.memory": 96
+    "giraffe_and_call.gbz": "{{GBZ}}",
+    "giraffe_and_call.dist": "{{DIST}}",
+    "giraffe_and_call.min": "{{MIN}}",
+    "giraffe_and_call.reference": "{{REF}}",
+    "giraffe_and_call.run_vg_stats": true,
+    "giraffe_and_call.run_deep_variant": true,
+    "giraffe_and_call.cpu": 18,
+    "giraffe_and_call.memory": 96
 }

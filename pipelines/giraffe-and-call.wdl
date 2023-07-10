@@ -7,7 +7,7 @@ import "wdl/tasks/vg/giraffe.wdl"
 import "wdl/tasks/vg/stats.wdl"
 import "wdl/tasks/vg/surject.wdl"
 
-workflow giraffe_pipeline {
+workflow giraffe_and_call {
 
   input {
     String sample

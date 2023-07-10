@@ -13,6 +13,7 @@ Map WGS fastqs using BWA-MEM and call variants with deep variant. This is the MG
 * name [String] - base name for outputs
 * fastqs [File] - an array of an 2 arrays, one each for read1 and read2 fastqs
 * idx [File] - tarred BWA index (made from build_idx workflow)
+* known_sites [File] - VCF of known vairants, like dbSNP
 
 ## Steps
 ### Untar the BWA Reference
@@ -22,7 +23,7 @@ Map WGS fastqs using BWA-MEM and call variants with deep variant. This is the MG
 * reference - untarred BWA idx
 
 ### bwa with BWA MEM
-Align sets of read 1 & 2 fastqs
+Map sets of read 1 & 2 fastqs
 #### input
 * name [workflow inputs]
 * fastqs [workflow inputs]
@@ -43,12 +44,6 @@ The bam needs to be sorted by coordinate to call variants
 * bam [output from samtools merge]
 #### output
 * sorted_bam
-
-### Samtools Stat
-#### input
-* bam [output from align]
-#### output
-* stats [samtools stat file]
 
 ### Picard Mark Duplicates
 #### input
@@ -72,6 +67,12 @@ The bam needs to be sorted by coordinate to call variants
 * bam [output from samtools merge]
 #### output
 * bai [bam index file]
+
+### Samtools Stat
+#### input
+* bam [output from align]
+#### output
+* stats [samtools stat file]
 
 ### Deep Variant
 * bam [otuput bam from gatk bqsr]

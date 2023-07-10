@@ -8,7 +8,7 @@ import "wdl/tasks/gatk/bqsr.wdl"
 import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/samtools.wdl"
 
-workflow align_and_call {
+workflow bwa_and_call {
   meta {
       author: "Eddie Belter"
       version: "0.1"

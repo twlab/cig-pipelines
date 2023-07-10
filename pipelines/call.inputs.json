@@ -1,0 +1,5 @@
+{
+  "calll.name": "{{NAME}}",
+  "calll.bam": "{{BAM}}",
+  "calll.reference": "{{REF}}"
+}
