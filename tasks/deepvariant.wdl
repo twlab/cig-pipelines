@@ -14,11 +14,13 @@ task deep_variant {
     String output_vcf = "${name}.vcf.gz"
     Int dv_cpu = runenv.cpu - 1
     command <<<
+        ln ~{bam} ~{basename(bam)}
+        ln ~{bai} ~{basename(bai)}
         reference_fasta=$(find ~{reference} -name \*.fasta)
         /opt/deepvariant/bin/run_deepvariant \
             --model_type=WGS \
             --ref=${reference_fasta} \
-            --reads=~{bam} \
+            --reads=~{basename(bam)} \
             --output_vcf=~{output_vcf} \
             --num_shards=~{dv_cpu}
     >>>
