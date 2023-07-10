@@ -1,13 +1,13 @@
-# Align and Call Pipeline
+# BWA and Call Pipeline
 
-Align WGS and call variants.  This pipeline is a standard for aligning WGS data to a reference using bwa-mem, then calling variants with GATK haplocaller.
+Map WGS fastqs using BWA-MEM and call variants with deep variant. This is the MGI Wang Lab standard for processing WGS data.
 
 ## Pipeline Files
-* align-and-call.wdl - WDL pipeline
-* align-and-call.inputs.json - pipeline inputs with place holders
-* align-and-call.outputs.yaml - steps and outputs to be copied after pipeline run
-* align-and-call.imports.zip - imports used in the WDL
-* align-and-call.imports.README - this file, documenting the pipeline
+* bwa-and-call.wdl - WDL pipeline
+* bwa-and-call.inputs.json - pipeline inputs with place holders
+* bwa-and-call.outputs.yaml - steps and outputs to be copied after pipeline run
+* bwa-and-call.imports.zip - imports used in the WDL
+* bwa-and-call.imports.README - this file, documenting the pipeline
 
 ## Inputs
 * name [String] - base name for outputs
@@ -21,7 +21,7 @@ Align WGS and call variants.  This pipeline is a standard for aligning WGS data 
 #### output
 * reference - untarred BWA idx
 
-### Align with BWA MEM
+### bwa with BWA MEM
 Align sets of read 1 & 2 fastqs
 #### input
 * name [workflow inputs]
