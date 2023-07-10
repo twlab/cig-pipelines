@@ -13,7 +13,6 @@ Align WGS and call variants.  This pipeline is a standard for aligning WGS data 
 * name [String] - base name for outputs
 * fastqs [File] - an array of an 2 arrays, one each for read1 and read2 fastqs
 * idx [File] - tarred BWA index (made from build_idx workflow)
-* known_sites - gzipped VCF of known sites like dbSNP
 
 ## Steps
 ### Untar the BWA Reference
@@ -38,18 +37,18 @@ Align sets of read 1 & 2 fastqs
 ####output:
 * merged_bam
 
-### Collect Samtools Stat
+### Samtools Sort BAM by Coordinates
+The bam needs to be sorted by coordinate to call variants
+#### input
+* bam [output from samtools merge]
+#### output
+* sorted_bam
+
+### Samtools Stat
 #### input
 * bam [output from align]
 #### output
-* stats [samtools stats file]
-
-### Sort the BAM by Coordinates
-The bam needs to be sorted by coordinate to call variants
-#### input
-* bam [output from merge]
-#### output
-* sorted_bam
+* stats [samtools stat file]
 
 ### Picard Mark Duplicates
 #### input
@@ -59,7 +58,7 @@ The bam needs to be sorted by coordinate to call variants
 * dedup_bam
 * metrics
 
-### BQSR
+### Picard BQSR
 [GATK BQSR doc](https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR-)
 #### input
 * bam [output bam from picard markdup]
@@ -68,9 +67,13 @@ The bam needs to be sorted by coordinate to call variants
 #### output
 * recalibrated bam
  
-### Haplotype Caller for SNPs and INDELs
-[GATK Haplotype Caller doc](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller)
+### Samtools Index
 #### input
+* bam [output from samtools merge]
+#### output
+* bai [bam index file]
+
+### Deep Variant
 * bam [otuput bam from gatk bqsr]
 * reference [output from untar idx]
 #### output
@@ -78,6 +81,7 @@ The bam needs to be sorted by coordinate to call variants
 
 ## Outputs
 * bam [from gatk_bqsr.recal_bam]
-* vcf [from haplotype caller]
+* bai [form samtools index]
+* vcf [from deep variant]
+* stats [from samtools stat]
 * dedup_metrics [from markdup]
-* stats [from stats]

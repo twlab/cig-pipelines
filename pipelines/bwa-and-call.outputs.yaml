@@ -4,5 +4,7 @@ align_and_call.run_markdup:
   - metrics
 align_and_call.bqsr:
   - recal_bam
-align_and_call.hc:
+align_and_call.samtools_index:
+  - bai
+align_and_call.dv:
   - vcf

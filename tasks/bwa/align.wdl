@@ -11,7 +11,7 @@ task run_bwa_mem {
         RunEnv runenv
     }
 
-    String bam = "~{library}.bam"
+    String bam = "~{sample}.bam"
     Int bwa_cpu = runenv.cpu - 1
     command <<<
         reference_fasta=$(find ~{reference} -name \*.fasta)
