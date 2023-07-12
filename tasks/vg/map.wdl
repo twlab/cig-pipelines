@@ -4,14 +4,14 @@ import "../../structs/runenv.wdl"
 
 task run_map {
   input {
+     String sample
      Array[File] fastqs
-     File xg
      File gcsa
-     String name
+     File xg
      RunEnv runenv
   }
 
-  String gam = "${name}.gam"
+  String gam = "${sample}.gam"
   # From https://github.com/vgteam/vg/wiki/Basic-Operations
   # Paired end reads in paired FASTQs
   #  vg map -x index.xg -g index.gcsa -f reads1.fq -f reads2.fq > mapped.gam

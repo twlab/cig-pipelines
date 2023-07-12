@@ -1,0 +1,15 @@
+{
+    "pangenome_ataqseq.sample": "{{SAMPLE}}",
+    "pangenome_ataqseq.fastqs": [
+        "{{FQ1}}",
+        "{{FQ2}}"
+    ],
+    "pangenome_ataqseq.gbz": "{{GBZ}}",
+    "pangenome_ataqseq.dist": "{{DIST}}",
+    "pangenome_ataqseq.min": "{{MIN}}",
+    "pangenome_ataqseq.reference": "{{REF}}",
+    "pangenome_ataqseq.run_vg_stats": true,
+    "pangenome_ataqseq.run_deep_variant": true,
+    "pangenome_ataqseq.cpu": 12,
+    "pangenome_ataqseq.memory": 72
+}
