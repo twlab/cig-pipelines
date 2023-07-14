@@ -113,7 +113,7 @@ task sort {
 
   String output_bam = basename(bam)
   command <<<
-    samtools sort -n ~{bam} -O ~{output_fmt} -o ~{output_bam}
+    samtools sort -O ~{output_fmt} -o ~{output_bam} ~{bam}
   >>>
 
   output {
