@@ -1,0 +1,6 @@
+{
+  "bwa_and_call.name": "{{NAME}}",
+  "bwa_and_call.fastqs": [["{{FQ1R11}}", "{{FQ1R2}}"], [...]],
+  "bwa_and_call.idx": "{{IDX}}",
+  "bwa_and_call.known_sites": "{{KNOWN_SITES}}",
+}
