@@ -30,7 +30,7 @@ task run_hello_world {
   >>>
 
   runtime {
-    docker: "alpine:3"
+    docker: "ebelter/linux-tk:latest"
     cpu: 1
     memory: "2 GB"
     disks : "local-disk 10 SSD"
