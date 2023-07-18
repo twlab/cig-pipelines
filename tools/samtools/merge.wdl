@@ -5,7 +5,7 @@ import "wdl/tasks/samtools.wdl"
 
 workflow samtools_merge {
     input {
-        String name
+        String sample
         Array[File] bams
         String docker = "ebelter/samtools:1.15.1"
         Int cpu = 1
@@ -21,7 +21,7 @@ workflow samtools_merge {
     }
 
     call samtools.merge_bams as merge { input:
-        name=name,
+        sample=sample,
         bams=bams,
         runenv=runenv,
     }

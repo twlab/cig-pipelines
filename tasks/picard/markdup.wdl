@@ -7,13 +7,13 @@ import "../../structs/runenv.wdl"
 
 task run_markdup {
     input {
-        String name
+        String sample
         File bam
         RunEnv runenv
     }
 
-    String output_bam = "${name}.dedup.bam"
-    String output_metrics = "${name}.dedup.metrics"
+    String output_bam = "~{sample}.dedup.bam"
+    String output_metrics = "~{sample}.dedup.metrics"
     Int javamem = runenv.memory - 2
     command <<<
         java -Xmx~{javamem}g -jar /usr/picard/picard.jar MarkDuplicates \
@@ -25,8 +25,8 @@ task run_markdup {
     >>>
 
     output {
-        File dedup_bam = "${output_bam}"
-        File metrics = "${output_metrics}"
+        File dedup_bam = "~{output_bam}"
+        File metrics = "~{output_metrics}"
     }
 
     runtime {

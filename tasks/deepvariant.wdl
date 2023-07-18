@@ -2,16 +2,16 @@ version development
 
 import "../structs/runenv.wdl"
 
-task deep_variant {
+task run_deepvariant {
     input {
-        String name
+        String sample
         File bam
         File bai
         Directory reference
         RunEnv runenv
     }
 
-    String output_vcf = "${name}.vcf.gz"
+    String output_vcf = "${sample}.vcf.gz"
     Int dv_cpu = runenv.cpu - 1
     command <<<
         ln ~{bam} ~{basename(bam)}
@@ -26,16 +26,15 @@ task deep_variant {
     >>>
 
     output {
-        String vcf = glob("${name}.vcf.gz")[0]
-        String vcf_tbi = glob("${name}.vcf.gz.tbi")[0]
-        String report = glob("${name}*.html")[0]
+        String vcf = glob("${sample}.vcf.gz")[0]
+        String vcf_tbi = glob("${sample}.vcf.gz.tbi")[0]
+        String report = glob("${sample}*.html")[0]
     }
 
     runtime {
         docker: runenv.docker
         cpu: runenv.cpu
         memory: runenv.memory + " GB"
-        #gpu_ount: 1
         disks : runenv.disks
     }
 }

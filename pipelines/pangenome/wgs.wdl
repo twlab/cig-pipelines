@@ -87,7 +87,7 @@ workflow pangenome_wgs {
   }
 
   call deepvariant.deep_variant as dv { input:
-    name=name,
+    sample=sample,
     bam=samtools_sort.sorted_bam,
     bai=samtools_index.bai,
     reference=reference,

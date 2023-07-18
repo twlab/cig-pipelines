@@ -59,12 +59,12 @@ task merge_sams {
 
 task merge_bams {
     input {
-        String name
+        String sample
         Array[File] bams
         RunEnv runenv
     }
 
-    String output_bam = name+".bam"
+    String output_bam = "~{sample}.bam"
     Int merge_cpu = if runenv.cpu > 1 then runenv.cpu - 1 else 1
     command <<<
         samtools merge -n -r -@ ~{merge_cpu} -o ~{output_bam} ~{sep=" " bams}

@@ -11,7 +11,7 @@ workflow bwa_align {
     }
 
     input {
-        String name
+        String sample
         String library
         Array[File] fastqs
         Directory reference
@@ -28,7 +28,7 @@ workflow bwa_align {
     }
 
     call align.run_bwa_mem { input:
-        name=name,
+        sample=sample,
         library=library,
         fastqs=fastqs,
         reference=reference,

@@ -8,11 +8,11 @@ task run_giraffe {
      File gbz
      File min
      File dist
-     String name
+     String sample
      RunEnv runenv
   }
 
-  String gam = "${name}.gam"
+  String gam = "${sample}.gam"
   # -f  fastqs
   # -m  minimizer index
   # -d  distance index

@@ -7,7 +7,7 @@ import "wdl/tasks/picard/markdup.wdl"
 
 workflow picard_markdup {
     input {
-        String name
+        String sample
         File bam
         String docker = "ebelter/picard:2.27.4"
         Int cpu = 4
@@ -23,7 +23,7 @@ workflow picard_markdup {
     }
 
     call markdup.run_markdup { input:
-        name=name,
+        sample=sample,
         bam=bam,
         runenv=runenv,
     }

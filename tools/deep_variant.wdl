@@ -11,7 +11,7 @@ workflow deep_variant {
     }
 
     input {
-        String name
+        String sample
         File bam
         File bai
         Directory reference
@@ -28,7 +28,7 @@ workflow deep_variant {
     }
 
     call deepvariant.deep_variant { input:
-        name=name,
+        sample=sample,
         bam=bam,
         bai=bai,
         reference=reference,
