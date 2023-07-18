@@ -1,13 +1,13 @@
-# Giraffe and Call Pipeline
+# Pangenome WGS Pipeline
 
-Map WGS data to the pangenome graph, and call variants with deep variant. Produces a GAM, sorted BAM & BAI, plus VCF & stats.
+Map WGS data to the pangenome graph using giraffe, and call variants with haplotype caller and deep variant. Produces a GAM, sorted BAM & BAI, plus VCF & stats.
 
 ## Pipeline Files
-* giraffe.wdl          - WDL pipeline
-* giraffe.inputs.json  - pipeline inputs with place holders
-* giraffe.outputs.yaml - steps and outputs to be copied after pipeline run
-* giraffe.imports.zip  - imports used in the WDL
-* giraffe.doc.md       - this file, documenting the pipeline
+* wgs.wdl          - WDL pipeline
+* wgs.inputs.json  - pipeline inputs with place holders
+* wgs.outputs.yaml - steps and outputs to be copied after pipeline run
+* wgs.imports.zip  - imports used in the WDL
+* wgs.doc.md       - this file, documenting the pipeline
 
 ## Inputs
 * sample [String] - sample name for outputs
