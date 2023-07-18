@@ -1,8 +1,0 @@
-giraffe_and_call.run_giraffe:
-- gam
-giraffe_and_call.run_stats:
-- stats
-giraffe_and_call.run_surject:
-- bam
-giraffe_and_call.samtools_stat:
-- stats

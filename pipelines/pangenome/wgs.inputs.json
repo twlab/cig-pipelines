@@ -1,0 +1,15 @@
+{
+    "pangenome_wgs.sample": "{{SAMPLE}}",
+    "pangenome_wgs.fastqs": [
+        "{{FQ1}}",
+        "{{FQ2}}"
+    ],
+    "pangenome_wgs.gbz": "{{GBZ}}",
+    "pangenome_wgs.dist": "{{DIST}}",
+    "pangenome_wgs.min": "{{MIN}}",
+    "pangenome_wgs.reference": "{{REF}}",
+    "pangenome_wgs.run_vg_stats": true,
+    "pangenome_wgs.run_deep_variant": true,
+    "pangenome_wgs.cpu": 18,
+    "pangenome_wgs.memory": 96
+}

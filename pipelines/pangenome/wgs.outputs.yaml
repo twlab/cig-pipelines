@@ -1,0 +1,8 @@
+pangenome_wgs.run_giraffe:
+- gam
+pangenome_wgs.run_stats:
+- stats
+pangenome_wgs.run_surject:
+- bam
+pangenome_wgs.samtools_stat:
+- stats
