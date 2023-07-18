@@ -4,11 +4,10 @@ import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/deepvariant.wdl"
-import "wdl/tasks/gatk/bqsr.wdl"
 import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/samtools.wdl"
 
-workflow bwa_and_call {
+workflow genome_wgs {
   meta {
       author: "Eddie Belter"
       version: "0.1"
@@ -16,10 +15,9 @@ workflow bwa_and_call {
   }
 
   input {
-      String name
+      String sample
       Array[Array[File]] fastqs  # read fastqs
       File idx            # tarred BWA index
-      File known_sites    # vcf 
   }
 
   RunEnv runenv_idx = {
@@ -43,8 +41,8 @@ workflow bwa_and_call {
 
   scatter (i in range(length(fastqs))) {
       call align.run_bwa_mem as align { input:
-          sample=name,
-          library=name+"-lib"+i,
+          sample=sample,
+          library=sample+"-lib"+i,
           fastqs=fastqs[i],
           reference=reference.path,
           runenv=runenv_bwa,
@@ -58,8 +56,9 @@ workflow bwa_and_call {
     "disks": 20,
 
   }
+
   call samtools.merge_bams as merge { input:
-      name=name,
+      sample=sample,
       bams=align.bam,
       runenv=runenv_merge,
   }
@@ -83,40 +82,19 @@ workflow bwa_and_call {
     "disks": 20,
   }
 
-  call markdup.run_markdup { input:
-      name=name,
+  call markdup.run_markdup as markdup { input:
+      sample=sample,
       bam=samtools_sort.sorted_bam,
       runenv=runenv_picard,
   }
 
-  RunEnv runenv_gatk = {
-    "docker": "broadinstitute/gatk:4.3.0.0",
-    "cpu": 4,
-    "memory": 20,
-    "disks": 20,
-  }
- 
-  call bqsr.run_bqsr { input:
-      bam=run_markdup.dedup_bam,
-      reference=reference.path,
-      known_sites=known_sites,
-      runenv=runenv_gatk,
-  }
-
-  call bqsr.apply_bqsr as bqsr { input:
-      bam=run_markdup.dedup_bam,
-      reference=reference.path,
-      table=run_bqsr.table,
-      runenv=runenv_gatk,
-  }
-
-  call samtools.stat as samtools_stat { input:
-      bam=merge.merged_bam,
+  call samtools.stat as stat { input:
+      bam=markdup.dedup_bam,
       runenv=runenv_samtools,
   } 
 
-  call samtools.index as samtools_index { input:
-      bam=bqsr.recal_bam,
+  call samtools.index as index { input:
+      bam=markdup.dedup_bam,
       runenv=runenv_samtools,
   } 
 
@@ -128,18 +106,18 @@ workflow bwa_and_call {
   }
 
   call deepvariant.deep_variant as dv { input:
-    name=name,
-    bam=bqsr.recal_bam,
-    bai=samtools_index.bai,
+    sample=sample,
+    bam=markdup.dedup_bam,
+    bai=index.bai,
     reference=reference.path,
     runenv=runenv,
   }
 
   output {
-      File bam = bqsr.recal_bam
-      File bai = samtools_index.bai
-      File vcf = dv.vcf
-      File stats = samtools_stat.stats
+      File bam = markdup.dedup_bam
+      File bai = index.bai
+      File stats = stat.stats
       File dedup_metrics = run_markdup.metrics
+      File vcf = dv.vcf
   }
 }

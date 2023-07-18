@@ -1,0 +1,10 @@
+genome_wgs.markdup:
+  - dedup_bam
+genome_wgs.index:
+  - bai
+genome_wgs.stat:
+  - stats
+genome_wgs.markdup:
+  - metrics
+genome_wgs.dv:
+  - vcf
