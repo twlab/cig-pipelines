@@ -105,7 +105,7 @@ workflow genome_wgs {
     "disks": 20,
   }
 
-  call deepvariant.deep_variant as dv { input:
+  call deepvariant.run_deepvariant as dv { input:
     sample=sample,
     bam=markdup.dedup_bam,
     bai=index.bai,
@@ -117,7 +117,7 @@ workflow genome_wgs {
       File bam = markdup.dedup_bam
       File bai = index.bai
       File stats = stat.stats
-      File dedup_metrics = run_markdup.metrics
+      File dedup_metrics = markdup.metrics
       File vcf = dv.vcf
   }
 }
