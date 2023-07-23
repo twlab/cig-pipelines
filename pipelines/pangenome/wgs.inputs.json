@@ -10,6 +10,7 @@
     "pangenome_wgs.reference": "{{REF}}",
     "pangenome_wgs.run_vg_stats": true,
     "pangenome_wgs.run_deep_variant": true,
+    "pangenome_wgs.docker": "quay.io/vgteam/vg:v1.48.0",
     "pangenome_wgs.cpu": 18,
     "pangenome_wgs.memory": 96
 }

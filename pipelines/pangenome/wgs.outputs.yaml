@@ -1,8 +1,12 @@
 pangenome_wgs.run_giraffe:
-- gam
-pangenome_wgs.run_stats:
-- stats
-pangenome_wgs.run_surject:
-- bam
+  - gam
+pangenome_wgs.gam_stats:
+  - stats
+pangenome_wgs.markdup:
+  - dedup_bam
+pangenome_wgs.samtools_index:
+  - bai
 pangenome_wgs.samtools_stat:
-- stats
+  - stats
+pangenome_wgs.dv:
+  - vcf
