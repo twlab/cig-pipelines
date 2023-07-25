@@ -2,6 +2,31 @@
 
 Map WGS fastqs using BWA-MEM and call variants with deep variant. This is the MGI Wang Lab standard for processing WGS data.
 
+## Pipeline Chart
+```mermaid
+  flowchart TB;
+      i1([SAMPLE]);
+      i2([FASTQs]);
+      i3([IDX]);
+      s1[UNTAR IDX];
+      s2[BWA-MEM];
+      s3[MERGE];
+      s4[SAMTOOLS SORT];
+      s5[PICARD MARKDUP];
+      s6[SAMTOOLS STAT];
+      s7[SAMTOOLS INDEX];
+      s8[DEEPVARIANT];
+      i3-->s1;
+      i1-->s2; i2-->s2; s1--REF PATH-->s2;
+      s2--BAMs-->s3;
+      s3--BAM-->s4;
+      s4--BAM-->s5;
+      s5--BAM-->s6;
+      s5--BAM-->s7;
+      s7--BAI-->s8;
+      s5--BAM-->s8;
+```
+
 ## Pipeline Files
 * wgs.wdl - WDL pipeline
 * wgs.inputs.json - pipeline inputs with place holders
