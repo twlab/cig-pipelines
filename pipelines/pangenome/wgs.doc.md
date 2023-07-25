@@ -2,6 +2,28 @@
 
 Map WGS data to the pangenome graph using giraffe, and call variants with haplotype caller and deep variant. Produces a GAM, sorted BAM & BAI, plus VCF & stats.
 
+## Pipeline Chart
+```mermaid
+  flowchart TB;
+      i1([FASTQs]);
+      i2([GBZ / DIST / MIN]);
+      i3([LINEAR REF])
+      i4([SAMPLE])
+      s1[VG GIRAFFE];
+      s2[VG STATS];
+      s3[VG SURJECT];
+      s4[SAMTOOLS SORT];
+      s5[PICARD MARKDUP];
+      s6[SAMTOOLS STAT];
+      s7[SAMTOOLS INDEX];
+      s8[DEEPVARIANT];
+      i1-->s1; i2-->s1
+      s1--GAM-->s2; s1--GAM-->s3;
+      i2-->s3; i4-->s3;
+      s3--BAM-->s4--BAM-->s5
+      s5--BAM-->s6; s5--BAM-->s7; s5--BAM-->s8;
+      i3-->s8;
+```
 ## Pipeline Files
 * wgs.wdl          - WDL pipeline
 * wgs.inputs.json  - pipeline inputs with place holders
