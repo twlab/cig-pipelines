@@ -22,7 +22,7 @@ Map WGS data to the pangenome graph using giraffe, and call variants with haplot
       i2-->s3; i4-->s3;
       s3--BAM-->s4--BAM-->s5
       s5--BAM-->s6; s5--BAM-->s7; s5--BAM-->s8;
-      i3-->s8;
+      s7--BAI-->s8; i3-->s8;
 ```
 ## Pipeline Files
 * wgs.wdl          - WDL pipeline
