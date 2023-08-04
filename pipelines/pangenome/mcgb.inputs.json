@@ -1,0 +1,8 @@
+{
+    "pangenome_mcgb.name": "{{NAME}}",
+    "pangenome_mcgb.ref": "{{REF}}",
+    "pangenome_mcgb.seqfile": "{{SEQFILE}}",
+    "pangenome_wgs.docker": "quay.io/vgteam/vg:v1.48.0",
+    "pangenome_wgs.cpu": 4,
+    "pangenome_wgs.memory": 16
+}

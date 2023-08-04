@@ -1,0 +1,14 @@
+pangenome_mcgb.run_mcgb:
+  - dist
+  - fasta
+  - gaf
+  - gbz
+  - gfa
+  - hal
+  - min
+  - paf
+  - stats
+  - vcf
+  - vcf_tbi
+  - raw_vcf
+  - raw_vcf_tbi
