@@ -8,6 +8,7 @@ pangenome_mcgb.run_mcgb:
   - min
   - paf
   - stats
+  - sv_gfa
   - vcf
   - vcf_tbi
   - raw_vcf
