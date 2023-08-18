@@ -38,7 +38,7 @@ task run_untar_idx {
     command <<<
         mkdir ref
         cd ref
-        tar -xvf ~{idx}
+        tar -xvvfm ~{idx}
 		>>>
 
     output {
