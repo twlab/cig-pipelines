@@ -21,7 +21,7 @@ task run_giraffe {
   # -o  output the alignments in NAME format
   # -t  number of mapping threads to use
   command <<<
-    vg giraffe -t ~{runenv.cpu - 1} -m ~{min} -d ~{dist} -Z ~{gbz} -f ~{fastqs[0]} -f ~{fastqs[1]} -p -o gam > ~{gam}
+    vg giraffe -t ~{runenv.cpu - 1} -m ~{min} -d ~{dist} -Z ~{gbz} -f ~{fastqs[0]} -f ~{fastqs[1]} -o gam > ~{gam}
   >>>
 
   output {
