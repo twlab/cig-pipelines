@@ -1,9 +1,9 @@
 version development
 
-import "wdl/subworkflows/crop_reference_fasta_headers.wdl"
+import "wdl/structs/runenv.wdl"
 import "wdl/tasks/gzip.wdl"
+import "wdl/tasks/misc/gunzip.wdl"
 import "wdl/tasks/transcriptclean.wdl"
-
 
 workflow long_rna_post_align {
 
@@ -12,8 +12,7 @@ workflow long_rna_post_align {
         String experiment_prefix
         # Input bam
         File bam
-        # Reference genome. Fasta format, gzipped.
-        File reference_genome
+        File reference # FASTA GZIPPED
         # Annotation file, gtf format, gzipped.
         File annotation
         # Variants file, vcf format, gzipped.
@@ -51,11 +50,16 @@ workflow long_rna_post_align {
       "docker": docker,
     }
 
-    call crop_reference_fasta_headers.crop_reference_fasta_headers as clean_reference {
-        input:
-            reference_fasta=reference_genome,
-            resources=small_task_resources,
-            runtime_environment=runtime_environment,
+    RunEnv runenv_gunzip {
+       "docker": "alpine:3",
+       "cpu": "1",
+       "memory": "4",
+       "disks": "10",
+    }
+
+    call gunzip.run_gunzip as uncompressed_ref { input:
+        compressed=reference,
+        runenv=runenv_gunzip,
     }
 
     call gzip.gzip as decompressed_gtf {
@@ -73,7 +77,7 @@ workflow long_rna_post_align {
     call transcriptclean.get_SJs_from_gtf as get_splice_junctions {
         input:
             annotation_gtf=decompressed_gtf.out,
-            reference_fasta=clean_reference.decompressed,
+            reference_fasta=uncompressed_ref.uncompressed,
             resources=medium_task_resources,
             output_filename="SJs.txt",
             runtime_environment=runtime_environment,
