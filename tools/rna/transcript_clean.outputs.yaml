@@ -1,0 +1,21 @@
+long_rna_post_align.transcriptclean_merge_logs_and_report:
+  - report
+  - transcript_log
+  - transcript_error_log
+long_rna_post_align.merge_sams:
+  - sam
+long_rna_post_align.talon:
+  - talon_config
+  - talon_log
+  - talon_db_out
+long_rna_post_align.talon_label_reads:
+  - labeled_bam
+  - labeled_sam
+  - read_labels_tsv
+long_rna_post_align.create_abundance_from_talon_db:
+  - talon_abundance
+  - number_of_genes_detected
+long_rna_post_align.create_gtf_from_talon_db:
+  - gtf
+long_rna_post_align.calculate_spearman:
+  - spearman
