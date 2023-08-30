@@ -3,10 +3,6 @@
     "long_rna_post_align.bam": "{{BAM}}",
     "long_rna_post_align.reference_genome": "/storage1/fs1/hprc/Active/raw-data/references/GRCh38/GRCh38.with-alts.fasta.gz",
     "long_rna_post_align.annotation": "/storage1/fs1/hprc/Active/raw-data/references/GRCh38/anno/gencode_v36/GRCh38.v36.annotation.gtf.gz",
-    "long_rna_post_align.input_type": "nanopore",
-    "long_rna_post_align.genome_build": "GRCh38",
-    "long_rna_post_align.annotation_name": "gencode_V36",
-    "long_rna_post_align.talon_prefixes": [],
     "long_rna_post_align.canonical_only": true,
     "long_rna_post_align.small_task_resources": {
         "cpu": 1,

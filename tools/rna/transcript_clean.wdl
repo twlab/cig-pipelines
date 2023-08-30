@@ -2,7 +2,6 @@ version development
 
 import "wdl/subworkflows/crop_reference_fasta_headers.wdl"
 import "wdl/tasks/gzip.wdl"
-import "wdl/tasks/talon.wdl"
 import "wdl/tasks/transcriptclean.wdl"
 
 
@@ -19,21 +18,11 @@ workflow long_rna_post_align {
         File annotation
         # Variants file, vcf format, gzipped.
         File? variants
-        # Is the data from "pacbio" or "nanopore"
-        String input_type
-        # Array[String] of prefixes for naming novel discoveries in eventual TALON runs (default = "TALON").
-        # If defined, length of this array needs to be equal to number of replicates.
-        Array[String] talon_prefixes = []
-        # Genome build name, for TALON. This must be in the initial_talon_db
-        String genome_build
-        # Annotation name, for creating abundance from talon db. This must be in the initial_talon_db
-        String annotation_name
         # If this option is set, TranscriptClean will only output transcripts that are either canonical
         # or that contain annotated noncanonical junctions to the clean SAM and Fasta files at the end
         # of the run.
         Boolean canonical_only = true
         String docker = "encodedcc/long-read-rna-pipeline:v2.1.0"
-        String singularity = "docker://encodedcc/long-read-rna-pipeline:v2.1.0"
 
         # Resouces
         Resources small_task_resources = {
@@ -60,7 +49,6 @@ workflow long_rna_post_align {
 
     RuntimeEnvironment runtime_environment = {
       "docker": docker,
-      "singularity": singularity
     }
 
     call crop_reference_fasta_headers.crop_reference_fasta_headers as clean_reference {
@@ -89,18 +77,6 @@ workflow long_rna_post_align {
             resources=medium_task_resources,
             output_filename="SJs.txt",
             runtime_environment=runtime_environment,
-    }
-
-    String talon_prefix = "TALON"
-
-    call init_talon_db { input:
-        annotation_gtf=decompressed_gtf.out,
-        annotation_name=annotation_name,
-        ref_genome_name=genome_build,
-        idprefix=talon_prefix,
-        output_prefix=experiment_prefix,
-        resources=medium_task_resources,
-        runtime_environment=runtime_environment,
     }
 
     call split_bam { input:
@@ -133,84 +109,6 @@ workflow long_rna_post_align {
         prefix=experiment_prefix,
         header=split_bam.header,
         sams=transcriptclean.corrected_sam,
-    }
-
-    call talon.talon_label_reads { input:
-            input_sam=merge_sams.sam,
-            output_bam_filename=experiment_prefix+"_labeled.bam",
-            output_sam_filename=experiment_prefix+"_labeled.sam",
-            output_tsv_filename=experiment_prefix+"_labeled.tsv",
-            reference_genome=clean_reference.decompressed,
-            resources=medium_task_resources,
-            runtime_environment=runtime_environment,
-    }
-
-    call talon { input:
-        talon_db=init_talon_db.database,
-        sam=talon_label_reads.labeled_sam,
-        genome_build=genome_build,
-        output_prefix=experiment_prefix,
-        platform=input_type,
-        resources=large_task_resources,
-        runtime_environment=runtime_environment,
-    }
-
-    call create_abundance_from_talon_db { input:
-        talon_db=talon.talon_db_out,
-        annotation_name=annotation_name,
-        genome_build=genome_build,
-        output_prefix=experiment_prefix,
-        idprefix=talon_prefix,
-        resources=medium_task_resources,
-        runtime_environment=runtime_environment,
-    }
-
-    call create_gtf_from_talon_db { input:
-        talon_db=talon.talon_db_out,
-        annotation_name=annotation_name,
-        genome_build=genome_build,
-        output_prefix=experiment_prefix,
-        resources=medium_task_resources,
-        runtime_environment=runtime_environment,
-    }
-}
-
-task init_talon_db {
-    input {
-        File annotation_gtf
-        Resources resources
-        String annotation_name
-        String ref_genome_name
-        String output_prefix
-        String? idprefix
-        RuntimeEnvironment runtime_environment
-    }
-
-    command {
-        talon_initialize_database \
-            --f ~{annotation_gtf} \
-            --a ~{annotation_name} \
-            --g ~{ref_genome_name} \
-            ~{"--idprefix " + idprefix} \
-            --o ~{output_prefix}
-
-        python3.7 $(which record_init_db_inputs.py) \
-            --annotation_name ~{annotation_name} \
-            --genome ~{ref_genome_name} \
-            --outfile ~{output_prefix}_talon_inputs.json
-        }
-
-    output {
-        File database = "~{output_prefix}.db"
-        File talon_inputs = "~{output_prefix}_talon_inputs.json"
-    }
-
-    runtime {
-        cpu: resources.cpu
-        memory: "~{resources.memory_gb} GB"
-        disks: resources.disks
-        docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
     }
 }
 
@@ -271,7 +169,6 @@ task split_bam {
         docker: "ebelter/samtools:1.15.1"
         #disks: resources.disks
         #docker: runtime_environment.docker
-        #singularity: runtime_environment.singularity
     }
 }
 
@@ -306,7 +203,6 @@ task merge_sams {
         docker: "ebelter/samtools:1.15.1"
         #disks: resources.disks
         #docker: runtime_environment.docker
-        #singularity: runtime_environment.singularity
     }
 }
 
@@ -356,7 +252,6 @@ task transcriptclean {
         memory: "48 GB"#"~{resources.memory_gb} GB"
         disks: resources.disks
         docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
     }
 }
 
@@ -405,169 +300,5 @@ task transcriptclean_merge_logs_and_report {
         cpu: cpu #resources.cpu
         memory: "~{memory} GB" #"~{resources.memory_gb} GB"
         docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
-    }
-}
-
-task talon {
-    input {
-        File talon_db
-        File sam
-        Resources resources
-        String genome_build
-        String output_prefix
-        String platform
-        RuntimeEnvironment runtime_environment
-    }
-
-    command {
-        export TMPDIR=/tmp
-        echo ~{output_prefix},~{output_prefix},~{platform},~{sam} > ~{output_prefix}_talon_config.csv
-        cp ~{talon_db} ./~{output_prefix}_talon.db
-        talon --f ~{output_prefix}_talon_config.csv \
-                                    --db ~{output_prefix}_talon.db \
-                                    --build ~{genome_build} \
-                                    --o ~{output_prefix}
-    }
-
-    output {
-        File talon_config = "~{output_prefix}_talon_config.csv"
-        File talon_log = "~{output_prefix}_QC.log"
-        File talon_db_out = "~{output_prefix}_talon.db"
-    }
-
-    runtime {
-        cpu: "4"#resources.cpu
-        #cpu: resources.cpu
-        memory: "48 GB"#"~{resources.memory_gb} GB"
-        #memory: "~{resources.memory_gb} GB"
-        disks: resources.disks
-        docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
-    }
-}
-
-task create_abundance_from_talon_db {
-    input {
-        File talon_db
-        Resources resources
-        String annotation_name
-        String genome_build
-        String output_prefix
-        String idprefix
-        RuntimeEnvironment runtime_environment
-    }
-
-    command {
-        talon_abundance --db=~{talon_db} \
-                        -a ~{annotation_name} \
-                        --build ~{genome_build} \
-                        --o=~{output_prefix}
-        python3.7 $(which calculate_number_of_genes_detected.py) --abundance ~{output_prefix}_talon_abundance.tsv \
-                                                                 --counts_colname ~{output_prefix} \
-                                                                 --idprefix ~{idprefix} \
-                                                                 --outfile ~{output_prefix}_number_of_genes_detected.json
-    }
-
-    output {
-        File talon_abundance = "~{output_prefix}_talon_abundance.tsv"
-        File number_of_genes_detected = "~{output_prefix}_number_of_genes_detected.json"
-    }
-
-    runtime {
-        cpu: resources.cpu
-        memory: "~{resources.memory_gb} GB"
-        disks: resources.disks
-        docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
-    }
-}
-
-task create_gtf_from_talon_db {
-    input {
-        File talon_db
-        Resources resources
-        String annotation_name
-        String genome_build
-        String output_prefix
-        RuntimeEnvironment runtime_environment
-    }
-
-    command {
-        talon_create_GTF --db ~{talon_db} \
-                         -a ~{annotation_name} \
-                         --build ~{genome_build} \
-                         --o ~{output_prefix}
-        gzip -n ~{output_prefix}_talon.gtf
-    }
-
-    output {
-        File gtf = "~{output_prefix}_talon.gtf.gz"
-    }
-
-    runtime {
-        cpu: resources.cpu
-        memory: "~{resources.memory_gb} GB"
-        disks: resources.disks
-        docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
-    }
-}
-
-task calculate_spearman {
-    input {
-        File rep1_abundance
-        File rep2_abundance
-        Resources resources
-        String rep1_idprefix
-        String rep2_idprefix
-        String output_prefix
-        RuntimeEnvironment runtime_environment
-    }
-
-    command {
-        python3.7 $(which calculate_correlation.py) --rep1_abundance ~{rep1_abundance} \
-                                                    --rep2_abundance ~{rep2_abundance} \
-                                                    --rep1_idprefix ~{rep1_idprefix} \
-                                                    --rep2_idprefix ~{rep2_idprefix} \
-                                                    --outfile ~{output_prefix}_spearman.json
-    }
-
-    output {
-        File spearman = "~{output_prefix}_spearman.json"
-    }
-
-    runtime {
-        cpu: resources.cpu
-        memory: "~{resources.memory_gb} GB"
-        disks: resources.disks
-        docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
-    }
-}
-
-task skipNfirstlines {
-    input {
-        File input_file
-        Resources resources
-        String output_fn
-        Int lines_to_skip
-        RuntimeEnvironment runtime_environment
-    }
-
-    command {
-        sed 1,~{lines_to_skip}d ~{input_file} > ~{output_fn}
-    }
-
-    output {
-        File output_file = output_fn
-    }
-
-    runtime {
-        cpu: resources.cpu
-        memory: "~{resources.memory_gb} GB"
-        disks: resources.disks
-        docker: runtime_environment.docker
-        singularity: runtime_environment.singularity
     }
 }
