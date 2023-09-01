@@ -56,9 +56,9 @@ Build STAR, RSEM, & KALLISTO indexes for the bulk RNA pipeline.
 * transcripts [File] - transcript sequences FASTA
 
 ## Build Transcripts (Kallisto) Index [build_transcripts_index]
-####input
+#### input
 * reference [build_transcripts_fasta.transcripts]
-####output
+#### output
 * index [File] - kallisto index
 
 ### Build STAR Index [build_star_index]
