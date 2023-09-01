@@ -1,0 +1,10 @@
+build_idxs.build_merged_annotation:
+ - merged_annotation # combined annotation [GTF GZ]
+build_idxs.build_transcripts_fasta:
+ - transcripts       # transcript sequences [FASTA]
+build_idxs.build_transcripts_idx:
+  - index            # kallisto transcript index
+build_idxs.build_star_idx:
+  - index            # STAR aligner index and aux files [TGZ]
+build_idxs.build_rsem_idx:
+  - index            # RSEM transcript index
