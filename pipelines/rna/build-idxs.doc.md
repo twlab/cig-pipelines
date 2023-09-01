@@ -9,21 +9,29 @@ Build STAR, RSEM, & KALLISTO indexes for the bulk RNA pipeline.
       i2([ANNOTATION]);
       i3([GENOME]);
       i4([ANNO_VERSION]);
+      o1([TRANSCRIPTS FASTA]);
+      o2([KALLISTO INDEX]);
+      o3([STAR INDEX]);
+      o4([RSEM INDEX]);
       s1[BUILD TRANSCRIPTS FASTA];
-      s1[BUILD TRANSCRIPTS IDX];
-      s1[BUILD STAR IDX];
-      s1[BUILD RSEM IDX];
+      s2[BUILD TRANSCRIPTS IDX];
+      s3[BUILD STAR IDX];
+      s4[BUILD RSEM IDX];
       i1-->s1;
       i2-->s1;
       s1--TRANSCRIPTS FASTA-->s2;
-      i1->s3
-      i2->s3
-      i3->s3
-      i4->s3
-      i1->s4
-      i2->s4
-      i3->s4
-      i4->s4
+      i1-->s3;
+      i2-->s3;
+      i3-->s3;
+      i4-->s3;
+      i1-->s4;
+      i2-->s4;
+      i3-->s4;
+      i4-->s4;
+      s1-->o1;
+      s2-->o2;
+      s3-->o3;
+      s4-->o4;
 ```
 
 ## Pipeline Files
