@@ -1,4 +1,4 @@
-# Bulk RNA Pipeline
+# Build Indexes for Bulk RNA Pipeline
 
 Build STAR, RSEM, & KALLISTO indexes for the bulk RNA pipeline.
 
