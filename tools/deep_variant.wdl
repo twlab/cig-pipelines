@@ -27,7 +27,7 @@ workflow deep_variant {
       "disks": 20,
     }
 
-    call deepvariant.deep_variant { input:
+    call deepvariant.run_deepvariant as dv { input:
         sample=sample,
         bam=bam,
         bai=bai,
@@ -36,8 +36,8 @@ workflow deep_variant {
     }
 
     output {
-        File vcf = deep_variant.vcf
-        File vcf_tbi = deep_variant.vcf_tbi
-        File repoort = deep_variant.report
+        File vcf = dv.vcf
+        File vcf_tbi = dv.vcf_tbi
+        File report = dv.report
     }
 }
