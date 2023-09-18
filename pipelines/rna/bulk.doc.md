@@ -4,31 +4,43 @@ Map Bulk RNA fastqs using STAR and run analysis tools stringtie, rsem, kallisto,
 
 ## Pipeline Chart
 ```mermaid
-  flowchart TB;
+  flowchart LR;
       i1([SAMPLE]);
       i2([FASTQs]);
       i3([ALIGN_IDX]);
       i4([RSEM_IDX]);
       i5([KALLISTO_IDX]);
-      s1[STAR ALIGN];
-      s2[BAM TO SIGNALS];
-      s3[STRINGTIE];
 
-      s3[MERGE];
-      s4[SAMTOOLS SORT];
-      s5[PICARD MARKDUP];
-      s6[SAMTOOLS STAT];
-      s7[SAMTOOLS INDEX];
-      s8[DEEPVARIANT];
-      i3-->s1;
-      i1-->s2; i2-->s2; s1--REF PATH-->s2;
-      s2--BAMs-->s3;
-      s3--BAM-->s4;
-      s4--BAM-->s5;
-      s5--BAM-->s6;
-      s5--BAM-->s7;
-      s7--BAI-->s8;
-      s5--BAM-->s8;
+      s1[STAR ALIGN];
+      s11{METRICS\nSAMTOOLS STAT\nPICARD RNA\nPICARD INSERT SIZE};
+      s12[SAMTOOLS INDEX];
+      s21[BAM TO SIGNALS];
+      s31[RSEM QUANT];
+      s51[DEEPVARIANT];
+      s61[STRINGTIE];
+      s71[KALLISTO];
+
+      o1([BAM]);
+      o2([ANNO BAM]);
+      o11a([SAMTOOLS STAT]);
+      o11b([RNA SEQ METRICS]);
+      o11c([INSERT SIZES METRICS]);
+      o12([BAI]);
+      o21([BIGWIG FILES]);
+      o31([RSEM QUANTS]);
+      o51([VCF]);
+      o61([DE NOVO TRANSCRIPTS]);
+      o62([ABUNDANCE]);
+      o71([QUANTS]);
+
+      i1-->s1; i2-->s1; i3-->s1; s1-->o1; s1-->o2;
+      s1--BAM-->s11; s11-->o11a; s11-->o11b; s11-->o11c;
+      s1--BAM-->s12; s12-->o12;
+      s1--BAM-->s21; s21-->o21;
+      s1--ANNO BAM-->s31; i4-->s31; s31-->o31;
+      s1--BAM-->s51; s51-->o51;
+      s1--BAM-->s61; s61-->o61; s61-->o62;
+      i2-->s71; i5-->s71; s71-->o71
 ```
 
 ## Pipeline Files
@@ -92,7 +104,7 @@ NONE
 * all_minus [bigwig file of signals]
 * python_log [script log]
 
-#### RSEM Quant
+### RSEM Quant
 #### input
 * rsem_index [inputs.rsem_index,
 * rnd_seed [inputs.rnd_seed (12345)]
@@ -115,7 +127,7 @@ NONE
 * abundance_estimate []
 
 ### Kallisto
-==== input
+#### input
 * fastqs_R1 [inputs.fastqs_R1]
 * fastqs_R2 [inputs.fastqs_R2]
 * endedness [inputs.endedness]
@@ -147,3 +159,7 @@ NONE
 * python_log [script log]
 
 ## Outputs
+* bam [align.genome_bam]
+* anno bam [align.anno_bam]
+* bai [index.bai]
+* plus others
