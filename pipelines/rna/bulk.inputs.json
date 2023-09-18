@@ -1,0 +1,36 @@
+{
+  "rna.bamroot": "{{SAMPLE}}",
+  "rna.endedness": "paired",
+  "rna.strandedness": "unstranded",
+  "rna.strandedness_direction": "unstranded",
+  "rna.fastqs_R1": [
+    [
+      "{{FQ1}}"
+    ]
+  ],
+  "rna.fastqs_R2": [
+    [
+      "{{FQ2}}"
+    ]
+  ],
+  "rna.chrom_sizes": "{{CHR_SIZES}}",
+  "rna.annotation": "{{ANNO}}",
+  "rna.align_index": "{{ALIGN_IDX}}",
+  "rna.align_ncpus": 8,
+  "rna.align_ramGB": 48,
+  "rna.align_disk": "local-disk 20 HDD",
+  "rna.bam_to_signals_ncpus": 4,
+  "rna.bam_to_signals_ramGB": 24,
+  "rna.bam_to_signals_disk": "local-disk 20 HDD",
+  "rna.run_kallisto": false,
+  "rna.kallisto_index": "{{KALLISTO_IDX}}",
+  "rna.kallisto_number_of_threads": 4,
+  "rna.kallisto_ramGB": 24,
+  "rna.kallisto_disk": "local-disk 20 HDD",
+  "rna.rna_qc_tr_id_to_gene_type_tsv": "/storage1/fs1/hprc/Active/raw-data/references/GRCh38/anno/gencode_v29/gencodeV29pri-UCSC-tRNAs-ERCC-phiX.transcript_id_to_genes.tsv",
+  "rna.rna_qc_disk": "local-disk 20 HDD",
+  "rna.rsem_index": "{{RSEM_IDX}}",
+  "rna.rsem_ncpus": 4,
+  "rna.rsem_ramGB": 24,
+  "rna.rsem_disk": "local-disk 20 HDD"
+}

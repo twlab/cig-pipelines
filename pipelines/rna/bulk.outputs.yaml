@@ -1,0 +1,37 @@
+rna.align:
+  - anno_flagstat
+  - anno_flagstat_json
+  - annobam
+  - genome_flagstat
+  - genome_flagstat_json
+  - genomebam
+  - log
+  - log_json
+  - splice_junctions
+  - unmapped_1
+  - unmapped_2
+rna.index_genome_bam:
+  - bai
+rna.collect_rna_seq_metrics:
+  - metrics
+rna.collect_insert_size_metrics:
+  - metrics
+  - histogram
+rna.bam_to_signals:
+  - all_minus
+  - all_plus
+  - all_unstranded
+  - unique_minus
+  - unique_plus
+  - unique_unstranded
+rna.kallisto:
+  - quants
+rna.mad_qc:
+  - madQCmetrics
+  - madQCplot
+rna.rna_qc:
+  - rnaQC
+rna.rsem_quant:
+  - genes_results
+  - isoforms_results
+  - number_of_genes
