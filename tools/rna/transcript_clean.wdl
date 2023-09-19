@@ -5,7 +5,7 @@ import "wdl/tasks/gzip.wdl"
 import "wdl/tasks/misc/gunzip.wdl"
 import "wdl/tasks/transcriptclean.wdl"
 
-workflow long_rna_post_align {
+workflow transcipt_clean {
 
     input {
         # Prefix that gets added into output filenames. Default "my_experiment", can not be empty.

@@ -1,25 +1,25 @@
 {
-    "long_rna_post_align.experiment_prefix": "{{SAMPLE}}",
-    "long_rna_post_align.bam": "{{BAM}}",
-    "long_rna_post_align.reference": "{{REF}}",
-    "long_rna_post_align.annotation": "{{ANNO}}",
-    "long_rna_post_align.canonical_only": true,
-    "long_rna_post_align.small_task_resources": {
+    "transcript_clean.experiment_prefix": "{{SAMPLE}}",
+    "transcript_clean.bam": "{{BAM}}",
+    "transcript_clean.reference": "{{REF}}",
+    "transcript_clean.annotation": "{{ANNO}}",
+    "transcript_clean.canonical_only": true,
+    "transcript_clean.small_task_resources": {
         "cpu": 1,
         "memory_gb": 4,
         "disks": "local-disk 10 SSD"
     },
-    "long_rna_post_align.medium_task_resources": {
+    "transcript_clean.medium_task_resources": {
         "cpu": 2,
         "memory_gb": 12,
         "disks": "local-disk 10 SSD"
     },
-    "long_rna_post_align.large_task_resources": {
+    "transcript_clean.large_task_resources": {
         "cpu": 4,
         "memory_gb": 24,
         "disks": "local-disk 10 SSD"
     },
-    "long_rna_post_align.xlarge_task_resources": {
+    "transcript_clean.xlarge_task_resources": {
         "cpu": 8,
         "memory_gb": 48,
         "disks": "local-disk 10 SSD"
