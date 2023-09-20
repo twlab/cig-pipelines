@@ -9,6 +9,7 @@ Map WGS data to the pangenome graph using giraffe, and call variants with haplot
       i2([GBZ / DIST / MIN]);
       i3([LINEAR REF])
       i4([SAMPLE])
+
       s1[VG GIRAFFE];
       s2[VG STATS];
       s3[VG SURJECT];
@@ -17,11 +18,22 @@ Map WGS data to the pangenome graph using giraffe, and call variants with haplot
       s6[SAMTOOLS STAT];
       s7[SAMTOOLS INDEX];
       s8[DEEPVARIANT];
-      i1-->s1; i2-->s1
-      s1--GAM-->s2; s1--GAM-->s3;
+
+      o11([GAM])
+      o12([GAM STAT])
+      o2([BAM])
+      o6([BAM STAT])
+      o7([BAI])
+      o8([VCF])
+
+      i1-->s1; i2-->s1; s1-->o11;
+      s1--GAM-->s2; s2-->o12;
+      s1--GAM-->s3;
       i2-->s3; i4-->s3;
-      s3--BAM-->s4--BAM-->s5
-      s5--BAM-->s6; s5--BAM-->s7; s5--BAM-->s8;
+      s3--BAM-->s4--BAM-->s5; s5-->o2;
+      s5--BAM-->s6; s6-->o6;
+      s5--BAM-->s7; s7-->o7;
+      s5--BAM-->s8; s8-->o8;
       s7--BAI-->s8; i3-->s8;
 ```
 ## Pipeline Files
