@@ -1,0 +1,4 @@
+picard_downsample.coordinate_sort:
+  - output_bam
+picard_downsample.ds:
+  - metrics
