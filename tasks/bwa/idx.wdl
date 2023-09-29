@@ -38,7 +38,8 @@ task run_untar_idx {
     command <<<
         mkdir ref
         cd ref
-        tar -xvvfm ~{idx}
+        tar -xvvf ~{idx}
+        find . -type f -exec touch {} \;
 		>>>
 
     output {
