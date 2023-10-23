@@ -7,3 +7,5 @@ genome_wgs.stat:
   - stats
 genome_wgs.dv:
   - vcf
+  - vcf_tbi
+  - report

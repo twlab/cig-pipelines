@@ -1,5 +1,5 @@
 {
   "genome_wgs.sample": "{{SAMPLE}}",
-  "genome_wgs.fastqs": [["{{FQ1R1}}", "{{FQ1R2}}"], [...]],
+  "genome_wgs.fastqs": [["{{FQ1}}", "{{FQ2}}"]],
   "genome_wgs.idx": "{{IDX}}"
 }

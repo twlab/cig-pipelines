@@ -10,3 +10,5 @@ pangenome_wgs.samtools_stat:
   - stats
 pangenome_wgs.dv:
   - vcf
+  - vcf_tbi
+  - report
