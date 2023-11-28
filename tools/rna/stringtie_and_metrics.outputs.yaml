@@ -1,0 +1,10 @@
+stringtie_and_metrics.run_stringtie_denovo:
+ - denovo_transcipts
+stringtie_and_metrics.run_stringtie_quantification:
+  - abundance_estimate
+  - ballgown_tables
+stringtie_and_metrics.run_collect_rnaseq_metrics:
+  - metrics
+stringtie_and_metrics.run_collect_insert_size_metrics:
+  - metrics
+  - histogram
