@@ -1,0 +1,8 @@
+stringtie_and_metrics.run_seqlendist:
+  - reports
+stringtie_and_metrics.run_collect_rnaseq_metrics:
+  - metrics
+  - metrics
+stringtie_and_metrics.run_collect_insert_size_metrics:
+  - metrics
+  - histogram
