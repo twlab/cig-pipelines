@@ -1,0 +1,8 @@
+{
+    "pangenie_genotyper.sample": "{{SAMPLE}}",
+    "pangenie_genotyper.fastqs": [{{FASTQS}}],
+    "pangenie_genotyper.index": "{{INDEX}}",
+    "pangenie_genotyper.docker": "mgibio/pangenie:v3.0.2-focal",
+    "pangenie_genotyper.cpu": 8,
+    "pangenie_genotyper.memory": 96
+}
