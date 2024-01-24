@@ -45,7 +45,6 @@ task run_genotyper {
   output {
     File vcf = glob("~{sample}*.vcf")[0]
     File histo = glob("~{sample}*.histo")[0]
-    File path_segments = glob("~{sample}*.fasta")[0]
   }
 
   runtime {
