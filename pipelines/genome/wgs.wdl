@@ -10,14 +10,14 @@ import "wdl/tasks/samtools.wdl"
 workflow genome_wgs {
   meta {
       author: "Eddie Belter"
-      version: "0.1"
+      version: "1.1"
       description: "Align and Call Variants Pipleine"
   }
 
   input {
       String sample
       Array[Array[File]] fastqs  # read fastqs
-      File idx            # tarred BWA index
+      File idx                   # tarred BWA index
   }
 
   RunEnv runenv_idx = {
@@ -99,7 +99,7 @@ workflow genome_wgs {
   } 
 
   RunEnv runenv = {
-    "docker": "google/deepvariant:1.5.0", # "google/deepvariant:1.5.0-gpu"
+    "docker": "google/deepvariant:1.6.0", # "google/deepvariant:1.6.0-gpu"
     "cpu": 9,
     "memory": 48,
     "disks": 20,
@@ -109,7 +109,7 @@ workflow genome_wgs {
     sample=sample,
     bam=markdup.dedup_bam,
     bai=index.bai,
-    reference=reference.path,
+    reference_tar=idx,
     runenv=runenv,
   }
 

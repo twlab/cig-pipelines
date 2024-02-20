@@ -7,7 +7,7 @@ task run_deepvariant {
         String sample
         File bam
         File bai
-        Directory reference
+        File reference_tar
         RunEnv runenv
     }
 
@@ -16,10 +16,18 @@ task run_deepvariant {
     command <<<
         ln ~{bam} ~{basename(bam)}
         ln ~{bai} ~{basename(bai)}
-        reference_fasta=$(find ~{reference} -name \*.fasta)
+        mkdir ref
+        tar xvvf ~{reference_tar} -C ref
+        reference_fasta=$(find ref -name \*.fasta)
+        customized_model_param=""
+        model_name=$(find ref -name model\* | xargs -I% basename % | awk -F. '{print $1}' | sort -u | head -1)
+        if [[ ! -z "${model_name}" ]]; then
+            customized_model_param="--customized_model=ref/${model_name}"
+        fi
         /opt/deepvariant/bin/run_deepvariant \
             --model_type=WGS \
             --ref=${reference_fasta} \
+            ${customized_model_param} \
             --reads=~{basename(bam)} \
             --output_vcf=~{output_vcf} \
             --num_shards=~{dv_cpu}

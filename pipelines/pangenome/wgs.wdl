@@ -9,6 +9,11 @@ import "wdl/tasks/vg/stats.wdl"
 import "wdl/tasks/vg/surject.wdl"
 
 workflow pangenome_wgs {
+  meta {
+    author: "Eddie Belter"
+    version: "1.1"
+    description: "Map WGS reads to the pangnome graph with giraffe, then surject alignments to call variants with run deepvariant."
+  }
 
   input {
     String sample
@@ -16,7 +21,7 @@ workflow pangenome_wgs {
     File min
     File dist
     File gbz
-    Directory reference
+    File reference_tar
     String docker = "quay.io/vgteam/vg:v1.48.0" #"quay.io/vgteam/vg@sha256:62a1177ab6feb76de6a19af7ad34352bea02cab8aa2996470d9d2b40b3190fe8"
     Int cpu
     Int memory
@@ -94,7 +99,7 @@ workflow pangenome_wgs {
   } 
 
   RunEnv runenv = {
-    "docker": "google/deepvariant:1.5.0", # "google/deepvariant:1.5.0-gpu"
+    "docker": "google/deepvariant:1.6.0", # "google/deepvariant:1.6.0-gpu"
     "cpu": 9,
     "memory": 48,
     "disks": 20,
@@ -104,7 +109,7 @@ workflow pangenome_wgs {
     sample=sample,
     bam=markdup.dedup_bam,
     bai=samtools_index.bai,
-    reference=reference,
+    reference_tar=reference_tar,
     runenv=runenv,
   }
 
