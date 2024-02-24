@@ -7,7 +7,7 @@ task run_left_shift_bam {
     File in_bam_file
     File in_reference_file
     File in_reference_index_file
-    Runenv runenv
+    RunEnv runenv
   }
 
   String out_prefix = basename(in_bam_file, ".bam")

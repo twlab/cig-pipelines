@@ -5,7 +5,7 @@ import "wdl/tasks/abra2.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/deepvariant.wdl"
 import "wdl/tasks/freebayes.wdl"
-import "wdl/tasks/gatk.wdl"
+import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/samtools.wdl"
 
 workflow realign_and_dv {
@@ -44,7 +44,7 @@ workflow realign_and_dv {
     "disks": 20,
   }
 
-  RunEnv samtools_renenv = {
+  RunEnv samtools_runenv = {
     "docker": samtools_docker, 
     "cpu": 1,
     "memory": 4,
@@ -59,7 +59,7 @@ workflow realign_and_dv {
   }
 
   RunEnv abra2_renenv = {
-    "docker": abra2_docker 
+    "docker": abra2_docker,
     "cpu": 1,
     "memory": 4,
     "disks": 20,
@@ -78,22 +78,21 @@ workflow realign_and_dv {
     runenv=runenv_idx,
   }
 
-  call freebayes.run_left_align_bam as left_align { input:
-    bam=bam,
+  call freebayes.run_left_shift_bam as left_shift { input:
     in_bam_file=bam,
     in_reference_file=reference.fasta,
     in_reference_index_file=reference.fai,
     runenv=freebayes_renenv,
   } 
 
-  call samtools.index as left_align_index { input:
-      bam=left_align.output_bam_file,
-      runenv=runenv_samtools,
+  call samtools.index as left_shift_index { input:
+      bam=left_shift.output_bam_file,
+      runenv=samtools_runenv,
   } 
 
-  call gatk.realigner_target_creator as targets { input:
-    in_bam_file=left_align.output_bam_file,
-    in_bam_index_file=left_align_index.bai,
+  call realigner_target_creator.run_realigner_target_creator as targets { input:
+    in_bam_file=left_shift.output_bam_file,
+    in_bam_index_file=left_shift_index.bai,
     in_reference_file=reference.fasta,
     in_reference_index_file=reference.fai,
     in_reference_dict_file=reference.dict,
@@ -101,9 +100,9 @@ workflow realign_and_dv {
     runenv=gatk_renenv,
   } 
 
-  call abra2.realign as realign { input:
-    in_bam_file=left_align.output_bam_file,
-    in_bam_index_file=left_align_index.bai,
+  call abra2.run_realigner as realign { input:
+    in_bam_file=left_shift.output_bam_file,
+    in_bam_index_file=left_shift_index.bai,
     in_target_bed_file=targets.output_target_bed_file,
     in_reference_file=reference.fasta,
     in_reference_index_file=reference.fai,

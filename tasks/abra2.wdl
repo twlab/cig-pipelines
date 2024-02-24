@@ -1,10 +1,8 @@
-version 1.0
-
 version development
 
 import "../structs/runenv.wdl"
 
-task runAbraRealigner {
+task run_realigner {
   input {
     File in_bam_file
     File in_bam_index_file
