@@ -9,7 +9,6 @@ task run_realigner_target_creator {
     File in_reference_file
     File in_reference_index_file
     File in_reference_dict_file
-    Int in_expansion_bases
     RunEnv runenv
   }
 
@@ -38,6 +37,7 @@ task run_realigner_target_creator {
     # And the dict must be adjacent to both
     ln -f -s "~{in_reference_dict_file}" reference.dict
 
+    # GATK 3.8
     java -jar /usr/GenomeAnalysisTK.jar -T RealignerTargetCreator \
       --remove_program_records \
       -drf DuplicateRead \
@@ -49,11 +49,6 @@ task run_realigner_target_creator {
       --out forIndelRealigner.intervals
 
       awk -F '[:-]' 'BEGIN { OFS = "\t" } { if( $3 == "") { print $1, $2-1, $2 } else { print $1, $2-1, $3}}' forIndelRealigner.intervals > ~{out_prefix}.intervals.bed
-
-      if [ ~{in_expansion_bases} -gt 0 ]; then
-        bedtools slop -i ~{out_prefix}.intervals.bed -g "~{in_reference_index_file}" -b "~{in_expansion_bases}" > ~{out_prefix}.intervals.widened.bed
-        mv ~{out_prefix}.intervals.widened.bed ~{out_prefix}.intervals.bed
-      fi
     >>>
 
     output {

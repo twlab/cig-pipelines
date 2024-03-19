@@ -3,7 +3,7 @@
   "realign_and_dv.bam": "{{BAM}}",
   "realign_and_dv.bai": "{{BAI}}",
   "realign_and_dv.idx": "{{IDX}}",
-  "realign_and_dv.rtc_expansion_bases": 160,
+  "realign_and_dv.targets_expansion_bases": 160,
   "realign_and_dv.abra2_docker": "mgibio/abra2:v2.24-focal",
   "realign_and_dv.deepvariant_docker": "google/deepvariant:1.6.0",
   "realign_and_dv.freebayes_docker": "mgibio/freebayes:1.3.6-focal",
