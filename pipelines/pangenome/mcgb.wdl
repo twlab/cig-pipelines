@@ -3,12 +3,11 @@ version development
 import "wdl/structs/runenv.wdl"
 
 workflow pangenome_mcgb {
-
   input {
     String name
     String ref
     File seqfile
-    String docker = "ebelter/cactus:2.5.0-20.04"
+    String docker = "mgibio/cactus:2.5.0-focal"
     Int cpu
     Int memory
   }
@@ -50,16 +49,17 @@ task run_mcgb {
   String alignments = "chrom-alignments"
   command <<<
     set -e
+    export OMP_NUM_THREADS=1
     cactus-minigraph ~{jobstore} ~{seqfile} ~{sv_gfa} --reference ~{ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
     
-    cactus-graphmap ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outputFasta ~{fasta} --reference ~{ref} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outputFasta ~{fasta} --reference ~{ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
     
-    cactus-graphmap-split ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outDir ~{chroms} --reference ~{ref} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-split ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outDir ~{chroms} --reference ~{ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
     
     chromfile=$(find ~{chroms} -name chromfile.txt)
-    cactus-align ~{jobstore} $chromfile ~{alignments} --batch --pangenome --reference ~{ref} --outVG --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-align ~{jobstore} $chromfile ~{alignments} --batch --pangenome --reference ~{ref} --outVG --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
     
-    cactus-graphmap-join ~{jobstore} --vg ~{alignments}/*.vg --hal ~{alignments}/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf --giraffe clip --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-join ~{jobstore} --vg ~{alignments}/*.vg --hal ~{alignments}/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf --giraffe clip --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
