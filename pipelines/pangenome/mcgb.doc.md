@@ -3,7 +3,6 @@
 Build pangenome graphs with minigraph-cactus.
 
 ## Pipeline Chart
-*Note: this workflow runs all 5 steps in one task*
 ```mermaid
   flowchart TB;
       i1([NAME]);
@@ -19,11 +18,12 @@ Build pangenome graphs with minigraph-cactus.
       o11([SV_GFA])
       o21([PAF])
       o22([FASTA])
+      o23([GAF])
       o51([DIST/GBZ/MIN for GIRAFFE])
       o52([HAL])
       o53([VG])
       o54([GFA])
-      o55([stats])
+      o55([STATS])
       o56([VCF & TBI])
       o57([RAW VCF & TBI])
 
@@ -46,27 +46,55 @@ Build pangenome graphs with minigraph-cactus.
 * name [String] - output base name
 * ref [String] - the sequence name in the seqfile to as the "reference"
 * seqfile [File] - tab sepqarated file of sequence names and URLs (files)
-* docker [String] - docker to use
+* docker [String] - docker to use (cactus)
 * cpu [Int] - cpus to request
 * memory [Int] - memory to request
 
 ## Steps
-### Map to the Pangenome with VG Giraffe [run_mcgb]
+### run_cactus_minigraph
 #### input
 * name [workflow inputs]
 * ref [workflow inputs]
 * seqfile [workflow inputs]
 #### output
-* dist
+* sv_gfa
+### run_cactus_graphmap
+#### input
+* name [workflow inputs]
+* ref [workflow inputs]
+* seqfile [workflow inputs]
+* sv_gfa [run_cactus_minigraph]
+#### output
 * fasta
 * gaf
+* paf
+* seqfile [updated with minigraph fasta, not retained]
+### run_cactus_graphmap_split
+#### input
+* ref [workflow inputs]
+* seqfile [run_cactus_graphmap]
+* paf [run_cactus_graphmap]
+* sv_gfa [run_cactus_minigraph]
+#### output
+* chroms (not retained)
+### run_cactus_align
+#### input
+* ref [workflow inputs]
+* chroms [run_cactus_graphmap_split]
+#### output
+* alignments (not retained)
+### run_cactus_graphmap_join
+#### input
+* name [workflow inputs]
+* ref [workflow inputs]
+* alignments [run_cactus_align]
+#### output
+* dist
 * gbz
 * gfa
 * hal
 * min
-* paf
 * stats
-* sv_gfa
 * vcf
 * vcf_tbi
 * raw_vcf
