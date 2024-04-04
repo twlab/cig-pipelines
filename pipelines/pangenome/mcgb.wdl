@@ -107,8 +107,8 @@ task run_cactus_graphmap {
 
   runtime {
     docker: runenv.docker
-    cpu: runenv.cpu
-    memory: "~{runenv.memory} GB"
+    cpu: 16 #runenv.cpu
+		memory: "192 GB" #memory: "~{runenv.memory} GB"
     #disks:  "local-disk ~{runenv.disks} SSD"
   }
 
@@ -203,14 +203,14 @@ task run_cactus_graphmap_join {
 
   output {
     File dist = glob("*.dist")[0]
-    File hal = glob("~{name}*.hal")[0]
-    File gbz = glob("~{name}.gbz")[0]
-    File gfa = glob("~{name}.gfa.gz")[0]
-    File min = glob("~{name}.min")[0]
-    File stats = glob("~{name}.stats.tgz")[0]
-    File vcf = glob("~{name}.vcf.gz")[0]
-    File vcf_tbi = glob("~{name}.vcf.gz.tbi")[0]
-    File raw_vcf = glob("~{name}.raw.vcf.gz")[0]
-    File raw_vcf_tbi = glob("~{name}.raw.vcf.gz.tbi")[0]
+    File hal = glob("*.hal")[0]
+    File gbz = glob("*.gbz")[0]
+    File gfa = glob("*.gfa.gz")[0]
+    File min = glob("*.min")[0]
+    File stats = glob("*.stats.tgz")[0]
+    File vcf = glob("*.vcf.gz")[0]
+    File vcf_tbi = glob("*.vcf.gz.tbi")[0]
+    File raw_vcf = glob("*.raw.vcf.gz")[0]
+    File raw_vcf_tbi = glob("*.raw.vcf.gz.tbi")[0]
   }
 }
