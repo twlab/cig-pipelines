@@ -88,11 +88,25 @@ The bam needs to be sorted by coordinate to call variants
 #### output
 * sorted_bam
 
-### Samtools Stat [samtools_stat]
+### Freebayes Left Align
 #### input
-* bam [dedup_bam from markdup]
+* bam [bam from surject]
+* reference [from extract ref]
 #### output
-* stats [samtools stat file]
+* bam 
+
+### GATK Realigner Target Creator
+#### input
+* bam [bam from freebayes]
+* reference [from extract ref]
+#### output
+* targets 
+
+### Bedtools Expand Target
+#### input
+* targets [from target creator]
+#### output
+* expended targets 
 
 ### Samtools Index
 Deep variant and other tools require a BAI
@@ -101,16 +115,36 @@ Deep variant and other tools require a BAI
 #### output
 * bai [bam index file]
 
+### Abra2 Realign
+#### input
+* bam [from left align]
+* bai [from samtools index]
+* targets [from expand targets]
+* reference [from extract ref]
+#### output
+* bam
+* bai
+
 ### Deep Variant
-* bam [dedup_bam from markdup]
+#### input
+* bam [bam from abra2 realign]
+* bai [bam from abra2 realign]
 * reference [workflow input]
 #### output
 * vcf
+* vcf_tbi
+
+### Samtools Stat [samtools_stat]
+#### input
+* bam [bam from abra2 realign]
+#### output
+* stats [samtools stat file]
 
 ## Outputs
 * gam [gam from run_giraffe]
 * gam_stats [stats from run_stats]
-* bam [dedup_bam from markdup]
-* bai [bai from samtools_index]
+* bam [bam from abra2 realign]
+* bai [bai from abra2 realign]
 * bam_stats [stats from samtools_stat]
 * vcf [vcf from deep variant]
+* vcf_tbi [vcf tbi from deep variant]
