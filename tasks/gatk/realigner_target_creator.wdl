@@ -28,7 +28,7 @@ task run_realigner_target_creator {
     ln -f -s ~{in_bam_file} input_bam_file.bam
     ln -f -s ~{in_bam_index_file} input_bam_file.bam.bai
 
-    CONTIG_ID=`head -1 < <(samtools view input_bam_file.bam) | cut -f3`
+    #CONTIG_ID=`head -1 < <(samtools view input_bam_file.bam) | cut -f3`
         
     # Reference and its index must be adjacent and not at arbitrary paths
     # the runner gives.
@@ -36,17 +36,18 @@ task run_realigner_target_creator {
     ln -f -s "~{in_reference_index_file}" reference.fa.fai
     # And the dict must be adjacent to both
     ln -f -s "~{in_reference_dict_file}" reference.dict
+    ls -alFh /usr/GenomeAnalysisTK.jar
 
     # GATK 3.8
-    java -jar /usr/GenomeAnalysisTK.jar -T RealignerTargetCreator \
+    java -Xmx~{runenv.memory - 2}G -jar /usr/GenomeAnalysisTK.jar -T RealignerTargetCreator \
       --remove_program_records \
       -drf DuplicateRead \
       --disable_bam_indexing \
       -nt ~{runenv.cpu} \
       -R reference.fa \
-      -L ${CONTIG_ID} \
       -I input_bam_file.bam \
       --out forIndelRealigner.intervals
+      #-L ${CONTIG_ID} \
 
       awk -F '[:-]' 'BEGIN { OFS = "\t" } { if( $3 == "") { print $1, $2-1, $2 } else { print $1, $2-1, $3}}' forIndelRealigner.intervals > ~{out_prefix}.intervals.bed
     >>>

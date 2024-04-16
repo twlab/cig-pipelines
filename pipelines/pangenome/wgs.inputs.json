@@ -1,14 +1,22 @@
 {
-    "pangenome_wgs.sample": "{{SAMPLE}}",
-    "pangenome_wgs.fastqs": [
-        "{{FQ1}}",
-        "{{FQ2}}"
-    ],
-    "pangenome_wgs.gbz": "{{GBZ}}",
-    "pangenome_wgs.dist": "{{DIST}}",
-    "pangenome_wgs.min": "{{MIN}}",
-    "pangenome_wgs.reference": "{{REF}}",
-    "pangenome_wgs.docker": "quay.io/vgteam/vg:v1.48.0",
-    "pangenome_wgs.cpu": 12,
-    "pangenome_wgs.memory": 64
+  "pangenome_wgs.sample": "{{SAMPLE}}",
+  "pangenome_wgs.reference_name": "{{REF_NAME}}",
+  "pangenome_wgs.fastqs": [
+    "{{FQ1}}",
+    "{{FQ2}}"
+  ],
+  "pangenome_wgs.gbz": "{{GBZ}}",
+  "pangenome_wgs.dist": "{{DIST}}",
+  "pangenome_wgs.min": "{{MIN}}",
+  "pangenome_wgs.idx": "{{IDX}}",
+  "pangenome_wgs.targets_expansion_bases": 160,
+  "pangenome_wgs.abra2_docker": "mgibio/abra2:v2.24-focal",
+  "pangenome_wgs.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",
+  "pangenome_wgs.deepvariant_docker": "google/deepvariant:1.6.0",
+  "pangenome_wgs.freebayes_docker": "mgibio/freebayes:1.3.6-focal",
+  "pangenome_wgs.gatk_docker": "broadinstitute/gatk:4.3.0.0",
+  "pangenome_wgs.samtools_docker": "mgibio/samtools:1.15.1-buster",
+  "pangenome_wgs.vg_docker": "quay.io/vgteam/vg:v1.48.0",
+  "pangenome_wgs.cpu": 12,
+  "pangenome_wgs.memory": 64
 }

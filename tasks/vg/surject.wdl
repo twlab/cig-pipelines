@@ -4,11 +4,12 @@ import "../../structs/runenv.wdl"
 
 task run_surject {
   input {
-     File gam
-     String sample
-     String library
-     File gbz
-     RunEnv runenv
+    File gam
+    String sample
+    String library
+    File gbz
+    File paths_list
+    RunEnv runenv
   }
 
   String output_bam = sub(basename(gam), ".gam$", ".bam")
@@ -37,7 +38,7 @@ task run_surject {
   # -V, --no-validate        skip checking whether alignments plausibly are against the provided graph
   # -w, --watchdog-timeout N warn when reads take more than the given number of seconds to surject
   command <<<
-    vg surject -t ~{runenv.cpu - 1} -b -N ~{sample} -R ~{library} -x ~{gbz} ~{gam} > ~{output_bam}
+    vg surject -t ~{runenv.cpu - 1} -b -N ~{sample} -R ~{library} -F ~{paths_list} -x ~{gbz} ~{gam} > ~{output_bam}
   >>>
 
   output {

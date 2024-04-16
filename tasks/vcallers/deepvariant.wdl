@@ -1,13 +1,13 @@
 version development
 
-import "../structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task run_deepvariant {
     input {
         String sample
         File bam
         File bai
-        File reference_tar
+        Directory reference_path
         RunEnv runenv
     }
 
@@ -16,9 +16,7 @@ task run_deepvariant {
     command <<<
         ln ~{bam} ~{basename(bam)}
         ln ~{bai} ~{basename(bai)}
-        mkdir ref
-        tar xvvf ~{reference_tar} -C ref
-        reference_fasta=$(find ref -name \*.fasta)
+        reference_fasta=$(find ~{reference_path} -name \*.fasta)
         customized_model_param=""
         model_name=$(find ref -name model\* | xargs -I% basename % | awk -F. '{print $1}' | sort -u | head -1)
         if [[ ! -z "${model_name}" ]]; then

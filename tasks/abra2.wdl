@@ -32,7 +32,7 @@ task run_realigner {
     ln -f -s ~{in_reference_file} reference.fa
     ln -f -s ~{in_reference_index_file} reference.fa.fai
 
-    java -Xmx~{runenv.memory - 2}G -jar /opt/abra2/abra2.jar \
+    java -Xmx~{runenv.memory - 2}G -jar /apps/abra2/abra2.jar \
       --targets ~{in_target_bed_file} \
       --in input_bam_file.bam \
       --out ~{out_prefix}.indel_realigned.bam \
