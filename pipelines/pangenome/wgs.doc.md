@@ -35,7 +35,7 @@ Map WGS data to the pangenome graph using giraffe, and call variants with haplot
       s1--GAM-->s2;
       s1--GAM-->s4--BAM-->s5--SORTED BAM-->s6--LEFT SHIFT BAM-->s8--TARGETS-->s9--EXPANDED TARGETS-->s10--BAM & BAI-->s11;
       s6--LEFT SHIFT BAM-->s10;
-      s6--BAM-->s7--BAI-->s10; s7--LEFT SHIFT BAI-->s8;
+      s6--LEFT SHIFT BAM-->s7--BAI-->s10; s7--LEFT SHIFT BAI-->s8;
       s10--BAM-->s12;
       i2-->s3; i4-->s3; s3--EXTRACTED REF-->s10; s3--EXTRACTED REF-->s11;
       s1-->o1; s2-->o2; s10-->o3; s10-->o4; s12-->o5; s11-->o6; s11-->o7;
@@ -49,11 +49,11 @@ Map WGS data to the pangenome graph using giraffe, and call variants with haplot
 
 ## Inputs
 * sample [String] - sample name for outputs
-* fastqs [File] - an array of read1 and read2 fastqs
+* fastqs [File] - an array of read1 and read2 fastqs 
 * gbz [File] - giraffe pangenome GBZ
 * dist [File] - pangenome dist
 * min [File] - pangenome min
-* sample [String] - reference name to extract from the graph
+* reference_name [String] - reference name to extract from the graph
 
 ## Steps
 ### Map to the Pangenome with VG Giraffe [run_giraffe]
@@ -88,7 +88,7 @@ The bam needs to be sorted by coordinate to call variants
 #### output
 * sorted_bam
 
-### Freebayes Left Align
+### Freebayes Left Align [left align]
 #### input
 * bam [bam from surject]
 * reference [from extract ref]
@@ -111,7 +111,7 @@ The bam needs to be sorted by coordinate to call variants
 ### Samtools Index
 Deep variant and other tools require a BAI
 #### input
-* bam [dedup_bam from markdup]
+* bam [from left align]
 #### output
 * bai [bam index file]
 
@@ -127,8 +127,8 @@ Deep variant and other tools require a BAI
 
 ### Deep Variant
 #### input
-* bam [bam from abra2 realign]
-* bai [bam from abra2 realign]
+* bam [from abra2 realign]
+* bai [from abra2 realign]
 * reference [workflow input]
 #### output
 * vcf
@@ -136,7 +136,7 @@ Deep variant and other tools require a BAI
 
 ### Samtools Stat [samtools_stat]
 #### input
-* bam [bam from abra2 realign]
+* bam [from abra2 realign]
 #### output
 * stats [samtools stat file]
 
