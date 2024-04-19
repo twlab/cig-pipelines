@@ -1,0 +1,7 @@
+{
+    "seqlendist.sample": "{{SAMPLE}}",
+    "seqlendist.seqfiles": ["{{SEQFILES}}"],
+    "seqlendist.labels": ["{{LABELS}}"],
+    "seqlendist.bins": "lr",
+    "seqlendist.reports": ["csv", "json", "text", "png"]
+}

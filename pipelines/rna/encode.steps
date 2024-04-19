@@ -1,0 +1,110 @@
+SCATTER by FASTQs
+ call align
+  input:
+   fastqs_R1=fastqs_R1[i],
+   fastqs_R2=fastqs_R2_[i],
+   index=align_index,
+   endedness=endedness
+   bamroot="rep"+(i+1)+bamroot,
+  output:
+   File genomebam = "~{bamroot}_genome.bam"
+   File annobam = "~{bamroot}_anno.bam"
+   File genome_flagstat = "~{bamroot}_genome_flagstat.txt"
+   File anno_flagstat = "~{bamroot}_anno_flagstat.txt"
+   File log = "~{bamroot}_Log.final.out"
+   File genome_flagstat_json = "~{bamroot}_genome_flagstat.json"
+   File anno_flagstat_json = "~{bamroot}_anno_flagstat.json"
+   File log_json = "~{bamroot}_Log.final.json"
+   File python_log = "align.log"
+
+ call samtools_quickcheck as check_genome
+  input:
+   bam=align.genomebam,
+  output:
+   NONE
+
+ call samtools_quickcheck as check_anno
+  input:
+   bam=align.annobam,
+  output:
+   NONE
+
+ File genome_alignment = select_first([genome_pbam.out, align.genomebam])
+ File transcriptome_alignment = select_first([anno_pbam.out, align.annobam])
+
+ call bam_to_signals
+  input:
+   input_bam=genome_alignment,
+   chrom_sizes=chrom_sizes,
+   strandedness=strandedness,
+   bamroot="rep"+(i+1)+bamroot+"_genome",
+  output:
+   File? unique_unstranded = if (strandedness == "unstranded") then glob("*_genome_uniq.bw")[0] else null
+   File? all_unstranded = if (strandedness == "unstranded") then glob("*_genome_all.bw")[0] else null
+   File? unique_plus = if (strandedness == "stranded") then glob("*_genome_plusUniq.bw")[0] else null
+   File? unique_minus = if (strandedness == "stranded") then glob("*_genome_minusUniq.bw")[0] else null
+   File? all_plus = if (strandedness == "stranded") then glob("*_genome_plusAll.bw")[0] else null
+   File? all_minus = if (strandedness == "stranded") then glob("*_genome_minusAll.bw")[0] else null
+   File python_log = "bam_to_signals.log"
+
+ call rsem_quant
+  input:
+   rsem_index=rsem_index,
+   rnd_seed=rnd_seed,
+   anno_bam=transcriptome_alignment,
+   endedness=endedness,
+   read_strand=strandedness_direction,
+  output:
+   File genes_results = glob("*.genes.results")[0]
+   File isoforms_results = glob("*.isoforms.results")[0]
+   File python_log = "rsem_quant.log"
+   File number_of_genes = glob("*_number_of_genes_detected.json")[0]
+
+END SCATTER by FASTQs
+
+IF RUN_KALLISTO
+ SCATTER BY FASTQs [kallisto]
+  Float? kallisto_sd = if (length(kallisto_sd_of_fragment_length) > 0) then kallisto_sd_of_fragment_length[i] else kallisto_sd_undefined
+  Int? kallisto_fl = if (length(kallisto_fragment_length) > 0) then kallisto_fragment_length[i] else kallisto_fragment_length_undefined
+
+  call kallisto
+   input:
+    fastqs_R1=fastqs_R1[i],
+    fastqs_R2=fastqs_R2_[i],
+    endedness=endedness,
+    strandedness_direction=strandedness_direction,
+    kallisto_index=select_first([kallisto_index]),
+    number_of_threads=select_first([kallisto_number_of_threads]),
+    fragment_length=kallisto_fl,
+    sd_of_fragment_length=kallisto_sd,
+    out_prefix="rep"+(i+1)+bamroot,
+   output:
+    File quants = "kallisto_out/~{out_prefix}_abundance.tsv"
+    File python_log = "kallisto_quant.log"
+
+ END SCATTER BY FASTQs [kallisto]
+END IF RUN_KALLISTO
+
+IF FASTQS_R1 == 2 [if exactly 2 replicates]
+ call mad_qc
+  input:
+   quants1=rsem_quant.genes_results[0],
+   quants2=rsem_quant.genes_results[1],
+  output:
+   File madQCplot = glob("*_mad_plot.png")[0]
+   File madQCmetrics = glob("*_mad_qc_metrics.json")[0]
+   File python_log = "mad_qc.log"
+
+ scatter (i in range(length(align.annobam))) {
+  Array[File] annobams = select_all(flatten([anno_pbam.out, align.annobam]))
+
+  call rna_qc
+   input:
+    input_bam=select_first([annobams[i]]),
+    tr_id_to_gene_type_tsv=rna_qc_tr_id_to_gene_type_tsv,
+    output_filename="rep"+(i+1)+bamroot+"_qc.json",
+   output:
+    File rnaQC = output_filename
+    File python_log = "rna_qc.log"
+
+END IF FASTQS_R1 == 2 [if exactly 2 replicates]

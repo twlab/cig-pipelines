@@ -1,0 +1,9 @@
+{
+  "pangenome_graph.sequences": "{{SEQS}}",
+  "pangenome_graph.reference_name": "{{REF_NAME}}",
+  "pangenome_graph.out_name": "{{OUT_NAME}}",
+  "pangenome_graph.docker": "ebelter/cactus:2.5.0-20.04",
+  "pangenome_graph.cpu": 4,
+  "pangenome_graph.memory": 16,
+  "pangenome_graph.disks": 100
+}

@@ -1,0 +1,18 @@
+  output {
+    File gam = vg_map.gam
+    File gam_stats = vg_stats.stats
+    File bam = samtools_sort.bam
+    File bai = samtools_index.bai
+    File bam_stats = samtools_stat.stats
+    #File vcf = peak_caller.vcf
+  }
+}
+
+pangenome_ataqseq.vg_map:
+- gam
+pangenome_ataqseq.vg_stats:
+- stats
+pangenome_ataqseq.surject:
+- bam
+pangenome_ataqseq.samtools_stat:
+- stats

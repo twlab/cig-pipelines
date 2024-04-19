@@ -1,0 +1,8 @@
+{
+    "rna_metrics.sample": "{{SAMPLE}}",
+    "rna_metrics.fastq": "{{FASTQ}}",
+    "rna_metrics.lendist_bin": "lr",
+    "rna_metrics.lendist_reports": ["json", "text", "plot"],
+    "rna_metrics.bam": "{{BAM}}",
+    "rna_metrics.annotation": "{{ANNOTATION}}"
+}

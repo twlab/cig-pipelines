@@ -1,0 +1,3 @@
+pangenie_genotyper.run_genotyper:
+- vcf
+- histo

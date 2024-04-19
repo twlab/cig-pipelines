@@ -1,0 +1,10 @@
+{
+  "picard_downsample.sample": "{{NAME}}",
+  "picard_downsample.bam": "{{BAM}}",
+  "picard_downsample.probability": "{{PROB}}",
+  "picard_downsample.params": "{{PARAMS}}",
+  "picard_downsample.docker": "ebelter/picard:2.27.4",
+  "picard_downsample.cpu": 4,
+  "picard_downsample.memory": 20,
+  "picard_downsample.disks": 20
+}

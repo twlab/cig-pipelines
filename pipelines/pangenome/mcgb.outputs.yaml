@@ -1,0 +1,17 @@
+pangenome_mcgb.run_cactus_minigraph:
+  - sv_gfa
+pangenome_mcgb.run_cactus_graphmap:
+  - minigraph_fasta
+  - gaf
+  - paf
+pangenome_mcgb.run_cactus_graphmap_join:
+  - dist
+  - hal
+  - gbz
+  - gfa
+  - min
+  - stats
+  - vcf
+  - vcf_tbi
+  - raw_vcf
+  - raw_vcf_tbi

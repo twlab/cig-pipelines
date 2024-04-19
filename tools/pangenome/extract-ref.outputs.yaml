@@ -1,0 +1,4 @@
+pangenome_extract_ref.run_paths_and_samtools:
+- fasta
+- fai
+- dict

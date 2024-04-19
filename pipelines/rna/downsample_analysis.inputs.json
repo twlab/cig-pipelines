@@ -1,0 +1,8 @@
+{
+    "minimap2.sample": "{{WSAMPLE
+    "minimap2.fastq": "{{FASTQ}}",
+    "minimap2.read_type": "{{READ_TYPE}}",
+    "minimap2.reference_genome": "{{REF}}",
+    "minimap2.junctions": "{{JUNC}}",
+    "minimap2.probabilites": "{{OUT_PREFIX}}",
+}

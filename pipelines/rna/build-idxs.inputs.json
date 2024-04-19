@@ -1,0 +1,6 @@
+{
+  "build_idxs.reference": "{{REF}}",
+  "build_idxs.annotation": "{{ANNO}}",
+  "build_idxs.genome": "{{GENOME}}",
+  "build_idxs.anno_version": "{{VERSION}}"
+}

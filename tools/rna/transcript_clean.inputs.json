@@ -1,0 +1,27 @@
+{
+    "transcript_clean.experiment_prefix": "{{SAMPLE}}",
+    "transcript_clean.bam": "{{BAM}}",
+    "transcript_clean.reference": "{{REF}}",
+    "transcript_clean.annotation": "{{ANNO}}",
+    "transcript_clean.canonical_only": true,
+    "transcript_clean.small_task_resources": {
+        "cpu": 1,
+        "memory_gb": 4,
+        "disks": "local-disk 10 SSD"
+    },
+    "transcript_clean.medium_task_resources": {
+        "cpu": 2,
+        "memory_gb": 12,
+        "disks": "local-disk 10 SSD"
+    },
+    "transcript_clean.large_task_resources": {
+        "cpu": 4,
+        "memory_gb": 24,
+        "disks": "local-disk 10 SSD"
+    },
+    "transcript_clean.xlarge_task_resources": {
+        "cpu": 8,
+        "memory_gb": 48,
+        "disks": "local-disk 10 SSD"
+    }
+}

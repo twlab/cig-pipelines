@@ -1,0 +1,10 @@
+{
+    "stringtie_and_metrics.sample": "{{SAMPLE}}",
+    "stringtie_and_metrics.bam": "{{BAM}}",
+    "stringtie_and_metrics.is_paired": "{{IS_PAIRED}}"
+    "stringtie_and_metrics.strandedness": "{{ANNOTATION}}",
+    "stringtie_and_metrics.denovo_mode": "{{DENOVO_MODE}}",
+    "stringtie_and_metrics.denovo_params": "{{DENOVO_PARAMS}}",
+    "stringtie_and_metrics.quant_mode": "{{QUANT_MODE}}",
+    "stringtie_and_metrics.quant_params": "{{QUANT_PARAMS}}",
+}

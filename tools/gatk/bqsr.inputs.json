@@ -1,0 +1,8 @@
+{
+  "gatk_bqsr.bam": "{{BAM}}",
+  "gatk_bqsr.reference": "{{REF_FASTA}}",
+  "gatk_bqsr.known_sites": "{{DBSNP_VCF}}",
+  "gatk_bqsr.docker": "broadinstitute/gatk:4.3.0.0",
+  "gatk_bqsr.cpu": 4,
+  "gatk_bqsr.memory": 20
+}

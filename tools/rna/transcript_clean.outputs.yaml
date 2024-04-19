@@ -1,0 +1,21 @@
+transcript_clean.transcriptclean_merge_logs_and_report:
+  - report
+  - transcript_log
+  - transcript_error_log
+transcript_clean.merge_sams:
+  - sam
+transcript_clean.talon:
+  - talon_config
+  - talon_log
+  - talon_db_out
+transcript_clean.talon_label_reads:
+  - labeled_bam
+  - labeled_sam
+  - read_labels_tsv
+transcript_clean.create_abundance_from_talon_db:
+  - talon_abundance
+  - number_of_genes_detected
+transcript_clean.create_gtf_from_talon_db:
+  - gtf
+transcript_clean.calculate_spearman:
+  - spearman

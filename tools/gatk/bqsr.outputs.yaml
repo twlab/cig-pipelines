@@ -1,0 +1,2 @@
+gatk_bqsr.apply_bqsr:
+  - recal_bam

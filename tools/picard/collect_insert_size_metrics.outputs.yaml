@@ -1,0 +1,3 @@
+collect_insert_size_metrics:
+  - metrics
+  - histogram
