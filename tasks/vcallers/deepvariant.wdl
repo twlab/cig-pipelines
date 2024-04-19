@@ -18,9 +18,9 @@ task run_deepvariant {
         ln ~{bai} ~{basename(bai)}
         reference_fasta=$(find ~{reference_path} -name \*.fasta)
         customized_model_param=""
-        model_name=$(find ref -name model\* | xargs -I% basename % | awk -F. '{print $1}' | sort -u | head -1)
+        model_name=$(find ~{reference_path} -name model\* | xargs -I% basename % | awk -F. '{print $1}' | sort -u | head -1)
         if [[ ! -z "${model_name}" ]]; then
-            customized_model_param="--customized_model=ref/${model_name}"
+            customized_model_param="--customized_model=~{reference_path}/${model_name}"
         fi
         /opt/deepvariant/bin/run_deepvariant \
             --model_type=WGS \

@@ -86,7 +86,7 @@ workflow pangenome_wgs {
   RunEnv bedtools_runenv = {
     "docker": bedtools_docker,
     "cpu": 1,
-  :  "memory": 4,
+    "memory": 4,
     "disks": 20,
   }
 

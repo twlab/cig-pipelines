@@ -2,7 +2,7 @@ version development
 
 # From: https://github.com/vgteam/vg/wiki/Extracting-a-FASTA-from-a-Graph
 
-import "../wdl/structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task run_extract_ref {
   input {
@@ -11,22 +11,25 @@ task run_extract_ref {
      RunEnv runenv
   }
 
-  String output_paths_list = "~{name}.paths.txt"
-  String output_fasta = "~{name}.fasta"
-  String output_fai = "~{output_fasta}.fai"
-  String output_dict = "~{name}.dict"
+  String output_paths_list = "ref/~{name}.paths.txt"
+  String output_fasta = "ref/~{name}.fasta"
+  String output_fai = "ref/~{output_fasta}.fai"
+  String output_dict = "ref/~{name}.dict"
   command <<<
-    vg paths --list --xg ~{gbz} | grep -v _decoy | grep -v _random |  grep -v chrUn_ | grep -v chrEBV | grep -v chrM | grep ~{ref} > ~{output_paths_list}
-    vg paths --extract-fasta -x ~{gbz} --paths-file ~{output_paths_listle} > ~{output_fasta}
+    set -ex
+    mkdir ref
+    vg paths --list --xg ~{gbz} | grep -v _decoy | grep -v _random |  grep -v chrUn_ | grep -v chrEBV | grep -v chrM | grep ~{name} > ~{output_paths_list}
+    vg paths --extract-fasta -x ~{gbz} --paths-file ~{output_paths_list} > ~{output_fasta}
     samtools faidx ~{output_fasta} -o ~{output_fai}
-    samtools dict ~{output_fasta} -o ~{name}.dict
+    samtools dict ~{output_fasta} -o ~{output_dict}
   >>>
 
   output {
+    Directory path = "ref"
     File fasta = glob("~{output_fasta}")[0]
     File fai = glob("~{output_fasta}.fai")[0]
     File dict = glob("~{output_dict}")[0]
-    File paths_list = glob("~{paths_file}")[0]
+    File paths_list = glob("~{output_paths_list}")[0]
   }
 
   runtime {
