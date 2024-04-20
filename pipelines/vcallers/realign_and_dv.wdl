@@ -55,8 +55,8 @@ workflow realign_and_dv {
 
   RunEnv gatk_renenv = {
     "docker": gatk_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": 4,
+    "memory": 24,
     "disks": 20,
   }
 
@@ -69,15 +69,15 @@ workflow realign_and_dv {
 
   RunEnv abra2_renenv = {
     "docker": abra2_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": 2,
+    "memory": 20,
     "disks": 20,
   }
 
   RunEnv dv_runenv = {
     "docker": deepvariant_docker,
-    "cpu": 9,
-    "memory": 48,
+    "cpu": 20,
+    "memory": 96,
     "disks": 20,
   }
 
