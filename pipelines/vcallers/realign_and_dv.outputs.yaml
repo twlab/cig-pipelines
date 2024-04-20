@@ -1,0 +1,7 @@
+realign_and_dv.realign:
+  - indel_realigned_bam
+  - indel_realigned_bam_index
+realign_and_dv.dv:
+  - vcf
+  - vcf_tbi
+  - report

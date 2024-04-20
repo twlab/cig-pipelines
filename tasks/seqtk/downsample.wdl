@@ -5,7 +5,7 @@ import "../../structs/runenv.wdl"
 task run_downsample {
   input {
     File fastq
-    Int fraction
+    Float fraction
     Int rng_seed = 37
     Boolean memory_saver = true
     RunEnv runenv

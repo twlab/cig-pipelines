@@ -23,7 +23,7 @@ task run_stringtie_denovo {
   input {
     String sample
     File bam
-    String strandedness # forward => -fr reverse => -rf unstranded => ""
+    String strandedness # forward => -fr | reverse => -rf | unstranded => ""
     String params
     RunEnv runenv
   }
@@ -71,15 +71,15 @@ task run_stringtie_quantification {
       ~{strandedness_param} \
       -e \
       -G ~{annotation} \
-      -b ballgown_tables \
       -p ~{runenv.cpu} \
       -o ~{abundance_estimate_fn} \
       ~{params}
   >>>
+      #-b ballgown_tables \
 
   output {
     File abundance_estimate = glob("~{abundance_estimate_fn}")[0]
-    Directory ballgown_tables = "ballgown_tables"
+    #Directory ballgown_tables = "ballgown_tables"
   }
 
   runtime {
