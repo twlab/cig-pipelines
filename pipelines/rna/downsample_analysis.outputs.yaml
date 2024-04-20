@@ -1,7 +1,7 @@
 downsample_analysis.minimap2_align:
   - output_bam
   - stats
-downsample_analysis.run_collect_rnaseq_metrics:
-  - metrics
-downsample_analysis.run_stringtie_denovo:
-  - denovo_transcripts
+downsample_analysis.stringtie_quant:
+  - abundance_estimate
+downsample_analysis.stringtie_denovo:
+  - denovo_transcipts
