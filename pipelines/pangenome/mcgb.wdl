@@ -208,9 +208,9 @@ task run_cactus_graphmap_join {
     File gfa = glob("*.gfa.gz")[0]
     File min = glob("*.min")[0]
     File stats = glob("*.stats.tgz")[0]
-    File vcf = glob("*.vcf.gz")[0]
-    File vcf_tbi = glob("*.vcf.gz.tbi")[0]
-    File raw_vcf = glob("*.raw.vcf.gz")[0]
-    File raw_vcf_tbi = glob("*.raw.vcf.gz.tbi")[0]
+    File vcf = glob("~{name}.vcf.gz")[0]
+    File vcf_tbi = glob("~{name}.vcf.gz.tbi")[0]
+    File raw_vcf = glob("~{name}.raw.vcf.gz")[0]
+    File raw_vcf_tbi = glob("~{name}.raw.vcf.gz.tbi")[0]
   }
 }
