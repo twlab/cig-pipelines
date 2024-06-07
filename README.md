@@ -8,10 +8,10 @@ In this repo, we share genomics pipelines, tools, and tasks, mostly in the form 
 
 ## Repo Structure
 
-| Path      | Description |
-| ---       | --- |
-| pipelines | full start to end workflows that produce outputs from many tasks |
-| tasks     | wrapped command line interfaces and scripts (must be incorporated into tools/pipelines) |
-| tools     | stand alone workflows that combine a few tasks to produce outputs |
-| structs   | data structures and types for pipelines, tools, and tasks |
-| import    | assorted unassimilated pipelines, code, etc. |
+| Path          | Description |
+| ---           | --- |
+| wdl/pipelines | full start to end workflows that produce outputs from many tasks |
+| wdl/tasks     | wrapped command line interfaces and scripts (must be incorporated into tools/pipelines) |
+| wdl/tools     | stand alone workflows that combine a few tasks to produce outputs |
+| wdl/structs   | data structures and types for pipelines, tools, and tasks |
+| import        | assorted unassimilated pipelines, code, etc. |
