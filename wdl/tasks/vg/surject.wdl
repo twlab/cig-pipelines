@@ -38,7 +38,7 @@ task run_surject {
   # -V, --no-validate        skip checking whether alignments plausibly are against the provided graph
   # -w, --watchdog-timeout N warn when reads take more than the given number of seconds to surject
   command <<<
-    vg surject -t ~{runenv.cpu - 1} -b -N ~{sample} -R ~{library} -F ~{paths_list} -x ~{gbz} ~{gam} > ~{output_bam}
+    vg surject -t ~{runenv.cpu - 1} -b -i -N ~{sample} -R ~{library} -F ~{paths_list} -x ~{gbz} ~{gam} > ~{output_bam}
   >>>
 
   output {
