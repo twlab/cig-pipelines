@@ -12,7 +12,7 @@ import "wdl/tasks/vg/paths.wdl"
 import "wdl/tasks/vg/stats.wdl"
 import "wdl/tasks/vg/surject.wdl"
 
-workflow pangenome_wgs {
+workflow wgs_from_gam {
   meta {
     author: "Eddie Belter"
     version: "1.2"
