@@ -3,7 +3,7 @@ version development
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
-import "wdl/tasks/deepvariant.wdl"
+import "wdl/tasks/vcallers/deepvariant.wdl"
 import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/samtools.wdl"
 

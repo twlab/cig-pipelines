@@ -1,6 +1,6 @@
 version development
 
-import "wdl/tasks/pangenome/extract_:ref"
+import "wdl/tasks/pangenome/extract_ref.wdl"
 import "wdl/structs/runenv.wdl"
 
 workflow pangenome_extract_ref {
