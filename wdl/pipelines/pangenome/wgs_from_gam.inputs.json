@@ -6,7 +6,7 @@
   "wgs_from_gam.targets_expansion_bases": 160,
   "wgs_from_gam.abra2_docker": "mgibio/abra2:v2.24-focal",
   "wgs_from_gam.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",
-  "wgs_from_gam.deepvariant_docker": "google/deepvariant:1.6.0",
+  "wgs_from_gam.deepvariant_docker": "google/deepvariant:1.5.0",
   "wgs_from_gam.freebayes_docker": "mgibio/freebayes:1.3.6-focal",
   "wgs_from_gam.gatk_docker": "broadinstitute/gatk3:3.5-0",
   "wgs_from_gam.samtools_docker": "mgibio/samtools:1.15.1-buster",
