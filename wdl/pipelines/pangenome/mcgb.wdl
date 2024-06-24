@@ -7,6 +7,7 @@ workflow pangenome_mcgb {
     String name
     String ref
     File seqfile
+    String giraffe_type = "clip"
     String docker = "mgibio/cactus:2.5.0-focal"
     Int cpu
     Int memory
@@ -53,6 +54,7 @@ workflow pangenome_mcgb {
     name=name,
     ref=ref,
     alignments=run_cactus_align.alignments,
+    giraffe_type=giraffe_type,
     runenv=runenv_mcgb,
   }
 }
