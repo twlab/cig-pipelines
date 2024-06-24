@@ -182,16 +182,21 @@ task run_cactus_graphmap_join {
   input {
     String name
     String ref
+    String giraffe_type = "clip"
     Directory alignments
     RunEnv runenv
   }
 
   String jobstore = "jobstore"
+  # --giraffe [GIRAFFE [GIRAFFE ...]]
+  #           Generate Giraffe (.dist, .min) indexes for the given graph type(s). Valid types are 'full', 'clip' and 'filter'. If
+  #           not type specified, 'filter' will be used (will fall back to 'clip' than full if filtering, clipping disabled,
+  #           respectively). Multiple types can be provided seperated by a space
   command <<<
     set -e
     export OMP_NUM_THREADS=1
     ln -s ~{alignments} alignments
-    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf --giraffe clip --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf --giraffe ~{giraffe_type} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
