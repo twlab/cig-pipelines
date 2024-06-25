@@ -10,7 +10,7 @@ import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
-workflow genome_wgs_with_ralign {
+workflow genome_wgs_with_realign {
   meta {
       author: "Eddie Belter"
       version: "1.2"
