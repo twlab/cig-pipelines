@@ -7,7 +7,7 @@ workflow pangenome_mcgb {
     String name
     String ref
     File seqfile
-    String giraffe_type = "clip"
+    Array[String] graph_types = ["clip", "full"]
     String docker = "mgibio/cactus:2.5.0-focal"
     Int cpu
     Int memory
@@ -54,7 +54,7 @@ workflow pangenome_mcgb {
     name=name,
     ref=ref,
     alignments=run_cactus_align.alignments,
-    giraffe_type=giraffe_type,
+    graph_types=graph_types,
     runenv=runenv_mcgb,
   }
 }
@@ -184,7 +184,7 @@ task run_cactus_graphmap_join {
   input {
     String name
     String ref
-    String giraffe_type = "clip"
+    Array[String] graph_types
     Directory alignments
     RunEnv runenv
   }
@@ -198,7 +198,7 @@ task run_cactus_graphmap_join {
     set -e
     export OMP_NUM_THREADS=1
     ln -s ~{alignments} alignments
-    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf --giraffe ~{giraffe_type} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf --gfa ~{sep=' ' graph_types} --giraffe ~{sep=' ' graph_types} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
@@ -209,15 +209,13 @@ task run_cactus_graphmap_join {
   }
 
   output {
-    File dist = glob("*.dist")[0]
-    File hal = glob("*.hal")[0]
-    File gbz = glob("*.gbz")[0]
-    File gfa = glob("*.gfa.gz")[0]
-    File min = glob("*.min")[0]
+    Array[File] dist = glob("*.dist")
+    Array[File] hal = glob("*.hal")
+    Array[File] gbz = glob("*.gbz")
+    Array[File] gfa = glob("*.gfa.gz")
+    Array[File] min = glob("*.min")
+    Array[File] vcf = glob("~{name}.vcf.gz")
+    Array[File] vcf_tbi = glob("~{name}.vcf.gz.tbi")
     File stats = glob("*.stats.tgz")[0]
-    File vcf = glob("~{name}.vcf.gz")[0]
-    File vcf_tbi = glob("~{name}.vcf.gz.tbi")[0]
-    File raw_vcf = glob("~{name}.raw.vcf.gz")[0]
-    File raw_vcf_tbi = glob("~{name}.raw.vcf.gz.tbi")[0]
   }
 }
