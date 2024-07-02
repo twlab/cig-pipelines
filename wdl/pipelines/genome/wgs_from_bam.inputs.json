@@ -1,13 +1,13 @@
 {
-  "genome_wgs_with_realign.sample": "{{SAMPLE}}",
-  "genome_wgs_with_realign.sorted_bam": "{{BAM}}",
-  "genome_wgs_with_realign.idx": "{{IDX}}",
-  "genome_wgs_with_realign.targets_expansion_bases": 160,
-  "genome_wgs_with_realign.abra2_docker": "mgibio/abra2:v2.23-focal",
-  "genome_wgs_with_realign.bwa_docker": "ebelter/bwa:0.7.17",
-  "genome_wgs_with_realign.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",
-  "genome_wgs_with_realign.deepvariant_docker": "google/deepvariant:1.5.0",
-  "genome_wgs_with_realign.freebayes_docker": "mgibio/freebayes:1.3.6-focal",
-  "genome_wgs_with_realign.gatk_docker": "broadinstitute/gatk3:3.5-0",
-  "genome_wgs_with_realign.samtools_docker": "mgibio/samtools:1.15.1-buster"
+  "genome_wgs_from_bam.sample": "{{SAMPLE}}",
+  "genome_wgs_from_bam.sorted_bam": "{{BAM}}",
+  "genome_wgs_from_bam.idx": "{{IDX}}",
+  "genome_wgs_from_bam.targets_expansion_bases": 160,
+  "genome_wgs_from_bam.abra2_docker": "mgibio/abra2:v2.23-focal",
+  "genome_wgs_from_bam.bwa_docker": "ebelter/bwa:0.7.17",
+  "genome_wgs_from_bam.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",
+  "genome_wgs_from_bam.deepvariant_docker": "google/deepvariant:1.5.0",
+  "genome_wgs_from_bam.freebayes_docker": "mgibio/freebayes:1.3.6-focal",
+  "genome_wgs_from_bam.gatk_docker": "broadinstitute/gatk3:3.5-0",
+  "genome_wgs_from_bam.samtools_docker": "mgibio/samtools:1.15.1-buster"
 }
