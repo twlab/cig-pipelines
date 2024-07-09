@@ -7,7 +7,8 @@ Build pangenome graphs with minigraph-cactus.
   flowchart TB;
       i1([NAME]);
       i2([REF]);
-      i3([SEQFILE])
+      i3([SEQFILE]);
+      i4([GRAPH_TYPES]);
 
       s1[[CACTUS-MINIGRAPH]];
       s2[[CACTUS-GRAPHMAPH]];
@@ -15,24 +16,23 @@ Build pangenome graphs with minigraph-cactus.
       s4[[CACTUS-ALIGN]];
       s5[[CACTUS-GRAPHMAP-JOIN]];
 
-      o11([SV_GFA])
-      o21([PAF])
-      o22([FASTA])
-      o23([GAF])
-      o51([DIST/GBZ/MIN for GIRAFFE])
-      o52([HAL])
-      o53([VG])
-      o54([GFA])
-      o55([STATS])
-      o56([VCF & TBI])
-      o57([RAW VCF & TBI])
+      o11([SV_GFA]);
+      o21([PAF]);
+      o22([FASTA]);
+      o23([GAF]);
+      o51([DIST/GBZ/MIN for GIRAFFE]);
+      o52([HAL]);
+      o53([VG]);
+      o55([STATS]);
+      o56([VCF & TBI]);
+      o57([RAW VCF & TBI]);
 
       i1-->s1; i2-->s1; i3-->s1; s1-->o11;
-      o11-->s2; s2-->o21; s2-->o22;
+      o11-->s2; s2-->o21; s2-->o22; s2-->o23;
       o21-->s3;
       s3--CHROMOSOMES-->s4;
-      s4--CHROMOSOME ALIGNMENTs & HALs -->s5;
-      s5-->o51; s5-->o52; s5-->o53; s5-->o54; s5-->o55; s5-->o56; s5-->o57
+      i4-->s5; s4--CHROMOSOME ALIGNMENTs & HALs -->s5;
+      s5-->o51; s5-->o52; s5-->o53; s5-->o55; s5-->o56; s5-->o57; 
 ```
 
 ## Pipeline Files
@@ -46,6 +46,7 @@ Build pangenome graphs with minigraph-cactus.
 * name [String] - output base name
 * ref [String] - the sequence name in the seqfile to as the "reference"
 * seqfile [File] - tab sepqarated file of sequence names and URLs (files)
+* graph_types [Array[String]] - output full and/or clip versions of the graph as GFA adn GBZ
 * docker [String] - docker to use (cactus)
 * cpu [Int] - cpus to request
 * memory [Int] - memory to request
@@ -89,6 +90,7 @@ Build pangenome graphs with minigraph-cactus.
 * ref [workflow inputs]
 * alignments [run_cactus_align]
 #### output
+Most outputs will have a full and clip version, if running full adn clip were sepdicfied.
 * dist
 * gbz
 * gfa
