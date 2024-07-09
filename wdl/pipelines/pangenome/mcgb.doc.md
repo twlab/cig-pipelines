@@ -16,7 +16,7 @@ Build pangenome graphs with minigraph-cactus.
       s4[[CACTUS-ALIGN]];
       s5[[CACTUS-GRAPHMAP-JOIN]];
 
-      o11([SV_GFA]);
+      o11([SV GFA]);
       o21([PAF]);
       o22([FASTA]);
       o23([GAF]);
@@ -28,7 +28,7 @@ Build pangenome graphs with minigraph-cactus.
       o57([RAW VCF & TBI]);
 
       i1-->s1; i2-->s1; i3-->s1; s1-->o11;
-      o11-->s2; s2-->o21; s2-->o22; s2-->o23;
+      s1--SV GAF-->s2; s2-->o21; s2-->o22; s2-->o23;
       o21-->s3;
       s3--CHROMOSOMES-->s4;
       i4-->s5; s4--CHROMOSOME ALIGNMENTs & HALs -->s5;
