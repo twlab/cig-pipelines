@@ -1,6 +1,7 @@
 version development
 
 import "wdl/structs/runenv.wdl"
+import "wdl/tasks/pangenome/panacus.wdl"
 
 workflow pangenome_mcgb {
   input {
@@ -13,10 +14,18 @@ workflow pangenome_mcgb {
     Int memory
   }
 
+  # Run Envss in order of use
   RunEnv runenv_mcgb = {
     "docker": docker,
     "cpu": cpu,
     "memory": memory,
+    "disks": 20,
+  }
+
+  RunEnv runenv_panacus = {
+    "docker": "mgibio/panacus:0.2.3-buster",
+    "cpu": 1,
+    "memory": 24,
     "disks": 20,
   }
 
@@ -56,6 +65,13 @@ workflow pangenome_mcgb {
     alignments=run_cactus_align.alignments,
     graph_types=graph_types,
     runenv=runenv_mcgb,
+  }
+
+  scatter (gfa_gz in run_cactus_graphmap_join.gfa) {
+    call panacus.run_panacus_hist as panacus { input:
+      gfa_gz=gfa_gz,
+      runenv=runenv_panacus,
+    }
   }
 }
 

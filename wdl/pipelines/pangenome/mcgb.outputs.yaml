@@ -13,3 +13,6 @@ pangenome_mcgb.run_cactus_graphmap_join:
   - stats
   - vcf
   - vcf_tbi
+pangenome_mcgb.panacus:
+  - hist
+  - png
