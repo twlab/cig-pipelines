@@ -48,7 +48,7 @@ Build pangenome graphs with minigraph-cactus.
 * name [String] - output base name
 * ref [String] - the sequence name in the seqfile to as the "reference"
 * seqfile [File] - tab sepqarated file of sequence names and URLs (files)
-* graph_types [Array[String]] - output full and/or clip versions of the graph as GFA adn GBZ
+* graph_types [Array[String]] - output full and/or clip versions of the graph as GFA and GBZ
 * docker [String] - docker to use (cactus)
 * cpu [Int] - cpus to request
 * memory [Int] - memory to request
