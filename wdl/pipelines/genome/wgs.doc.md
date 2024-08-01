@@ -27,12 +27,18 @@ Map WGS data to the linear geome with BWA, optionally left shift/realign bam, an
       o4([VCF])
       o5([VCF TBI])
 
-    
       i3-->s1;
       s1--REF PATH-->s2; i1-->s2; i2-->s2;
       s2--BAM-->s3;
-      s3--SORTED BAM-->s4; s1--ref Fasta/FAI-->s3;
+      s3--SORTED BAM-->s4;
+      s4--LEFT SHIFT BAM-->s5;
+      s4--LEFT SHIFT BAM-->s6; s5--LEFT SHIFT BAI-->s6;
+      s6--TARGETS-->s7; i4-->s7;
+      s4--LEFT SHIFT BAM-->s8; s7--EXPANDED TARGETS-->s8;
+      s8--REALIGN BAM/BAI-->s9;
+      s8--REALIGN BAM-->s10;
       
+      s8-->o1; s8-->o2; s9-->o4; s9-->o5; s10-->o3;
 ```
 ## Pipeline Files
 * wgs.wdl          - WDL pipeline
