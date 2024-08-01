@@ -29,15 +29,15 @@ workflow pangenome_wgs {
     File gbz
     Int targets_expansion_bases = 160
     # dockers
-    String abra2_docker = "mgibio/abra2:v2.24-focal"
+    String abra2_docker = "mgibio/abra2:v2.23-focal"
     String bedtools_docker = "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1"
     String deepvariant_docker = "google/deepvariant:1.5.0"
     String freebayes_docker = "mgibio/freebayes:1.3.6-focal"
-    String gatk_docker = "broadinstitute/gatk3@sha256:5ecb139965b86daa9aa85bc531937415d9e98fa8a6b331cb2b05168ac29bc76b" #"broadinstitute/gatk:4.3.0.0"
+    String gatk_docker = "pangenome_wgs.gatk_docker": "broadinstitute/gatk3:3.5-0"
     String samtools_docker = "mgibio/samtools:1.15.1-buster"
-    String vg_docker = "quay.io/vgteam/vg:v1.48.0" #"quay.io/vgteam/vg@sha256:62a1177ab6feb76de6a19af7ad34352bea02cab8aa2996470d9d2b40b3190fe8"
-    Int cpu
-    Int memory
+    String vg_docker = "quay.io/vgteam/vg:v1.55.0"
+    Int cpu = 12
+    Int memory = 64
   }
 
   # RunEnvs in order of usage
