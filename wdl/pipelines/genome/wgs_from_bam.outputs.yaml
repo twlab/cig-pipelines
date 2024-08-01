@@ -1,9 +1,9 @@
-pangenome_wgs_from_bam.realign:
+genome_wgs_from_bam.realign:
   - indel_realigned_bam
   - indel_realigned_bam_index
-pangenome_wgs_from_bam.samtools_stat:
+genome_wgs_from_bam.samtools_stat:
   - stats
-pangenome_wgs_from_bam.dv:
+genome_wgs_from_bam.dv:
   - vcf
   - vcf_tbi
   - report

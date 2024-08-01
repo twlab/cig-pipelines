@@ -1,13 +1,11 @@
-pangenome_pangenome_wgs.run_giraffe:
-  - gam
-pangenome_pangenome_wgs.gam_stats:
+wgs_from_gam.vg_stats:
   - stats
-pangenome_pangenome_wgs.realign:
+wgs_from_gam.realign:
   - indel_realigned_bam
   - indel_realigned_bam_index
-pangenome_pangenome_wgs.samtools_stat:
+wgs_from_gam.samtools_stat:
   - stats
-pangenome_pangenome_wgs.dv:
+wgs_from_gam.dv:
   - vcf
   - vcf_tbi
   - report
