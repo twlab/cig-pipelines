@@ -20,15 +20,16 @@ workflow genome_wgs_with_realign {
   input {
     String sample
     Array[File] fastqs
-    File idx                   # tarred BWA index
+    File idx # tarred BWA index
+    Boolean realign_bam = true
     Int targets_expansion_bases = 160
     # dockers
-    String abra2_docker = "mgibio/abra2:v2.24-focal"
+    String abra2_docker = "mgibio/abra2:v2.23-focal"
     String bwa_docker = "ebelter/bwa:0.7.17"
     String bedtools_docker = "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1"
     String deepvariant_docker = "google/deepvariant:1.5.0"
     String freebayes_docker = "mgibio/freebayes:1.3.6-focal"
-    String gatk_docker = "broadinstitute/gatk3@sha256:5ecb139965b86daa9aa85bc531937415d9e98fa8a6b331cb2b05168ac29bc76b" #"broadinstitute/gatk:4.3.0.0"
+    String gatk_docker = "broadinstitute/gatk3:3.5-0"
     String samtools_docker = "mgibio/samtools:1.15.1-buster"
   }
 
@@ -107,59 +108,71 @@ workflow genome_wgs_with_realign {
     runenv=samtools_runenv,
   } 
 
-  call freebayes.run_left_shift_bam as left_shift { input:
-    in_bam_file=samtools_sort.sorted_bam,
-    in_reference_file=reference.fasta,
-    in_reference_index_file=reference.fai,
-    runenv=freebayes_renenv,
-  } 
+  if ( realign_bam ) {
+    call freebayes.run_left_shift_bam as left_shift { input:
+      in_bam_file=samtools_sort.sorted_bam,
+      in_reference_file=reference.fasta,
+      in_reference_index_file=reference.fai,
+      runenv=freebayes_renenv,
+    }
 
-  call samtools.index as left_shift_index { input:
-    bam=left_shift.output_bam_file,
-    runenv=samtools_runenv,
-  } 
+    call samtools.index as left_shift_index { input:
+      bam=left_shift.output_bam_file,
+      runenv=samtools_runenv,
+    } 
 
-  call realigner_target_creator.run_realigner_target_creator as target_creator { input:
-    in_bam_file=left_shift.output_bam_file,
-    in_bam_index_file=left_shift_index.bai,
-    in_reference_file=reference.fasta,
-    in_reference_index_file=reference.fai,
-    in_reference_dict_file=reference.dict,
-    runenv=gatk_renenv,
-  } 
+    call realigner_target_creator.run_realigner_target_creator as target_creator { input:
+      in_bam_file=left_shift.output_bam_file,
+      in_bam_index_file=left_shift_index.bai,
+      in_reference_file=reference.fasta,
+      in_reference_index_file=reference.fai,
+      in_reference_dict_file=reference.dict,
+      runenv=gatk_renenv,
+    }
 
-  call bedtools.run_slop as expand_targets { input:
-    bed_file=target_creator.output_target_bed_file,
-    reference_fai=reference.fai,
-    bases=targets_expansion_bases,
-    runenv=bedtools_runenv,
+    call bedtools.run_slop as expand_targets { input:
+      bed_file=target_creator.output_target_bed_file,
+      reference_fai=reference.fai,
+      bases=targets_expansion_bases,
+      runenv=bedtools_runenv,
+    }
+
+    call abra2.run_realigner as realign { input:
+      in_bam_file=left_shift.output_bam_file,
+      in_bam_index_file=left_shift_index.bai,
+      in_target_bed_file=expand_targets.slopped_bed_file,
+      in_reference_file=reference.fasta,
+      in_reference_index_file=reference.fai,
+      runenv=abra2_renenv,
+    }
   }
 
-  call abra2.run_realigner as realign { input:
-    in_bam_file=left_shift.output_bam_file,
-    in_bam_index_file=left_shift_index.bai,
-    in_target_bed_file=expand_targets.slopped_bed_file,
-    in_reference_file=reference.fasta,
-    in_reference_index_file=reference.fai,
-    runenv=abra2_renenv,
-  } 
+  if ( !realign_bam ) {
+    call samtools.index as align_index { input:
+      bam=align.bam,
+      runenv=samtools_runenv,
+    } 
+  }
 
-  call deepvariant.run_deepvariant as dv { input:
-    sample=sample,
-    bam=realign.indel_realigned_bam,
-    bai=realign.indel_realigned_bam_index,
+  File final_bam = select_first([realign.indel_realigned_bam, samtools_sort.sorted_bam])
+  File final_bai = select_first([realign.indel_realigned_bam_index, align_index.bai])
+
+ call deepvariant.run_deepvariant as dv { input:
+  sample=sample,
+    bam=final_bam,
+    bai=final_bai,
     reference_path=reference.path,
     runenv=dv_runenv,
   }
 
   call samtools.stat as samtools_stat { input:
-    bam=realign.indel_realigned_bam,
+    bam=final_bam,
     runenv=samtools_runenv,
   } 
 
   output {
-    File bam = realign.indel_realigned_bam
-    File bai = realign.indel_realigned_bam_index
+    File bam = final_bam
+    File bai = final_bai
     File bam_stats = samtools_stat.stats
     File vcf = dv.vcf
     File vcf_tvi = dv.vcf_tbi
