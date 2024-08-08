@@ -3,6 +3,7 @@ version development
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/misc/cat.wdl"
 import "wdl/tasks/pangenie.wdl"
+import "wdl/tasks/vcallers/index.wdl"
 
 workflow pangenie_genotyper {
   input {
@@ -20,11 +21,6 @@ workflow pangenie_genotyper {
     "memory": 4,
     "disks": 10,
   }
-  call cat.run_zcat as combined_fastq { input:
-    files=fastqs,
-    out="combined.fastq",
-    runenv=runenv_cat,
-  }
 
   RunEnv runenv_pangenie = {
     "docker": docker,
@@ -32,6 +28,20 @@ workflow pangenie_genotyper {
     "memory": memory,
     "disks": 20,
   }
+
+  RunEnv runenv_pangenie_small = {
+    "docker": docker,
+    "cpu": 1,
+    "memory": 8,
+    "disks": 20,
+  }
+
+  call cat.run_zcat as combined_fastq { input:
+    files=fastqs,
+    out="combined.fastq",
+    runenv=runenv_cat,
+  }
+
   call pangenie.run_genotyper { input:
     fastq=combined_fastq.concatenated_file,
     index=index,
@@ -39,8 +49,14 @@ workflow pangenie_genotyper {
     runenv=runenv_pangenie,
   }
 
+  call index.run_bzip2_and_index as index_vcf { input:
+    vcf=run_genotyper.vcf,
+    runenv=runenv_pangenie_small,
+  }
+
   output {
-    File vcf = run_genotyper.vcf
+    File vcf = index.vcf_gz
+    File vcf_tbi = index.vcf_tbi
     File histo = run_genotyper.histo
   }
 }
