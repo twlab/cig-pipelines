@@ -55,8 +55,8 @@ workflow pangenie_genotyper {
   }
 
   output {
-    File vcf = index.vcf_gz
-    File vcf_tbi = index.vcf_tbi
+    File vcf = index_vcf.vcf_gz
+    File vcf_tbi = index_vcf.vcf_tbi
     File histo = run_genotyper.histo
   }
 }
