@@ -12,7 +12,7 @@ task run_bzip2_and_index {
   String vcf_bn = basename(vcf)
   String vcf_gz = "${vcf_bn}.gz"
   command <<<
-    bzip2 -c ~{vcf} > ~{vcf_gz}
+    bgzip -c ~{vcf} > ~{vcf_gz}
     tabix -p vcf ~{vcf_gz}
   >>>
 
