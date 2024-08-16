@@ -49,14 +49,14 @@ workflow pangenie_genotyper {
     runenv=runenv_pangenie,
   }
 
-  call utils.run_bzip_and_index as bgzip_and_index_vcf { input:
+  call utils.run_bgzip_and_index as bgzip_and_index_vcf { input:
     vcf=run_genotyper.vcf,
     runenv=runenv_pangenie_small,
   }
 
   output {
-    File vcf = index_vcf.vcf_gz
-    File vcf_tbi = index_vcf.vcf_tbi
+    File vcf = bgzip_and_index_vcf.vcf_gz
+    File vcf_tbi = bgzip_and_index_vcf.vcf_tbi
     File histo = run_genotyper.histo
   }
 }
