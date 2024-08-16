@@ -2,8 +2,8 @@ version development
 
 import "../../structs/runenv.wdl"
 
-# REQUIRES: bzip2 and tabix
-task run_bzip2_and_index {
+# REQUIRES: bgzip and tabix
+task run_bgzip_and_index {
     input {
         File vcf
         RunEnv runenv

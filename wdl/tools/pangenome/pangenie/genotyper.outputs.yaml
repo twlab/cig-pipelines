@@ -1,5 +1,5 @@
 pangenie_genotyper.run_genotyper:
   - histo
-pangenie_genotyper.index:
+pangenie_genotyper.bgzip_and_index_vcf:
   - vcf_gz
   - vcf_tbi
