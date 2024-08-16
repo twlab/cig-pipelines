@@ -214,7 +214,7 @@ task run_cactus_graphmap_join {
     set -e
     export OMP_NUM_THREADS=1
     ln -s ~{alignments} alignments
-    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf --gfa ~{sep=' ' graph_types} --giraffe ~{sep=' ' graph_types} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf ~{sep=' ' graph_types} --gfa ~{sep=' ' graph_types} --giraffe ~{sep=' ' graph_types} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
@@ -230,8 +230,8 @@ task run_cactus_graphmap_join {
     Array[File] gbz = glob("*.gbz")
     Array[File] gfa = glob("*.gfa.gz")
     Array[File] min = glob("*.min")
-    Array[File] vcf = glob("~{name}.vcf.gz")
-    Array[File] vcf_tbi = glob("~{name}.vcf.gz.tbi")
+    Array[File] vcf = glob("*.vcf.gz")
+    Array[File] vcf_tbi = glob("*.vcf.gz.tbi")
     File stats = glob("*.stats.tgz")[0]
   }
 }
