@@ -125,8 +125,8 @@ task run_cactus_graphmap {
 
   runtime {
     docker: runenv.docker
-    cpu: 16 #runenv.cpu
-		memory: "192 GB" #memory: "~{runenv.memory} GB"
+    cpu: runenv.cpu
+    memory: "~{runenv.memory} GB"
     #disks:  "local-disk ~{runenv.disks} SSD"
   }
 
