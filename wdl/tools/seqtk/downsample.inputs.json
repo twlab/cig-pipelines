@@ -1,5 +1,5 @@
 {
-  "seqtk_downsample.fastqs": ["{{FQ1}}", "{{FQ2}"],
+  "seqtk_downsample.fastqs": ["{{FQ1}}", "{{FQ2}}"],
   "seqtk_downsample.probability": "{{PROB}}",
   "seqtk_downsample.docker": "mgi/seqtools:latest",
   "seqtk_downsample.cpu": 4,
