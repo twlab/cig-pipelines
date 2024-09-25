@@ -1,0 +1,6 @@
+{
+  "panacus.gfa_gz": "{{GFA_GZ}}",
+  "panacus.docker": "mgibio/panacus:0.2.3-buster",
+  "panacus.cpu": 1,
+  "panacus.memory": 24
+}
