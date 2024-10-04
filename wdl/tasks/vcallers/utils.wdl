@@ -4,10 +4,10 @@ import "../../structs/runenv.wdl"
 
 # REQUIRES: bgzip and tabix
 task run_bgzip_and_index {
-    input {
-        File vcf
-        RunEnv runenv
-    }
+   input {
+     File vcf
+     RunEnv runenv
+   }
 
   String vcf_bn = basename(vcf)
   String vcf_gz = "${vcf_bn}.gz"
