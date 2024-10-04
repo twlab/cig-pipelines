@@ -33,7 +33,7 @@ workflow pangenome_wgs {
     String bedtools_docker = "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1"
     String deepvariant_docker = "google/deepvariant:1.5.0"
     String freebayes_docker = "mgibio/freebayes:1.3.6-focal"
-    String gatk_docker = "pangenome_wgs.gatk_docker": "broadinstitute/gatk3:3.5-0"
+    String gatk_docker = "broadinstitute/gatk3:3.5-0"
     String samtools_docker = "mgibio/samtools:1.15.1-buster"
     String vg_docker = "quay.io/vgteam/vg:v1.55.0"
     Int cpu = 12
