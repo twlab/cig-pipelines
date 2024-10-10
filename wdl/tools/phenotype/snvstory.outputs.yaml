@@ -1,0 +1,3 @@
+snvstory.run_igm_churchill_ancestry:
+ - csv_file
+ - pickle_file

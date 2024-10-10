@@ -1,0 +1,2 @@
+kinship_matrix.run_generate_kinship_matrix:
+ - output_file

@@ -1,0 +1,6 @@
+{
+    "kinship_matrix.vcfs": [{{VCFS}}],
+    "kinship_matrix.docker": "mgibio/smahtqc:v1.0-buster",
+    "kinship_matrix.cpu": 1,
+    "kinship_matrix.memory": 8
+}

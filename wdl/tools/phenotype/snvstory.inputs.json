@@ -1,0 +1,9 @@
+{
+  "snvstory.input_vcfs": [{{VCFS}}],
+  "snvstory.resource": "{{RESOURCE}}",
+  "snvstory.genome_ver": "38",
+  "snvstory.mode": "WGS",
+  "snvstory.docker": "mgibio/snvstory:v1.1-buster",
+  "snvstory.cpu": 8,
+  "snvstory.memory": 64
+}

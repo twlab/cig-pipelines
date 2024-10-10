@@ -1,0 +1,7 @@
+{
+  "checksex.input_vcf": "{{VCF}}",
+  "checksex.input_vcf_tbi": "{{VCF_TBI}}",
+  "checksex.docker": "mgibio/smahtqc:v1.0-buster",
+  "checksex.cpu": 1,
+  "checksex.memory": 8
+}
