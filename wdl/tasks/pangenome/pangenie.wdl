@@ -1,6 +1,6 @@
 version development
 
-import "../structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 # version: v3.0.1
 # usage:

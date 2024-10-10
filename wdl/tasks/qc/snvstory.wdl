@@ -1,6 +1,6 @@
 version development
 
-import "../structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task run_igm_churchill_ancestry {
   input {

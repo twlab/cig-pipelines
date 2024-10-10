@@ -44,3 +44,45 @@ task run_deepvariant {
         disks : runenv.disks
     }
 }
+
+task run_dv {
+  input {
+    String sample
+    File bam
+    File bai
+    File reference_fasta
+    File reference_fai
+    String model_type
+    RunEnv runenv
+  }
+
+  String output_vcf = "${sample}.vcf.gz"
+  Int dv_cpu = runenv.cpu - 1
+  # MALE
+  # --haploid_contigs=chrX,chrY,chrY_KI270740v1_random
+  command <<<
+    ln ~{bam} ~{basename(bam)}
+    ln ~{bai} ~{basename(bai)}
+    /opt/deepvariant/bin/run_deepvariant \
+      --model_type=~{model_type} \
+      --ref=~{reference_fasta} \
+      --reads=~{basename(bam)} \
+      --output_vcf=~{sample}.vcf.gz \
+      --output_gvcf=~{sample}.g.vcf.gz \
+      --num_shards=~{dv_cpu}
+  >>>
+
+  output {
+    File vcf = glob("~{sample}.vcf.gz")[0]
+    File vcf_tbi = glob("~{sample}.vcf.gz.tbi")[0]
+    File gvcf = glob("~{sample}.g.vcf.gz")[0]
+    File gvcf_tbi = glob("~{sample}.g.vcf.gz.tbi")[0]
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: runenv.memory + " GB"
+    disks : runenv.disks
+  }
+}

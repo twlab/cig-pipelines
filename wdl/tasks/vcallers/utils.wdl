@@ -28,3 +28,33 @@ task run_bgzip_and_index {
     disks : runenv.disks
   }
 }
+
+task run_validate_vcf {
+   input {
+     String sample
+     File vcf
+     RunEnv runenv
+   }
+
+  command <<<
+    bcftools view ~{vcf} > /dev/null
+    RV=$?
+    if [ $RV -eq 0 ]; then
+      status="OK"
+    else
+      status="FAIL"
+    fi 
+    printf "%s\t%s\t%s" ~{sample} ~{basename(vcf)} ${status} | tee output
+  >>>
+
+  output {
+    status
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: runenv.memory + " GB"
+    disks : runenv.disks
+  }
+}

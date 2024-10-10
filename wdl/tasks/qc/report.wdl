@@ -1,6 +1,6 @@
 version development
 
-import "../structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task run_qc_report {
   input {
