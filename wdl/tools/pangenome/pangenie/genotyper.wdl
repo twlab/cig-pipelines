@@ -2,8 +2,7 @@ version development
 
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/misc/cat.wdl"
-import "wdl/tasks/pangenie.wdl"
-import "wdl/tasks/vcallers/utils.wdl"
+import "wdl/tasks/pangenome/pangenie.wdl"
 
 workflow pangenie_genotyper {
   input {
@@ -49,14 +48,9 @@ workflow pangenie_genotyper {
     runenv=runenv_pangenie,
   }
 
-  call utils.run_bgzip_and_index as bgzip_and_index_vcf { input:
-    vcf=run_genotyper.vcf,
-    runenv=runenv_pangenie_small,
-  }
-
   output {
-    File vcf = bgzip_and_index_vcf.vcf_gz
-    File vcf_tbi = bgzip_and_index_vcf.vcf_tbi
+    File vcf = run_genotyper.vcf_gz
+    File vcf_tbi = run_genotyper.vcf_tbi
     File histo = run_genotyper.histo
   }
 }

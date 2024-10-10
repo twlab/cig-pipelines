@@ -33,24 +33,38 @@ task run_genotyper {
      RunEnv runenv
   }
 
-  #String index_name = basename(index)
-  #String index_subd = "~{index}/~{index_name}"
   command <<<
-    set -x
+    set -e
     index_name=$(basename ~{index})
     index_subd="~{index}/${index_name}"
+    printf "Running Pangenie..."
     PanGenie -i ~{fastq} -f ${index_subd} -s ~{sample} -o ~{sample} -t ~{runenv.cpu} -j ~{runenv.cpu}
+    printf "Running Pangenie complete..."
+    vcf=$(find . -name \*.vcf)
+    printf "VCF: %s" ${vcf} 
+    printf "BGZIP VCF..." 
+    vcf_gz="${vcf}.gz"
+    bgzip "${vcf}" > "${vcf_gz}"
+    printf "Validating BGZIP VCF %s" "${vcf_gz}"
+    unset -e
+    bcftools view "${vcf_gz}" > /dev/null
+    rv=$?
+    test "${rv}" != "0" && ( printf "VCF is corrupted, exiting."; exit "${rv}" )
+    set -e
+    printf "Indexing BGZIP VCF: %s" "${vcf_gz}"
+    tabix -p vcf "${vcf_gz}"
   >>>
 
   output {
     File vcf = glob("~{sample}*.vcf")[0]
+    File vcf_tbi = glob("~{sample}*.vcf.tbi")[0]
     File histo = glob("~{sample}*.histo")[0]
   }
 
   runtime {
     docker: runenv.docker
     cpu: runenv.cpu
-    memory: "${runenv.memory} GB"
+    memory: "~{runenv.memory} GB"
     #disks: runenv.disks
   }
 }
