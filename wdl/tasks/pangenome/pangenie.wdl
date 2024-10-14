@@ -37,19 +37,19 @@ task run_genotyper {
     set -e
     index_name=$(basename ~{index})
     index_subd="~{index}/${index_name}"
-    printf "Running Pangenie..."
+    printf "Running Pangenie..." 1>&2
     PanGenie -i ~{fastq} -f ${index_subd} -s ~{sample} -o ~{sample} -t ~{runenv.cpu} -j ~{runenv.cpu}
-    printf "Running Pangenie complete..."
+    printf "Running Pangenie complete..." 1>&2
     vcf=$(find . -name \*.vcf)
-    printf "VCF: %s" ${vcf} 
-    printf "BGZIP VCF..." 
+    printf "VCF: %s" ${vcf} 1>&2
+    printf "BGZIP VCF...\n" 1>&2
     vcf_gz="${vcf}.gz"
-    bgzip "${vcf}" > "${vcf_gz}"
-    printf "Validating BGZIP VCF %s" "${vcf_gz}"
-    unset -e
+    bgzip "${vcf}"
+    printf "Validating BGZIP VCF %s" "${vcf_gz}" 1>&2
+    set +e
     bcftools view "${vcf_gz}" > /dev/null
     rv=$?
-    test "${rv}" != "0" && ( printf "VCF is corrupted, exiting."; exit "${rv}" )
+    test "${rv}" != "0" && ( printf "VCF is corrupted, exiting." 1>&2; exit "${rv}" )
     set -e
     printf "Indexing BGZIP VCF: %s" "${vcf_gz}"
     tabix -p vcf "${vcf_gz}"
