@@ -37,27 +37,27 @@ task run_genotyper {
     set -e
     index_name=$(basename ~{index})
     index_subd="~{index}/${index_name}"
-    printf "Running Pangenie..." 1>&2
+    printf "Running Pangenie...\n" 1>&2
     PanGenie -i ~{fastq} -f ${index_subd} -s ~{sample} -o ~{sample} -t ~{runenv.cpu} -j ~{runenv.cpu}
-    printf "Running Pangenie complete..." 1>&2
+    printf "Running Pangenie complete...\n" 1>&2
     vcf=$(find . -name \*.vcf)
-    printf "VCF: %s" ${vcf} 1>&2
+    printf "VCF: %s\n" ${vcf} 1>&2
     printf "BGZIP VCF...\n" 1>&2
     vcf_gz="${vcf}.gz"
     bgzip "${vcf}"
-    printf "Validating BGZIP VCF %s" "${vcf_gz}" 1>&2
+    printf "Indexing BGZIP VCF: %s"\n "${vcf_gz}" 1>&2
+    tabix -p vcf "${vcf_gz}"
+    printf "Validating BGZIP VCF %s\n" "${vcf_gz}" 1>&2
     set +e
     bcftools view "${vcf_gz}" > /dev/null
     rv=$?
-    test "${rv}" != "0" && ( printf "VCF is corrupted, exiting." 1>&2; exit "${rv}" )
-    set -e
-    printf "Indexing BGZIP VCF: %s" "${vcf_gz}"
-    tabix -p vcf "${vcf_gz}"
+    test "${rv}" != "0" && ( printf "VCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
+    printf "VCF PASS\n" 1>&2
   >>>
 
   output {
-    File vcf = glob("~{sample}*.vcf")[0]
-    File vcf_tbi = glob("~{sample}*.vcf.tbi")[0]
+    File vcf = glob("~{sample}*.vcf.gz")[0]
+    File vcf_tbi = glob("~{sample}*.vcf.gz.tbi")[0]
     File histo = glob("~{sample}*.histo")[0]
   }
 
