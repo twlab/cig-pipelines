@@ -29,6 +29,11 @@ task run_deepvariant {
             --reads=~{basename(bam)} \
             --output_vcf=~{output_vcf} \
             --num_shards=~{dv_cpu}
+        printf "Validating VCF: %s\n" "~{output_vcf}" 1>&2
+        bcftools view "${output_vcf}" > /dev/null
+        rv=$?
+        test "${rv}" != "0" && ( printf "VCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
+        printf "VCF PASS\n" 1>&2
     >>>
 
     output {
