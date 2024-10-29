@@ -9,6 +9,7 @@ import "wdl/tasks/pangenome/extract_ref.wdl"
 import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 import "wdl/tasks/vg/giraffe.wdl"
+import "wdl/tasks/vg/haplotypes.wdl"
 import "wdl/tasks/vg/paths.wdl"
 import "wdl/tasks/vg/stats.wdl"
 import "wdl/tasks/vg/surject.wdl"
@@ -24,27 +25,49 @@ workflow pangenome_wgs {
     String sample
     String reference_name
     Array[File] fastqs
-    File min
-    File dist
     File gbz
+    File hap
     Int targets_expansion_bases = 160
     # dockers
-    String abra2_docker = "mgibio/abra2:v2.23-focal"
-    String bedtools_docker = "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1"
-    String deepvariant_docker = "google/deepvariant:1.5.0"
-    String freebayes_docker = "mgibio/freebayes:1.3.6-focal"
-    String gatk_docker = "broadinstitute/gatk3:3.5-0"
-    String samtools_docker = "mgibio/samtools:1.15.1-buster"
-    String vg_docker = "quay.io/vgteam/vg:v1.55.0"
-    Int cpu = 12
-    Int memory = 64
+    String abra2_docker 
+    Int abra2_cpu 
+    Int abra2_memory 
+    String bedtools_docker
+    Int bedtools_cpu
+    Int bedtools_memory
+    String deepvariant_docker
+    Int deepvariant_cpu
+    Int deepvariant_memory
+    String freebayes_docker
+    Int freebayes_cpu
+    Int freebayes_memory
+    String gatk_docker
+    Int gatk_cpu
+    Int gatk_memory
+    String kmc_docker
+    Int kmc_cpu
+    Int kmc_memory
+    String samtools_docker
+    Int samtools_cpu
+    Int samtools_memory
+    String vg_docker
+    Int vg_cpu
+    Int vg_memory
+    String utils_docker
   }
 
   # RunEnvs in order of usage
+  RunEnv runenv_kmc = {
+    "docker": kmc_docker,
+    "cpu": kmc_cpu,
+    "memory": kmc_memory,
+    "disks": 20,
+  }
+
   RunEnv runenv_giraffe = {
     "docker": vg_docker,
-    "cpu": cpu,
-    "memory": memory,
+    "cpu": vg_cpu,
+    "memory": vg_memory,
     "disks": 20,
   }
 
@@ -56,7 +79,7 @@ workflow pangenome_wgs {
   }
 
   RunEnv runenv_idx = {
-    "docker": "ebelter/linux-tk:latest",
+    "docker": utils_docker,
     "cpu": 1,
     "memory": 4,
     "disks": 20,
@@ -64,52 +87,58 @@ workflow pangenome_wgs {
 
   RunEnv samtools_runenv = {
     "docker": samtools_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": samtools_cpu,
+    "memory": samtools_memory,
     "disks": 20,
   }
 
   RunEnv freebayes_renenv = {
     "docker": freebayes_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": freebayes_cpu,
+    "memory": freebayes_memory,
     "disks": 20,
   }
 
   RunEnv gatk_renenv = {
     "docker": gatk_docker,
-    "cpu": 4,
-    "memory": 24,
+    "cpu": gatk_cpu,
+    "memory": gatk_memory,
     "disks": 20,
   }
 
   RunEnv bedtools_runenv = {
     "docker": bedtools_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": bedtools_cpu,
+    "memory": bedtools_memory,
     "disks": 20,
   }
 
   RunEnv abra2_renenv = {
     "docker": abra2_docker,
-    "cpu": 2,
-    "memory": 20,
+    "cpu": abra2_cpu,
+    "memory": abra2_memory,
     "disks": 20,
   }
 
   RunEnv dv_runenv = {
     "docker": deepvariant_docker,
-    "cpu": 20,
-    "memory": 96,
+    "cpu": deepvariant_cpu,
+    "memory": deepvariant_memory,
     "disks": 20,
   }
 
-  call giraffe.run_giraffe { input:
+  call haplotypes.generater_kmers_with_kmc as kmc { input:
     sample=sample,
     fastqs=fastqs,
-    min=min,
-    dist=dist,
+    runenv=runenv_kmc,
+  }
+
+  call giraffe.run_giraffe_haplotype_mode as run_giraffe { input:
+    sample=sample,
+    fastqs=fastqs,
     gbz=gbz,
+    haplotypes=hap,
+    kmers=kmc.kmers,
     runenv=runenv_giraffe,
   }
 

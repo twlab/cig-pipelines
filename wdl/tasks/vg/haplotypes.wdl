@@ -63,18 +63,16 @@ task generater_kmers_with_kmc {
   input {
     String sample
     Array[File] fastqs
-    File min
-    File dist
     RunEnv runenv
   }
 
   command <<<
     mkdir ./tmp/
-    kmc -t ~{runenv.cpu} -k 29 -m 128 -o kff @~{write_lines(fastqs)} ~{sample} ./tmp/
+    kmc -t~{runenv.cpu} -k29 -m128 -okff @~{write_lines(fastqs)} ~{sample} ./tmp/
   >>>
 
   output {
-    File kff = glob("*.kff")[0]
+    File kmers = glob("*.kff")[0]
   }
 
   runtime {
