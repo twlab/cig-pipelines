@@ -7,6 +7,8 @@ pangenome_wgs.realign:
   - indel_realigned_bam_index
 pangenome_wgs.samtools_stat:
   - stats
+pangenome_wgs.run_fastqc:
+  - output_files
 pangenome_wgs.dv:
   - vcf
   - vcf_tbi

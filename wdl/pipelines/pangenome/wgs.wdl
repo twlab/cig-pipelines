@@ -3,6 +3,7 @@ version development
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/abra2.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
+import "wdl/tasks/qc/fastqc.wdl"
 import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/pangenome/extract_ref.wdl"
@@ -28,6 +29,7 @@ workflow pangenome_wgs {
     File gbz
     File hap
     Int targets_expansion_bases = 160
+    Boolean generate_fastqc = false
     # dockers
     String abra2_docker 
     Int abra2_cpu 
@@ -38,6 +40,9 @@ workflow pangenome_wgs {
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
+    String? fastqc_docker
+    Int? fastqc_cpu
+    Int? fastqc_memory
     String freebayes_docker
     Int freebayes_cpu
     Int freebayes_memory
@@ -125,6 +130,19 @@ workflow pangenome_wgs {
     "cpu": deepvariant_cpu,
     "memory": deepvariant_memory,
     "disks": 20,
+  }
+
+  if ( generate_fastqc ) {
+    RunEnv runenv_fastqc = {
+      "docker": fastqc_docker,
+      "cpu": fastqc_cpu,
+      "memory": fastqc_memory,
+      "disks": 20,
+    }
+    call fastqc.run_fastqc { input:
+      seqfiles=fastqs,
+      runenv=runenv_fastqc,
+    }
   }
 
   call haplotypes.generater_kmers_with_kmc as kmc { input:
