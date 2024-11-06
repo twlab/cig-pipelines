@@ -5,6 +5,7 @@ import "wdl/tasks/abra2.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
+import "wdl/tasks/qc/fastqc.wdl"
 import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/samtools.wdl"
@@ -21,10 +22,11 @@ workflow genome_wgs {
     String sample
     Array[File] fastqs
     File idx # tarred BWA index
+    Boolean generate_fastqc = false
     Boolean realign_bam = true
     Int targets_expansion_bases = 160
     # dockers and resources
-    String abra2_docker = "mgibio/abra2:v2.23-focal"
+    String abra2_docker
     Int abra2_cpu
     Int abra2_memory
     String bwa_docker
@@ -36,13 +38,16 @@ workflow genome_wgs {
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
-    String freebayes_docker = "mgibio/freebayes:1.3.6-focal"
+    String? fastqc_docker
+    Int? fastqc_cpu
+    Int? fastqc_memory
+    String freebayes_docker
     Int freebayes_cpu
     Int freebayes_memory
-    String gatk_docker = "broadinstitute/gatk3:3.5-0"
+    String gatk_docker
     Int gatk_cpu
     Int gatk_memory
-    String samtools_docker = "mgibio/samtools:1.15.1-buster"
+    String samtools_docker
     Int samtools_cpu
     Int samtools_memory
     String utils_docker
@@ -105,6 +110,19 @@ workflow genome_wgs {
     "cpu": deepvariant_cpu,
     "memory": deepvariant_memory,
     "disks": 20,
+  }
+
+  if ( generate_fastqc ) {
+    RunEnv runenv_fastqc = {
+      "docker": fastqc_docker,
+      "cpu": fastqc_cpu,
+      "memory": fastqc_memory,
+      "disks": 20,
+    }
+    call fastqc.run_fastqc { input:
+      seqfiles=fastqs,
+      runenv=runenv_fastqc,
+    }
   }
 
   call idx.run_untar_idx as reference { input:
