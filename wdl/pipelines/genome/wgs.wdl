@@ -10,7 +10,7 @@ import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
-workflow genome_wgs_with_realign {
+workflow genome_wgs {
   meta {
       author: "Eddie Belter"
       version: "1.2"
@@ -23,76 +23,93 @@ workflow genome_wgs_with_realign {
     File idx # tarred BWA index
     Boolean realign_bam = true
     Int targets_expansion_bases = 160
-    # dockers
+    # dockers and resources
     String abra2_docker = "mgibio/abra2:v2.23-focal"
-    String bwa_docker = "ebelter/bwa:0.7.17"
-    String bedtools_docker = "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1"
-    String deepvariant_docker = "google/deepvariant:1.5.0"
+    Int abra2_cpu
+    Int abra2_memory
+    String bwa_docker
+    Int bwa_cpu
+    Int bwa_memory
+    String bedtools_docker
+    Int bedtools_cpu
+    Int bedtools_memory
+    String deepvariant_docker
+    Int deepvariant_cpu
+    Int deepvariant_memory
     String freebayes_docker = "mgibio/freebayes:1.3.6-focal"
+    Int freebayes_cpu
+    Int freebayes_memory
     String gatk_docker = "broadinstitute/gatk3:3.5-0"
+    Int gatk_cpu
+    Int gatk_memory
     String samtools_docker = "mgibio/samtools:1.15.1-buster"
+    Int samtools_cpu
+    Int samtools_memory
+    String utils_docker
+    Int utils_cpu
+    Int utils_memory
   }
 
   # RunEnvs in order of usage
-  RunEnv idx_runenv = {
-    "docker": "ebelter/linux-tk:latest",
-    "cpu": 1,
-    "memory": 4,
+  RunEnv utils_runenv = {
+    "docker": utils_docker,
+    "cpu": utils_cpu,
+    "memory": utils_memory,
     "disks": 20,
   }
 
   RunEnv bwa_runenv = {
     "docker": bwa_docker,
-    "cpu": 6,
-    "memory": 36,
+    "cpu": bwa_cpu,
+    "memory": bwa_memory,
     "disks": 20,
   }
 
   RunEnv samtools_runenv = {
     "docker": samtools_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": samtools_cpu,
+    "memory": samtools_memory,
     "disks": 20,
   }
 
   RunEnv freebayes_renenv = {
     "docker": freebayes_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": freebayes_cpu,
+    "memory": freebayes_memory,
     "disks": 20,
   }
 
   RunEnv gatk_renenv = {
     "docker": gatk_docker,
-    "cpu": 4,
-    "memory": 24,
+    "cpu": gatk_cpu,
+    "memory": gatk_memory,
     "disks": 20,
   }
 
   RunEnv bedtools_runenv = {
     "docker": bedtools_docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": bedtools_cpu,
+    "memory": bedtools_memory,
     "disks": 20,
   }
 
   RunEnv abra2_renenv = {
     "docker": abra2_docker,
-    "cpu": 2,
-    "memory": 20,
+    "cpu": abra2_cpu,
+    "memory": abra2_memory,
     "disks": 20,
   }
 
   RunEnv dv_runenv = {
     "docker": deepvariant_docker,
-    "cpu": 20,
-    "memory": 96,
+    "cpu": deepvariant_cpu,
+    "memory": deepvariant_memory,
     "disks": 20,
   }
 
   call idx.run_untar_idx as reference { input:
     idx=idx,
-    runenv=idx_runenv,
+    runenv=utils_runenv,
   }
 
   call align.run_bwa_mem as align { input:
