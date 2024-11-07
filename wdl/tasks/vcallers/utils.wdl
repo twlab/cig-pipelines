@@ -29,26 +29,29 @@ task run_bgzip_and_index {
   }
 }
 
-task run_validate_vcf {
-   input {
-     String sample
-     File vcf
-     RunEnv runenv
-   }
+task run_quick_validate_vcf {
+  # this task use bcftools view to validate a vcf
+  input {
+    String input_sample
+    File input_vcf
+    Int exit_on_fail = 0
+    RunEnv runenv
+  }
 
   command <<<
-    bcftools view ~{vcf} > /dev/null
-    RV=$?
-    if [ $RV -eq 0 ]; then
-      status="OK"
-    else
-      status="FAIL"
-    fi 
-    printf "%s\t%s\t%s" ~{sample} ~{basename(vcf)} ${status} | tee output
+    printf "Validate VCF: %s" ~{input_vcf}
+    bcftools view ~{input_vcf} > /dev/null
+    rv=$?
+    test "${rv}" == "0" && status="PASS" || status="FAIL"
+    printf "VCF status: %s" "${status}"
+    printf "${status}" > status
+    test ~{exit_on_fail} == 1 && exit "${rv}"
   >>>
 
   output {
-    status
+    String sample = input_sample
+    String vcf = input_vcf
+    String status = read_string("status")
   }
 
   runtime {
