@@ -30,7 +30,7 @@ task run_deepvariant {
       ${customized_model_param} \
       --reads=~{basename(bam)} \
       --output_vcf=~{output_vcf} \
-      --gvcf=~{output_gvcf} \
+      --output_gvcf=~{output_gvcf} \
       --num_shards=~{dv_cpu}
     set +e
     printf "Validating VCF: %s\n" "~{output_vcf}" 1>&2
