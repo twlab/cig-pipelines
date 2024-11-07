@@ -52,6 +52,8 @@ flowchart TB;
 * wgs.doc.md       - this file, documenting the pipeline
 
 ## Inputs
+See [inputs json](https://github.com/twlab/cig-pipelines/blob/main/wdl/pipelines/pangenome/wgs.inputs.json) for all inputs.
+
 * sample [String] - sample name for outputs
 * fastqs [File] - an array of read1 and read2 fastqs 
 * gbz [File] - giraffe pangenome GBZ
@@ -59,96 +61,5 @@ flowchart TB;
 * min [File] - pangenome min
 * reference_name [String] - reference name to extract from the graph
 
-## Steps
-### Map to the Pangenome with VG Giraffe [run_giraffe]
-#### input
-* sample [workflow inputs]
-* fastqs [workflow inputs]
-* gbz [workflow inputs]
-* dist [workflow inputs]
-* min [workflow inputs]
-####output:
-* gam
-
-### VG Stats [vg_stats]
-#### input
-* gam [from run_giraffe]
-####output:
-* stats
-
-### VG Surject GAM to BAM [run_surject]
-#### input
-* gam [from run_giraffe]
-* sample [workflow inputs]
-* library [workflow inputs + "-lib1"]
-* gbz [workflow inputs]
-#### output
-* bam
-
-### Samtools Sort BAM by Coordinates [samtools_sort]
-The bam needs to be sorted by coordinate to call variants
-#### input
-* bam [bam from run_surject]
-#### output
-* sorted_bam
-
-### Freebayes Left Align [left align]
-#### input
-* bam [bam from surject]
-* reference [from extract ref]
-#### output
-* bam 
-
-### GATK Realigner Target Creator
-#### input
-* bam [bam from freebayes]
-* reference [from extract ref]
-#### output
-* targets 
-
-### Bedtools Expand Target
-#### input
-* targets [from target creator]
-#### output
-* expended targets 
-
-### Samtools Index
-Deep variant and other tools require a BAI
-#### input
-* bam [from left align]
-#### output
-* bai [bam index file]
-
-### Abra2 Realign
-#### input
-* bam [from left align]
-* bai [from samtools index]
-* targets [from expand targets]
-* reference [from extract ref]
-#### output
-* bam
-* bai
-
-### Deep Variant
-#### input
-* bam [from abra2 realign]
-* bai [from abra2 realign]
-* reference [workflow input]
-#### output
-* vcf
-* vcf_tbi
-
-### Samtools Stat [samtools_stat]
-#### input
-* bam [from abra2 realign]
-#### output
-* stats [samtools stat file]
-
 ## Outputs
-* gam [gam from run_giraffe]
-* gam_stats [stats from run_stats]
-* bam [bam from abra2 realign]
-* bai [bai from abra2 realign]
-* bam_stats [stats from samtools_stat]
-* vcf [vcf from deep variant]
-* vcf_tbi [vcf tbi from deep variant]
+See [inputs json](https://github.com/twlab/cig-pipelines/blob/main/wdl/pipelines/pangenome/wgs.outputs.yaml).
