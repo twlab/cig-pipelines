@@ -39,7 +39,7 @@ task run_deepvariant {
     test "${rv}" != "0" && ( printf "VCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
     printf "VCF PASS\n" 1>&2
     printf "Validating GVCF: %s\n" "~{output_gvcf}" 1>&2
-    bcftools view "${output_gvcf}" > /dev/null
+    bcftools view "~{output_gvcf}" > /dev/null
     rv=$?
     test "${rv}" != "0" && ( printf "GVCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
     printf "GVCF PASS\n" 1>&2
