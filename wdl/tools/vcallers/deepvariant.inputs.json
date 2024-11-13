@@ -2,8 +2,10 @@
   "deep_variant.sample": "{{SAMPLE}}",
   "deep_variant.bam": "{{BAM}}",
   "deep_variant.bai": "{{BAI}}",
-  "deep_variant.reference": "{{REF}}",
+  "deep_variant.ref_fasta": "{{REF_FASTA}}",
+  "deep_variant.ref_fai": "{{REF_FAI}}",
+  "deep_variant.ref_dict": "{{REF_DICT}}",
   "deep_variant.docker": "google/deepvariant:1.5.0",
-  "deep_variant.cpu": 9,
-  "deep_variant.memory": 48
+  "deep_variant.cpu": 8,
+  "deep_variant.memory": 96
 }

@@ -5,19 +5,21 @@ import "wdl/tasks/vcallers/deepvariant.wdl"
 
 workflow deep_variant {
   meta {
-      author: "Eddie Belter"
-      version: "0.1"
-      description: "Call variants with Deep Variant"
+    author: "Eddie Belter"
+    version: "1.2"
+    description: "Call variants with Deep Variant"
   }
 
   input {
-      String sample
-      File bam
-      File bai
-      File reference_tar
-      String docker = "google/deepvariant:1.6.0" # "google/deepvariant:1.5.0-gpu"
-      Int cpu = 9
-      Int memory = 48
+    String sample
+    File bam
+    File bai
+    File ref_fasta
+    File ref_fai
+    File ref_dict
+    String docker
+    Int cpu
+    Int memory
   }
 
   RunEnv runenv = {
@@ -26,17 +28,22 @@ workflow deep_variant {
     "memory": memory,
     "disks": 20,
   }
-  call deepvariant.run_deepvariant as dv { input:
-      sample=sample,
-      bam=bam,
-      bai=bai,
-      reference_tar=reference_tar,
-      runenv=runenv
+
+  call deepvariant.NEW_run_deepvariant as dv { input:
+    sample=sample,
+    bam=bam,
+    bai=bai,
+    ref_fasta=ref_fasta,
+    ref_fai=ref_fai,
+    ref_dict=ref_dict,
+    runenv=runenv,
   }
 
   output {
-      File vcf = dv.vcf
-      File vcf_tbi = dv.vcf_tbi
-      File report = dv.report
+    File vcf = dv.vcf
+    File vcf_tbi = dv.vcf_tbi
+    File gvcf = dv.gvcf
+    File gvcf_tbi = dv.gvcf_tbi
+    File report = dv.report
   }
 }
