@@ -59,7 +59,7 @@ task apply_haplotypes_to_graph {
   }
 }
 
-task generater_kmers_with_kmc {
+task generate_kmers_with_kmc {
   input {
     String sample
     Array[File] fastqs

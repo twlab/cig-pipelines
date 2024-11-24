@@ -145,7 +145,7 @@ workflow pangenome_wgs {
     }
   }
 
-  call haplotypes.generater_kmers_with_kmc as kmc { input:
+  call haplotypes.generate_kmers_with_kmc as kmc { input:
     sample=sample,
     fastqs=fastqs,
     runenv=runenv_kmc,

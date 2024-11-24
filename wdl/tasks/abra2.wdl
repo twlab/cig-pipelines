@@ -38,7 +38,8 @@ task run_realigner {
       --out ~{out_prefix}.indel_realigned.bam \
       --ref reference.fa \
       --index \
-      --threads ~{runenv.cpu}
+      --threads ~{runenv.cpu} \
+      --log warn
   >>>
 
   output {
