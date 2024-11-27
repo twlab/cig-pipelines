@@ -1,0 +1,13 @@
+{
+  "distortion_mapping.query_fasta": "{{QUERY_FASTA}}",
+  "distortion_mapping.reference_idx": "{{REF_FASTA}}",
+  "distortion_mapping.docker": "",
+  "distortion_mapping.cpu": 4,
+  "distortion_mapping.memory": 16,
+  "distortion_map.samtools_docker": "mgibio/samtools:1.15.1-buster",
+  "distortion_map.samtools_cpu": 1,
+  "distortion_map.samtools_memory": 4, 
+  "distortion_map.utils_docker": "ebelter/linux-tk:latest",
+  "distortion_map.utils_cpu": 1,
+  "distortion_map.utils_memory": 4 
+}
