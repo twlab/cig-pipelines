@@ -1,14 +1,17 @@
 version development
 
 import "wdl/structs/runenv.wdl"
+import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/samtools/split.wdl"
 import "wdl/tasks/wgsim.wdl"
 
-workflow distortion_mapping {
+workflow distortion_map {
     input {
+      String sample
       File query_fasta
       File reference_idx      # tar file with ref fasta, fai, adn aligner index
+      Array[String] chrs
       Float wgsim_base_error
       Int wgsim_out_distance
       Int wgsim_stdev
@@ -19,9 +22,10 @@ workflow distortion_mapping {
       Float wgsim_fraction_indels
       Float wgsim_prob_indel_extentsion
       Int wgsim_seed
-      String docker
-      Int cpu
-      Int memory
+      # Resources
+      String bwa_docker
+      Int bwa_cpu
+      Int bwa_memory
       String samtools_docker
       Int samtools_cpu
       Int samtools_memory
@@ -55,6 +59,13 @@ workflow distortion_mapping {
     "disks": 20,
   }
 
+  RunEnv bwa_runenv = {
+    "docker": bwa_docker,
+    "cpu": bwa_cpu,
+    "memory": bwa_memory,
+    "disks": 20,
+  }
+
   call idx.run_untar_idx as reference { input:
     idx=reference_idx,
     runenv=utils_runenv,
@@ -81,6 +92,21 @@ workflow distortion_mapping {
       prob_indel_extentsion=wgsim_prob_indel_extentsion,
       seed=wgsim_seed,
       runenv=wgsim_runenv,
+    }
+
+    call align.run_bwa_mem as align_to_query { input:
+      sample=sample,
+      library=sample+"-lib1",
+      fastqs=run_wgsim.simulated_fastqs,
+      reference=reference.path,
+      runenv=bwa_runenv,
+    }
+    call align.run_bwa_mem as align_to_ref { input:
+      sample=sample,
+      library=sample+"-lib1",
+      fastqs=run_wgsim.simulated_fastqs,
+      reference=reference.path,
+      runenv=bwa_runenv,
     }
   }
 }
