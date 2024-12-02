@@ -34,3 +34,26 @@ task run_slop {
       #disks: "local-disk " + in_call_disk + " SSD"
   }
 }
+
+task run_bam_to_bed {
+  input {
+    File bam
+    RunEnv runenv
+  }
+
+  String output_fn = sub(basename("~{bam}"), ".bam$", "bed")
+  command <<<
+    bedtools bamtobed -i ~{bam} > ~{output_fn}
+  >>>
+
+  output {
+      File bedfile = glob("~{output_fn}")[0]
+  }
+
+  runtime {
+      docker: runenv.docker
+      cpu: runenv.cpu
+      memory: runenv.memory + " GB"
+      #disks: "local-disk " + in_call_disk + " SSD"
+  }
+}

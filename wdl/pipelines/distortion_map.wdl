@@ -3,6 +3,7 @@ version development
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
+import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/samtools/split.wdl"
 import "wdl/tasks/wgsim.wdl"
 
@@ -26,6 +27,9 @@ workflow distortion_map {
       String bwa_docker
       Int bwa_cpu
       Int bwa_memory
+      String bedtools_docker
+      Int bedtools_cpu
+      Int bedtools_memory
       String samtools_docker
       Int samtools_cpu
       Int samtools_memory
@@ -63,6 +67,13 @@ workflow distortion_map {
     "docker": bwa_docker,
     "cpu": bwa_cpu,
     "memory": bwa_memory,
+    "disks": 20,
+  }
+
+  RunEnv bedtools_runenv = {
+    "docker": bedtools_docker,
+    "cpu": bedtools_cpu,
+    "memory": bedtools_memory,
     "disks": 20,
   }
 
@@ -108,5 +119,16 @@ workflow distortion_map {
       reference=reference.path,
       runenv=bwa_runenv,
     }
+
+    call bedtools.run_bam_to_bed as bam2bed_query { input:
+      bam=align_to_query.bam,
+      runenv=bedtools_runenv,
+    }
+    call bedtools.run_bam_to_bed as bam2bed_ref { input:
+      bam=align_to_ref.bam,
+      runenv=bedtools_runenv,
+    }
+
+
   }
 }
