@@ -127,9 +127,17 @@ workflow distortion_map {
     }
 
     # Extract Source Locations from FASTQs
-    call wgsim.extract_source_locations as r1_src_locations { input:
+    call wgsim.extract_source_locations as source_locations { input:
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       runenv=wgsim_runenv,
+    }
+    call liftover.run_liftover as liftover_source_positions_to_ref { input:
+      paf=query_to_ref_paf,
+      bed=source_locations.source_locations,
+      mapping_qual=5,
+      alignment_length=50000,
+      max_seq_divergence=1,
+      runenv=minimap2_runenv,
     }
 
     # REF
