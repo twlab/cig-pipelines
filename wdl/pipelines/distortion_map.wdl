@@ -126,11 +126,17 @@ workflow distortion_map {
       runenv=wgsim_runenv,
     }
 
+    # Extract Source Locations from FASTQs
+    call wgsim.extract_source_locations as r1_src_locations { input:
+      fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
+      runenv=wgsim_runenv,
+    }
+
     # REF
     call align.run_bwa_mem as align_to_ref { input:
       sample=sample,
       library=sample+"-lib1",
-      fastqs=run_wgsim.simulated_fastqs,
+      fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       reference=reference.path,
       runenv=bwa_runenv,
     }
@@ -143,7 +149,7 @@ workflow distortion_map {
     call align.run_bwa_mem as align_to_query { input:
       sample=sample,
       library=sample+"-lib1",
-      fastqs=run_wgsim.simulated_fastqs,
+      fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       reference=query.path,
       runenv=bwa_runenv,
     }

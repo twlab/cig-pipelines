@@ -26,7 +26,32 @@ task run_wgsim {
   >>>
 
   output {
-    Array[File] simulated_fastqs = glob("~{bn}.R*.fastq")
+    File simulated_r1_fastq = glob(fq1)
+    File simulated_r2_fastq = glob(fq2)
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: runenv.memory + " GB"
+    #disks : select_first([runenv.disks,"local-disk 100 SSD"])
+  }
+}
+
+task extract_source_locations {
+  input {
+    Array[File] fastqs
+    RunEnv runenv
+  }
+
+  command <<<
+    for fastq in ~{sep=" " fastqs}; do
+      grep "@" ${fastq} | sed s:"@":"":g | awk -F '_|/' '{print $1"\t"$2"\t"$3"\t"$7"\t"$0}' >> source_locations.txt
+    end
+  >>>
+
+  output {
+    File source_locations = glob("source_locations.txt")
   }
 
   runtime {
