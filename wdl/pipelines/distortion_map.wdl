@@ -4,6 +4,7 @@ import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
+import "wdl/tasks/minimap2/liftover.wdl"
 import "wdl/tasks/samtools/split.wdl"
 import "wdl/tasks/wgsim.wdl"
 
@@ -12,6 +13,7 @@ workflow distortion_map {
       String sample
       File query_idx          # tar file with ref fasta, fai, and aligner index
       File reference_idx      # tar file with ref fasta, fai, and aligner index
+      File query_to_ref_paf
       Array[String] chrs
       Float wgsim_base_error
       Int wgsim_out_distance
@@ -30,6 +32,9 @@ workflow distortion_map {
       String bedtools_docker
       Int bedtools_cpu
       Int bedtools_memory
+      String minimap2_docker
+      Int minimap2_cpu
+      Int minimap2_memory
       String samtools_docker
       Int samtools_cpu
       Int samtools_memory
@@ -74,6 +79,13 @@ workflow distortion_map {
     "docker": bedtools_docker,
     "cpu": bedtools_cpu,
     "memory": bedtools_memory,
+    "disks": 20,
+  }
+
+  RunEnv minimap2_runenv = {
+    "docker": minimap2_docker,
+    "cpu": minimap2_cpu,
+    "memory": minimap2_memory,
     "disks": 20,
   }
 
@@ -138,6 +150,14 @@ workflow distortion_map {
     call bedtools.run_bam_to_bed as bam2bed_query { input:
       bam=align_to_query.bam,
       runenv=bedtools_runenv,
+    }
+    call liftover.run_liftover as liftover_query_to_ref { input:
+      paf=query_to_ref_paf,
+      bed=bam2bed_query.bedfile,
+      mapping_qual=5,
+      alignment_length=50000,
+      max_seq_divergence=1,
+      runenv=minimap2_runenv,
     }
   }
 }
