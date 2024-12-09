@@ -10,8 +10,8 @@ import "wdl/tasks/wgsim.wdl"
 workflow distortion_map {
     input {
       String sample
-      File query_fasta
-      File reference_idx      # tar file with ref fasta, fai, adn aligner index
+      File query_idx          # tar file with ref fasta, fai, and aligner index
+      File reference_idx      # tar file with ref fasta, fai, and aligner index
       Array[String] chrs
       Float wgsim_base_error
       Int wgsim_out_distance
@@ -77,19 +77,28 @@ workflow distortion_map {
     "disks": 20,
   }
 
+  # Untar the Indexes
   call idx.run_untar_idx as reference { input:
     idx=reference_idx,
     runenv=utils_runenv,
   }
 
+  call idx.run_untar_idx as query { input:
+    idx=query_idx,
+    runenv=utils_runenv,
+  }
+
+  # Split the QUERY FASTA by Chromosome
   call split.run_split_by_chromosome as splitter { input:
-    fasta=reference.fasta,
-    fai=reference.fai,
+    fasta=query.fasta,
+    fai=query.fai,
     chrs=chrs,
     runenv=samtools_runenv,
   }
 
+  # Process Each QUERY Chromosome
   scatter (chromosome_fasta in splitter.chromosome_fastas) {
+    # Simulate reads from query chromosome
     call wgsim.run_wgsim { input:
       fasta=chromosome_fasta,
       base_error=wgsim_base_error,
@@ -105,13 +114,7 @@ workflow distortion_map {
       runenv=wgsim_runenv,
     }
 
-    call align.run_bwa_mem as align_to_query { input:
-      sample=sample,
-      library=sample+"-lib1",
-      fastqs=run_wgsim.simulated_fastqs,
-      reference=reference.path,
-      runenv=bwa_runenv,
-    }
+    # REF
     call align.run_bwa_mem as align_to_ref { input:
       sample=sample,
       library=sample+"-lib1",
@@ -119,16 +122,22 @@ workflow distortion_map {
       reference=reference.path,
       runenv=bwa_runenv,
     }
-
-    call bedtools.run_bam_to_bed as bam2bed_query { input:
-      bam=align_to_query.bam,
-      runenv=bedtools_runenv,
-    }
     call bedtools.run_bam_to_bed as bam2bed_ref { input:
       bam=align_to_ref.bam,
       runenv=bedtools_runenv,
     }
 
-
+    # QUERY
+    call align.run_bwa_mem as align_to_query { input:
+      sample=sample,
+      library=sample+"-lib1",
+      fastqs=run_wgsim.simulated_fastqs,
+      reference=query.path,
+      runenv=bwa_runenv,
+    }
+    call bedtools.run_bam_to_bed as bam2bed_query { input:
+      bam=align_to_query.bam,
+      runenv=bedtools_runenv,
+    }
   }
 }
