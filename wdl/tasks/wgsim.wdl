@@ -38,7 +38,7 @@ task run_wgsim {
   }
 }
 
-task extract_source_locations {
+task extract_source_positions {
   input {
     Array[File] fastqs
     RunEnv runenv
@@ -46,12 +46,12 @@ task extract_source_locations {
 
   command <<<
     for fastq in ~{sep=" " fastqs}; do
-      grep "@" ${fastq} | sed s:"@":"":g | awk -F '_|/' '{print $1"\t"$2"\t"$3"\t"$7"\t"$0}' >> source_locations.txt
+      grep "@" ${fastq} | sed s:"@":"":g | awk -F '_|/' '{print $1"\t"$2"\t"$3"\t"$7"\t"$0}' >> source_positions.txt
     end
   >>>
 
   output {
-    File source_locations = glob("source_locations.txt")
+    File source_positions = glob("source_positions.txt")[0]
   }
 
   runtime {

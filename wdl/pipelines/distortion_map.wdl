@@ -4,6 +4,7 @@ import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
+import "wdl/tasks/distortion_map.wdl"
 import "wdl/tasks/minimap2/liftover.wdl"
 import "wdl/tasks/samtools/split.wdl"
 import "wdl/tasks/wgsim.wdl"
@@ -32,6 +33,9 @@ workflow distortion_map {
       String bedtools_docker
       Int bedtools_cpu
       Int bedtools_memory
+      String distortion_map_docker
+      Int distortion_map_cpu
+      Int distortion_map_memory
       String minimap2_docker
       Int minimap2_cpu
       Int minimap2_memory
@@ -89,6 +93,13 @@ workflow distortion_map {
     "disks": 20,
   }
 
+  RunEnv distortion_map_runenv = {
+    "docker": distortion_map_docker,
+    "cpu": distortion_map_cpu,
+    "memory": distortion_map_memory,
+    "disks": 20,
+  }
+
   # Untar the Indexes
   call idx.run_untar_idx as reference { input:
     idx=reference_idx,
@@ -127,13 +138,13 @@ workflow distortion_map {
     }
 
     # Extract Source Locations from FASTQs
-    call wgsim.extract_source_locations as source_locations { input:
+    call wgsim.extract_source_positions { input:
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       runenv=wgsim_runenv,
     }
     call liftover.run_liftover as liftover_source_positions_to_ref { input:
       paf=query_to_ref_paf,
-      bed=source_locations.source_locations,
+      bed=extract_source_positions.source_positions,
       mapping_qual=5,
       alignment_length=50000,
       max_seq_divergence=1,
@@ -165,13 +176,23 @@ workflow distortion_map {
       bam=align_to_query.bam,
       runenv=bedtools_runenv,
     }
-    call liftover.run_liftover as liftover_query_to_ref { input:
+    call liftover.run_liftover as liftover_query_alignments_to_ref { input:
       paf=query_to_ref_paf,
       bed=bam2bed_query.bedfile,
       mapping_qual=5,
       alignment_length=50000,
       max_seq_divergence=1,
       runenv=minimap2_runenv,
+    }
+
+    # Load the Database
+    call distortion_map.load_db { input:
+      source_positions=extract_source_positions.source_positions,
+      lifted_source=liftover_source_positions_to_ref.bedfile,
+      aligned_ref=bam2bed_ref.bedfile,
+      aligned_source=bam2bed_query.bedfile,
+      lifted_aligned_source=liftover_query_alignments_to_ref.bedfile,
+      runenv=distortion_map_runenv,
     }
   }
 }

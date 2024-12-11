@@ -47,13 +47,13 @@ task run_bam_to_bed {
   >>>
 
   output {
-      File bedfile = glob("~{output_fn}")[0]
+    File bedfile = glob(output_fn)[0]
   }
 
   runtime {
-      docker: runenv.docker
-      cpu: runenv.cpu
-      memory: runenv.memory + " GB"
-      #disks: "local-disk " + in_call_disk + " SSD"
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: runenv.memory + " GB"
+    #disks: "local-disk " + in_call_disk + " SSD"
   }
 }
