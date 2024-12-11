@@ -9,6 +9,7 @@ workflow pangenome_mcgb {
     String ref
     File seqfile
     Array[String] graph_types = ["clip", "full"]
+    Boolean run_panacus= true
     String docker = "mgibio/cactus:2.5.0-focal"
     Int cpu
     Int memory
@@ -67,10 +68,12 @@ workflow pangenome_mcgb {
     runenv=runenv_mcgb,
   }
 
-  scatter (gfa_gz in run_cactus_graphmap_join.gfa) {
-    call panacus.run_panacus_hist as panacus { input:
-      gfa_gz=gfa_gz,
-      runenv=runenv_panacus,
+  if ( run_panacus ) {
+    scatter (gfa_gz in run_cactus_graphmap_join.gfa) {
+      call panacus.run_panacus_hist as panacus { input:
+        gfa_gz=gfa_gz,
+        runenv=runenv_panacus,
+      }
     }
   }
 }

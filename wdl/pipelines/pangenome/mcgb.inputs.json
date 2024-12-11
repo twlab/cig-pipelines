@@ -3,6 +3,7 @@
     "pangenome_mcgb.seqfile": "{{SEQFILE}}",
     "pangenome_mcgb.ref": "{{REF}}",
     "pangenome_mcgb.graph_types": ["clip", "full"],
+    "pangenome_mcgb.run_panacus": true,
     "pangenome_mcgb.docker": "mgibio/cactus:2.5.0-focal",
     "pangenome_mcgb.cpu": 16,
     "pangenome_mcgb.memory": 96
