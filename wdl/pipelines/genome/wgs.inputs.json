@@ -11,7 +11,7 @@
   "genome_wgs.abra2_docker": "mgibio/abra2:v2.23-focal",
   "genome_wgs.abra2_cpu": 2,
   "genome_wgs.abra2_memory": 20,
-  "genome_wgs.bwa_docker": "ebelter/bwa:0.7.17",
+  "genome_wgs.bwa_docker": "mgibio/bwa:0.7.17",
   "genome_wgs.bwa_cpu": 8,
   "genome_wgs.bwa_memory": 48, 
   "genome_wgs.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",

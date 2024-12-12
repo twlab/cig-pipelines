@@ -23,7 +23,7 @@ workflow bwa_build_idx {
     input {
         String name
         File fasta_gz
-        String docker = "ebelter/bwa:0.7.17"
+        String docker = "mgibio/bwa:0.7.17"
         Int cpu = 2
         Int memory = 8
     }

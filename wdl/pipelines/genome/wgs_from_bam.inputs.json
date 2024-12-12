@@ -4,7 +4,7 @@
   "genome_wgs_from_bam.idx": "{{IDX}}",
   "genome_wgs_from_bam.targets_expansion_bases": 160,
   "genome_wgs_from_bam.abra2_docker": "mgibio/abra2:v2.23-focal",
-  "genome_wgs_from_bam.bwa_docker": "ebelter/bwa:0.7.17",
+  "genome_wgs_from_bam.bwa_docker": "mgibio/bwa:0.7.17",
   "genome_wgs_from_bam.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",
   "genome_wgs_from_bam.deepvariant_docker": "google/deepvariant:1.5.0",
   "genome_wgs_from_bam.freebayes_docker": "mgibio/freebayes:1.3.6-focal",

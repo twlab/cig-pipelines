@@ -23,7 +23,7 @@ workflow genome_wgs_from_bam {
     Int targets_expansion_bases = 160
     # dockers
     String abra2_docker = "mgibio/abra2:v2.24-focal"
-    String bwa_docker = "ebelter/bwa:0.7.17"
+    String bwa_docker = "mgibio/bwa:0.7.17"
     String bedtools_docker = "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1"
     String deepvariant_docker = "google/deepvariant:1.5.0"
     String freebayes_docker = "mgibio/freebayes:1.3.6-focal"

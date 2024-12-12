@@ -15,7 +15,7 @@ workflow bwa_align {
         String name
         Array[File] fastqs
         File reference
-        String docker = "ebelter/bwa:0.7.17"
+        String docker = "mgibio/bwa:0.7.17"
         Int cpu = 8
         Int memory = 48
     }
