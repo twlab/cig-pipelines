@@ -36,5 +36,5 @@
   "pangenome_wgs.vg_docker": "quay.io/vgteam/vg:v1.55.0",
   "pangenome_wgs.vg_cpu": 12,
   "pangenome_wgs.vg_memory": 64,
-  "pangenome_wgs.utils_docker": "ebelter/linux-tk:latest"
+  "pangenome_wgs.utils_docker": "mgibio/linux-tk:latest"
 }

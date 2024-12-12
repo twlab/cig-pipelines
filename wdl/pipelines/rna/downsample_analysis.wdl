@@ -48,7 +48,7 @@ workflow downsample_analysis {
   }
 
   RunEnv linuxtk_runenv = {
-    "docker": "ebelter/linux-tk:latest",
+    "docker": "mgibio/linux-tk:latest",
     "cpu": 1,
     "memory": 4,
     "disks": 20,

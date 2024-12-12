@@ -33,7 +33,7 @@ workflow realign_and_dv {
 
   # RunEnvs in order of usage
   RunEnv runenv_idx = {
-    "docker": "ebelter/linux-tk:latest",
+    "docker": "mgibio/linux-tk:latest",
     "cpu": 1,
     "memory": 4,
     "disks": 20,

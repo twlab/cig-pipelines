@@ -15,7 +15,7 @@ workflow pangenie_genotyper {
   }
 
   RunEnv runenv_cat = {
-    "docker": "ebelter/linux-tk:latest",
+    "docker": "mgibio/linux-tk:latest",
     "cpu": 1,
     "memory": 4,
     "disks": 10,

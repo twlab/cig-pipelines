@@ -12,7 +12,7 @@ workflow untar_idx {
 
     input {
         File idx
-        String docker = "ebelter/linux-tk:latest"
+        String docker = "mgibio/linux-tk:latest"
         Int cpu = 1
         Int memory = 4
     }

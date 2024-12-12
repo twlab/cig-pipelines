@@ -33,7 +33,7 @@ workflow genome_wgs_from_bam {
 
   # RunEnvs in order of usage
   RunEnv idx_runenv = {
-    "docker": "ebelter/linux-tk:latest",
+    "docker": "mgibio/linux-tk:latest",
     "cpu": 1,
     "memory": 4,
     "disks": 20,
