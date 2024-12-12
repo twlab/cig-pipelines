@@ -4,11 +4,11 @@ import "../structs/runenv.wdl"
 
 task load_db {
   input {
-    Array[File] source_positions
-    Array[File] lifted_source
-    Array[File] aligned_ref
-    Array[File] aligned_source
-    Array[File] lifted_aligned_source
+    File source_positions
+    File lifted_source
+    File aligned_ref
+    File aligned_source
+    File lifted_aligned_source
     RunEnv runenv
   }
 
