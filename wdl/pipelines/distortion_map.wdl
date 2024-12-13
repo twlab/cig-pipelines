@@ -4,10 +4,10 @@ import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
-import "wdl/tasks/distortion_map.wdl"
+import "wdl/tasks/distortion_map/db.wdl"
+import "wdl/tasks/distortion_map/wgsim.wdl"
 import "wdl/tasks/minimap2/liftover.wdl"
 import "wdl/tasks/samtools/split.wdl"
-import "wdl/tasks/wgsim.wdl"
 
 workflow distortion_map {
     input {
@@ -186,7 +186,7 @@ workflow distortion_map {
     }
 
     # Load the Database
-    call distortion_map.load_db { input:
+    call db.load_db { input:
       source_positions=extract_source_positions.source_positions,
       lifted_source=liftover_source_positions_to_ref.bedfile,
       aligned_ref=bam2bed_ref.bedfile,
