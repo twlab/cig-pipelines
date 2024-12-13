@@ -41,7 +41,7 @@ task run_bam_to_bed {
     RunEnv runenv
   }
 
-  String output_fn = sub(basename("~{bam}"), ".bam$", "bed")
+  String output_fn = sub(basename("~{bam}"), ".bam$", ".bed")
   command <<<
     bedtools bamtobed -i ~{bam} > ~{output_fn}
   >>>

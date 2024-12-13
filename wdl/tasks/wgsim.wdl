@@ -26,8 +26,8 @@ task run_wgsim {
   >>>
 
   output {
-    File simulated_r1_fastq = glob(fq1)
-    File simulated_r2_fastq = glob(fq2)
+    File simulated_r1_fastq = glob(fq1)[0]
+    File simulated_r2_fastq = glob(fq2)[0]
   }
 
   runtime {
@@ -46,8 +46,8 @@ task extract_source_positions {
 
   command <<<
     for fastq in ~{sep=" " fastqs}; do
-      grep "@" ${fastq} | sed s:"@":"":g | awk -F '_|/' '{print $1"\t"$2"\t"$3"\t"$7"\t"$0}' >> source_positions.txt
-    end
+      grep "@" ${fastq} | sed s:"@":"":g | awk -F '_|/' '{print $1"\t"$2"\t"$3"\t"$7"\t"$0}' >> source_positions.txt;
+    done
   >>>
 
   output {

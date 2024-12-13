@@ -19,7 +19,7 @@ task run_liftover {
   #  -d FLOAT  max sequence divergence (>=1 to disable) [1]
   String bedfile = basename(paf, "paf") + "liftover.bed"
   command <<<
-    paftools.js liftover -q ~{mapping_qual} -l ~{alignment_length} - d ~{max_seq_divergence} ~{paf} ~{bed} > ~{bedfile}
+    paftools.js liftover -q ~{mapping_qual} -l ~{alignment_length} -d ~{max_seq_divergence} ~{paf} ~{bed} > ~{bedfile}
   >>>
 
   output {

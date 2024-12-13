@@ -2,7 +2,7 @@ version development
 
 # these tasks require samtools
 
-import "../structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task run_split_by_chromosome {
   input {
