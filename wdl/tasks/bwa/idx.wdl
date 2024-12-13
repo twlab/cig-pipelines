@@ -44,9 +44,10 @@ task run_untar_idx {
 
     output {
         Directory path = "ref"
+        File dict = glob("ref/*.dict")[0]
         File fasta = glob("ref/*.fasta")[0]
         File fai = glob("ref/*.fasta.fai")[0]
-        File dict = glob("ref/*.dict")[0]
+        File sizes = glob("ref/*.sizes")[0]
 		}
 
     runtime {

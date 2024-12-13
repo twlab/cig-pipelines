@@ -5,6 +5,7 @@ import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/distortion_map/db.wdl"
+import "wdl/tasks/distortion_map/intervals.wdl"
 import "wdl/tasks/distortion_map/wgsim.wdl"
 import "wdl/tasks/minimap2/liftover.wdl"
 import "wdl/tasks/samtools/split.wdl"
@@ -151,7 +152,7 @@ workflow distortion_map {
       runenv=minimap2_runenv,
     }
 
-    # REF
+    # Align Sim Reads to REF
     call align.run_bwa_mem as align_to_ref { input:
       sample=sample,
       library=sample+"-lib1",
@@ -164,7 +165,7 @@ workflow distortion_map {
       runenv=bedtools_runenv,
     }
 
-    # QUERY
+    # Align Sim Reads to QUERY
     call align.run_bwa_mem as align_to_query { input:
       sample=sample,
       library=sample+"-lib1",
@@ -194,5 +195,17 @@ workflow distortion_map {
       lifted_aligned_source=liftover_query_alignments_to_ref.bedfile,
       runenv=distortion_map_runenv,
     }
+
+    # Create the Intervals
+    call intervals.create_intervals { input:
+      db=load_db.db,
+      reference_sizes=reference.sizes,
+      window_length=100000,
+      window_stride=100000,
+      runenv=distortion_map_runenv,
+    }
+    #File reference_intervals = glob("reference_intervals.tsv")[0]
+    #File simulated_intervals = glob("simulated_intervals.tsv")[0]
+    #File source_sizes = glob("source_sizes.tsv")[0]
   }
 }
