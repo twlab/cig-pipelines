@@ -1,6 +1,6 @@
 version development
 
-import "../structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
 task load_db {
   input {
