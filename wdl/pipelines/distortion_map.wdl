@@ -5,6 +5,7 @@ import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/distortion_map/db.wdl"
+import "wdl/tasks/distortion_map/coverage.wdl"
 import "wdl/tasks/distortion_map/intervals.wdl"
 import "wdl/tasks/distortion_map/wgsim.wdl"
 import "wdl/tasks/minimap2/liftover.wdl"
@@ -207,5 +208,19 @@ workflow distortion_map {
     #File reference_intervals = glob("reference_intervals.tsv")[0]
     #File simulated_intervals = glob("simulated_intervals.tsv")[0]
     #File source_sizes = glob("source_sizes.tsv")[0]
+
+    # Generate Coverages
+    call coverage.generate_simulated_coverage { input:
+      db=load_db.db,
+      simulated_intervals=create_intervals.simulated_intervals,
+      batch_size=100000,
+      runenv=distortion_map_runenv,
+    }
+
+    call coverage.generate_simulated_no_lift_over_coverage { input:
+      db=load_db.db,
+      simulated_intervals=create_intervals.simulated_intervals,
+      runenv=distortion_map_runenv,
+    }
   }
 }

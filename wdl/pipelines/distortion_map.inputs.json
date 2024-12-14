@@ -22,7 +22,7 @@
   "distortion_map.bwa_memory": 48,
   "distortion_map.distortion_map_docker": "mgibio/distortionmap:v0.1-bookworm",
   "distortion_map.distortion_map_cpu": 2,
-  "distortion_map.distortion_map_memory": 96,
+  "distortion_map.distortion_map_memory": 24,
   "distortion_map.minimap2_docker": "mgibio/minimap2:2.26-buster",
   "distortion_map.minimap2_cpu": 2,
   "distortion_map.minimap2_memory": 24,
