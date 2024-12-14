@@ -5,6 +5,7 @@ import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/distortion_map/db.wdl"
+import "wdl/tasks/distortion_map/count_matrices.wdl"
 import "wdl/tasks/distortion_map/coverage.wdl"
 import "wdl/tasks/distortion_map/intervals.wdl"
 import "wdl/tasks/distortion_map/wgsim.wdl"
@@ -99,6 +100,13 @@ workflow distortion_map {
     "docker": distortion_map_docker,
     "cpu": distortion_map_cpu,
     "memory": distortion_map_memory,
+    "disks": 20,
+  }
+
+  RunEnv distortion_map_threaded_runenv = {
+    "docker": distortion_map_docker,
+    "cpu": distortion_map_cpu * 4,
+    "memory": distortion_map_memory * 2,
     "disks": 20,
   }
 
@@ -221,6 +229,13 @@ workflow distortion_map {
       db=load_db.db,
       simulated_intervals=create_intervals.simulated_intervals,
       runenv=distortion_map_runenv,
+    }
+
+    # Count Matrices
+    call count_matrices.generate_count_matrices { input:
+      db=load_db.db,
+      reference_intervals=create_intervals.reference_intervals,
+      runenv=distortion_map_threaded_runenv,
     }
   }
 }
