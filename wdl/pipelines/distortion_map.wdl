@@ -213,9 +213,6 @@ workflow distortion_map {
       window_stride=100000,
       runenv=distortion_map_runenv,
     }
-    #File reference_intervals = glob("reference_intervals.tsv")[0]
-    #File simulated_intervals = glob("simulated_intervals.tsv")[0]
-    #File source_sizes = glob("source_sizes.tsv")[0]
 
     # Generate Coverages
     call coverage.generate_simulated_coverage { input:
