@@ -15,7 +15,7 @@ task generate_simulated_coverage {
   #--output_file      Output file for the simulated coverage in BED format.
   # --batch_size      Batch size for processing source positions.
   command <<<
-    /scratch/hllab/Juan/JuanMacias_General_Code/DistortionMapping/calculate_simulated_source_coverage.py \
+    /apps/scripts/calculate_simulated_source_coverage.py \
       --db ~{db} \
       --intervals_file ~{simulated_intervals} \
       --batch_size ~{batch_size} \

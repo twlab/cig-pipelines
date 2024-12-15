@@ -103,13 +103,6 @@ workflow distortion_map {
     "disks": 20,
   }
 
-  RunEnv distortion_map_threaded_runenv = {
-    "docker": distortion_map_docker,
-    "cpu": distortion_map_cpu * 4,
-    "memory": distortion_map_memory * 2,
-    "disks": 20,
-  }
-
   # Untar the Indexes
   call idx.run_untar_idx as reference { input:
     idx=reference_idx,
@@ -162,11 +155,11 @@ workflow distortion_map {
     }
 
     # Align Sim Reads to REF
-    call align.run_bwa_mem as align_to_ref { input:
+    call align.run_bwa_mem2 as align_to_ref { input:
       sample=sample,
       library=sample+"-lib1",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
-      reference=reference.path,
+      idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa], 
       runenv=bwa_runenv,
     }
     call bedtools.run_bam_to_bed as bam2bed_ref { input:
@@ -232,7 +225,7 @@ workflow distortion_map {
     call count_matrices.generate_count_matrices { input:
       db=load_db.db,
       reference_intervals=create_intervals.reference_intervals,
-      runenv=distortion_map_threaded_runenv,
+      runenv=distortion_map_runenv,
     }
   }
 }

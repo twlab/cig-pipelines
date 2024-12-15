@@ -48,6 +48,11 @@ task run_untar_idx {
         File fasta = glob("ref/*.fasta")[0]
         File fai = glob("ref/*.fasta.fai")[0]
         File sizes = glob("ref/*.sizes")[0]
+        File amb = glob("ref/*.amb")[0]
+        File ann = glob("ref/*.ann")[0]
+        File bwt = glob("ref/*.bwt")[0]
+        File pac = glob("ref/*.pac")[0]
+        File sa = glob("ref/*.sa")[0]
 		}
 
     runtime {
