@@ -7,6 +7,7 @@ import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/distortion_map/db.wdl"
 import "wdl/tasks/distortion_map/count_matrices.wdl"
 import "wdl/tasks/distortion_map/coverage.wdl"
+import "wdl/tasks/distortion_map/distortion_metrics.wdl"
 import "wdl/tasks/distortion_map/intervals.wdl"
 import "wdl/tasks/distortion_map/wgsim.wdl"
 import "wdl/tasks/minimap2/liftover.wdl"
@@ -207,7 +208,6 @@ workflow distortion_map {
       runenv=distortion_map_runenv,
     }
 
-    # Generate Coverages
     call coverage.generate_simulated_coverage { input:
       db=load_db.db,
       simulated_intervals=create_intervals.simulated_intervals,
@@ -221,10 +221,16 @@ workflow distortion_map {
       runenv=distortion_map_runenv,
     }
 
-    # Count Matrices
-    call count_matrices.generate_count_matrices { input:
+    call count_matrices.generate_count_matrices as count_mtx { input:
       db=load_db.db,
       reference_intervals=create_intervals.reference_intervals,
+      runenv=distortion_map_runenv,
+    }
+
+    call distortion_metrics.calculate_distortion_metrics { input:
+      normalized_aligned_reference_matrix=count_mtx.aligned_reference_count_matrix,
+      normalized_lifted_aligned_source_matrix=count_mtx.lifted_aligned_source_count_matrix,
+      interval_mapping=count_mtx.interval_mapping,
       runenv=distortion_map_runenv,
     }
   }

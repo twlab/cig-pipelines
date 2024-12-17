@@ -24,8 +24,8 @@ task generate_count_matrices {
   >>>
 
   output {
-    File aligned_reference_count = glob("aligned_reference_count.mtx")[0]
-    File lifted_aligned_source_count = glob("lifted_aligned_source_count.mtx")[0]
+    File aligned_reference_count_matrix = glob("aligned_reference_count.mtx")[0]
+    File lifted_aligned_source_count_matrix = glob("lifted_aligned_source_count.mtx")[0]
     File interval_mapping = glob("interval_mapping.tsv")[0]
   }
 
