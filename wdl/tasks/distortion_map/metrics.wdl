@@ -2,7 +2,7 @@ version development
 
 import "../../structs/runenv.wdl"
 
-task calculate_distortion_metrics {
+task calculate {
   input {
     File normalized_aligned_reference_matrix
     File normalized_lifted_aligned_source_matrix
@@ -16,11 +16,11 @@ task calculate_distortion_metrics {
   # --output_file OUTPUT_FILE                   Path to the output file (TSV format).
   String output_fn = "distortion_metrics.tsv"
   command <<<
-    /apps/scritps/calculate_distortion_metrics.py \
-    --normalized_aligned_reference_matrix ~{normalized_aligned_reference_matrix} \
-    --normalized_lifted_aligned_source_matrix ~{normalized_lifted_aligned_source_matrix} \
-    --intervals_file ~{interval_mapping} \
-    --output_file 
+    /apps/scripts/calculate_distortion_metrics.py \
+      --normalized_aligned_reference_matrix ~{normalized_aligned_reference_matrix} \
+      --normalized_lifted_aligned_source_matrix ~{normalized_lifted_aligned_source_matrix} \
+      --intervals_file ~{interval_mapping} \
+      --output_file ~{output_fn}
   >>>
 
   output {

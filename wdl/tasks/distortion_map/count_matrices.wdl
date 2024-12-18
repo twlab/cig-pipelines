@@ -2,7 +2,7 @@ version development
 
 import "../../structs/runenv.wdl"
 
-task generate_count_matrices {
+task generate {
   input {
     File db
     File reference_intervals
@@ -27,6 +27,33 @@ task generate_count_matrices {
     File aligned_reference_count_matrix = glob("aligned_reference_count.mtx")[0]
     File lifted_aligned_source_count_matrix = glob("lifted_aligned_source_count.mtx")[0]
     File interval_mapping = glob("interval_mapping.tsv")[0]
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: "~{runenv.memory} GB"
+    #disks: runenv.disks
+  }
+}
+
+task merge {
+  input {
+    Array[File] matrices
+    String output_fn
+    RunEnv runenv
+  }
+
+  #--matrix_file_list  Path to the file containing a list of matrix files. (FOF)
+  #--output_file       Path to save the merged matrix in .mtx format.
+  command <<<
+    /apps/scripts/merge_count_matrices.py \
+    --matrix_file_list ~{write_lines(matrices)} \
+    --output_file ~{output_fn}
+  >>>
+
+  output {
+    File matrix = glob("~{output_fn}")[0]
   }
 
   runtime {

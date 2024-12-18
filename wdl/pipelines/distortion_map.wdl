@@ -7,7 +7,7 @@ import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/distortion_map/db.wdl"
 import "wdl/tasks/distortion_map/count_matrices.wdl"
 import "wdl/tasks/distortion_map/coverage.wdl"
-import "wdl/tasks/distortion_map/distortion_metrics.wdl"
+import "wdl/tasks/distortion_map/metrics.wdl"
 import "wdl/tasks/distortion_map/intervals.wdl"
 import "wdl/tasks/distortion_map/wgsim.wdl"
 import "wdl/tasks/minimap2/liftover.wdl"
@@ -155,7 +155,7 @@ workflow distortion_map {
       runenv=minimap2_runenv,
     }
 
-    # Align Sim Reads to REF
+    # Align Sim Reads to REF then Convert Alignments to BED
     call align.run_bwa_mem2 as align_to_ref { input:
       sample=sample,
       library=sample+"-lib1",
@@ -168,12 +168,12 @@ workflow distortion_map {
       runenv=bedtools_runenv,
     }
 
-    # Align Sim Reads to QUERY
-    call align.run_bwa_mem as align_to_query { input:
+    # Align Sim Reads to QUERY then Convert Alignments to BED & Lift Over
+    call align.run_bwa_mem2 as align_to_query { input:
       sample=sample,
       library=sample+"-lib1",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
-      reference=query.path,
+      idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa], 
       runenv=bwa_runenv,
     }
     call bedtools.run_bam_to_bed as bam2bed_query { input:
@@ -189,7 +189,6 @@ workflow distortion_map {
       runenv=minimap2_runenv,
     }
 
-    # Load the Database
     call db.load_db { input:
       source_positions=extract_source_positions.source_positions,
       lifted_source=liftover_source_positions_to_ref.bedfile,
@@ -199,7 +198,6 @@ workflow distortion_map {
       runenv=distortion_map_runenv,
     }
 
-    # Create the Intervals
     call intervals.create_intervals { input:
       db=load_db.db,
       reference_sizes=reference.sizes,
@@ -221,17 +219,34 @@ workflow distortion_map {
       runenv=distortion_map_runenv,
     }
 
-    call count_matrices.generate_count_matrices as count_mtx { input:
+    call count_matrices.generate as count_mtx { input:
       db=load_db.db,
       reference_intervals=create_intervals.reference_intervals,
       runenv=distortion_map_runenv,
     }
+  }
 
-    call distortion_metrics.calculate_distortion_metrics { input:
-      normalized_aligned_reference_matrix=count_mtx.aligned_reference_count_matrix,
-      normalized_lifted_aligned_source_matrix=count_mtx.lifted_aligned_source_count_matrix,
-      interval_mapping=count_mtx.interval_mapping,
-      runenv=distortion_map_runenv,
-    }
+  call count_matrices.merge as merge_ref_matrices { input:
+    matrices=count_mtx.aligned_reference_count_matrix,
+    output_fn="merged.ref.mtx",
+    runenv=distortion_map_runenv,
+  }
+  
+  call count_matrices.merge as merge_src_matrices { input:
+    matrices=count_mtx.lifted_aligned_source_count_matrix,
+    output_fn="merged.src.mtx",
+    runenv=distortion_map_runenv,
+  }
+
+  call intervals.merge as merge_intervals { input:
+    intervals=count_mtx.interval_mapping,
+    runenv=distortion_map_runenv,
+  }
+
+  call metrics.calculate as calulate_metrics { input:
+    normalized_aligned_reference_matrix=merge_ref_matrices.matrix,
+    normalized_lifted_aligned_source_matrix=merge_src_matrices.matrix,
+    interval_mapping=merge_intervals.merged_intervals,
+    runenv=distortion_map_runenv,
   }
 }

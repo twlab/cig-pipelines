@@ -43,3 +43,30 @@ task create_intervals {
     #disks: runenv.disks
   }
 }
+
+task merge {
+  input {
+    Array[File] intervals
+    RunEnv runenv
+  }
+
+  command <<<
+    for f in ~{sep=' ' intervals}; do
+      echo "${f}" >> intervals.fof
+    done
+    /apps/scripts/merge_interval_files.py \
+    intervals.fof \
+    merged_intervals.tsv
+  >>>
+
+  output {
+    File merged_intervals = glob("merged_intervals.tsv")[0]
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: "~{runenv.memory} GB"
+    #disks: runenv.disks
+  }
+}
