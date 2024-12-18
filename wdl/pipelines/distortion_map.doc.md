@@ -8,38 +8,48 @@ title: Distortion Map Pipeline
 ---
 flowchart TB;
   i1([Query FASTA]);
+  i2([Chromsomes]);
 
   s1[[Split Query by Chromosome]];
-  s2[[Generate Simulated Reads]];
-  s31[[Map Reads to Query]];
-  s32[[Map Reads to Ref]];
-  s41[[BAM to BED]];
+  s21[[Generate Simulated Reads]];
+  s22[[Extract Source Poistions]];
+  s23[[Liftover Sorce Poisitons to REF]];
+
+  s31[[Map Reads to Ref]];
+  s32[[BAM to BED]];
+
+  s41[[Map Reads to Query]];
   s42[[BAM to BED]];
-  s51[[Liftover]];
-  s52[[Liftover]];
+  s43[[Liftover Alignments to REF]];
+
   s61[[Integrate Data into SQL Database]];
-  s62[[Integrate Data into SQL Database]];
-  s71[[Generate & Process Intervals]];
-  s72[[Generate & Process Intervals]];
-  s8[[Generate & Normalize Count Matrices]];
-  s9[[Calculate Distortion Metrics]];
+  s62[[Create Intervals]]
+  s63[[Generate Count Matrices]];
 
-  o1([Graph])
+  s101[[Merge & Normalize Count Matrices and Merge Intervals]];
+  s102[[Calculate Distortion Metrics]];
 
-  i1-->s1;
-  s1--Query Chromosome FASTAs-->s2;
+  o1([Metrics]);
+ 
+  i1-->s1; i2-->s1;
+  s1--Query Chromosome FASTAs-->s21;
   subgraph sg1 ["SCATTER BY CHROMOSOME"]
-    s2-->s31;
-    s2-->s32;
-    subgraph sgq ["QUERY"]
-      s31-->s41-->s51-->s61-->s71;
+    s21--Reads-->s31;
+    s21--Reads-->s41;
+    s21--Reads-->s22-->s23--Lift Over Source Positions-->s61;
+    s22--Source Poistions-->s61
+    subgraph sgq ["REF"]
+      s31--Alignments-->s32
     end
-    subgraph sgr ["REF"]
-      s32-->s42-->s52-->s62-->s72;
+    subgraph sgr ["QUERY"]
+      s41--Alignments-->s42--BED-->s43
+      s42--Query Alignemnts-->s61;
     end
+    s32--Ref Alignments-->s61;
+    s43--Lift Over-->s61;
+    s61--DB-->s62--Intervals-->s63;
   end
-  s71-->s8; s72-->s8;
-  s8-->s9;
+  s63--Matrices per Chromosome-->s101--Merged Matrices & Intervals-->s102
 
-  s9-->o1
+  s102-->o1
 ```
