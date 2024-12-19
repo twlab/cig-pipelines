@@ -170,7 +170,7 @@ task split_bam {
     runtime {
         cpu: cpu #resources.cpu
         memory: "~{memory} GB" #"~{resources.memory_gb} GB"
-        docker: "ebelter/samtools:1.15.1"
+        docker: "mgibio/samtools:1.15.1"
         #disks: resources.disks
         #docker: runtime_environment.docker
     }
@@ -204,7 +204,7 @@ task merge_sams {
     runtime {
         cpu: cpu #resources.cpu
         memory: "~{memory} GB" #"~{resources.memory_gb} GB"
-        docker: "ebelter/samtools:1.15.1"
+        docker: "mgibio/samtools:1.15.1"
         #disks: resources.disks
         #docker: runtime_environment.docker
     }

@@ -6,7 +6,7 @@ import "wdl/tasks/samtools.wdl"
 workflow samtools_sort {
     input {
         File bam
-        String docker = "ebelter/samtools:1.15.1"
+        String docker = "mgibio/samtools:1.15.1"
         Int cpu = 1
         Int memory = 4
         Int disks = 20

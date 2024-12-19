@@ -8,7 +8,7 @@ import "wdl/tasks/samtools.wdl"
 workflow samtools_stat {
     input {
         File bam
-        String docker = "ebelter/samtools:1.15.1"
+        String docker = "mgibio/samtools:1.15.1"
         Int cpu = 4
         Int memory = 24
         Int disks = 20

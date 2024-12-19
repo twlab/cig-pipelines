@@ -8,7 +8,7 @@ workflow pangenome_graph {
         File sequences         # tsv of sequences [fasta] with special header
         String reference_name  # name of the sequence to be used as the reference
         String out_name     # base name for outputs
-        String docker = "ebelter/cactus:2.5.0-20.04"
+        String docker = "mgibio/cactus:2.5.0-20.04"
         Int cpu = 4
         Int memory = 16
         Int disks = 100

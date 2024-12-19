@@ -8,7 +8,7 @@ workflow build_idxs {
         File annotation     # annotation [GTF GZ]
         String genome       # genome (e.g 'GRCh38')
         String anno_version # annotation version (e.g 'v24')
-        String docker = "ebelter/rna-seq-pipeline:v1.2.11-nsp"
+        String docker = "mgibio/rna-seq-pipeline:v1.2.11-nsp"
     }
 
     RunEnv runenv = {
