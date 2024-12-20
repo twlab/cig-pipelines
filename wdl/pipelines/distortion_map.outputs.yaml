@@ -6,10 +6,10 @@ distortion_map.generate_simulated_coverage:
 distortion_map.generate_simulated_no_lift_over_coverage:
   - coverage
 distortion_map.merge_ref_matrices:
-  - metrix
+  - matrix
 distortion_map.merge_src_matrices:
-  - metrix
+  - matrix
 distortion_map.merge_intervals:
-  - intervals
+  - merged_intervals
 distortion_map.calculate_metrics:
   - metrics

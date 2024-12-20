@@ -19,7 +19,6 @@ workflow distortion_map {
       File query_idx          # tar file with ref fasta, fai, and aligner index
       File reference_idx      # tar file with ref fasta, fai, and aligner index
       File query_to_ref_paf
-      Array[String] chrs
       Float wgsim_base_error
       Int wgsim_out_distance
       Int wgsim_stdev
@@ -119,7 +118,7 @@ workflow distortion_map {
   call split.run_split_by_chromosome as splitter { input:
     fasta=query.fasta,
     fai=query.fai,
-    chrs=chrs,
+    chrs=query.chromosomes,
     runenv=samtools_runenv,
   }
 
@@ -243,7 +242,7 @@ workflow distortion_map {
     runenv=distortion_map_runenv,
   }
 
-  call metrics.calculate as calulate_metrics { input:
+  call metrics.calculate as calculate_metrics { input:
     normalized_aligned_reference_matrix=merge_ref_matrices.matrix,
     normalized_lifted_aligned_source_matrix=merge_src_matrices.matrix,
     interval_mapping=merge_intervals.merged_intervals,
