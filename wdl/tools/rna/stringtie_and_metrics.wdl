@@ -59,7 +59,7 @@ workflow stringtie_and_metrics {
   }
 
   RunEnv picard_runenv = {
-    "docker": "ebelter/picard:2.27.4",
+    "docker": "mgibio/picard:2.27.4",
     "cpu": 6,
     "memory": 24,
     "disks": 20,

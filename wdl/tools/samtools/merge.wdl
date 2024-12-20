@@ -7,7 +7,7 @@ workflow samtools_merge {
     input {
         String sample
         Array[File] bams
-        String docker = "ebelter/samtools:1.15.1"
+        String docker = "mgibio/samtools:1.15.1"
         Int cpu = 1
         Int memory = 4
         Int disks = 20

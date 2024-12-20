@@ -75,7 +75,7 @@ workflow rna {
         # These are for internal use, leave undefined
         Int? kallisto_fragment_length_undefined
         Float? kallisto_sd_undefined
-        String docker = "ebelter/mgi:bulk-rna"
+        String docker = "mgibio/mgi:bulk-rna"
         String singularity = "docker://encodedcc/rna-seq-pipeline:1.2.4"
 
     }
@@ -122,7 +122,7 @@ workflow rna {
 
         call index.index as index_genome_bam { input:
             bam=align.genomebam,
-            docker = "ebelter/samtools:1.15.1",
+            docker = "mgibio/samtools:1.15.1",
         }
 
         call samtools_quickcheck as check_anno { input:
@@ -136,12 +136,12 @@ workflow rna {
         call collect_rna_seq_metrics.collect_rna_seq_metrics { input:
             alignments=align.genomebam,
             annotation=annotation,
-            docker="ebelter/picard:2.27.4",
+            docker="mgibio/picard:2.27.4",
         }
 
         call collect_insert_size_metrics.collect_insert_size_metrics { input:
             alignments=align.genomebam,
-            docker="ebelter/picard:2.27.4",
+            docker="mgibio/picard:2.27.4",
         }
 
         if (produce_pbams) {

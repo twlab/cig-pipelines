@@ -9,7 +9,7 @@ workflow collect_rna_seq_metrics {
     input {
         File alignments     # [bam]
         File annotation     # [GTF GZ]
-        String docker = "ebelter/picard:2.27.4"
+        String docker = "mgibio/picard:2.27.4"
         Int cpu = 4
         Int memory = 20
     }
