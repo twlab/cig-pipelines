@@ -1,0 +1,9 @@
+markdup_and_deepvariant.run_markdup:
+  - dedup_bam
+  - metrics
+markdup_and_deepvariant.dv:
+  - vcf
+  - vcf_tbi
+  - gvcf
+  - gvcf_tbi
+  - report
