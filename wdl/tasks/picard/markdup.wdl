@@ -1,22 +1,18 @@
 version development
 
-# Picard Mark Dups
-# these tasks require picard
-
 import "../../structs/runenv.wdl"
 
 task run_markdup {
     input {
-        String sample
         File bam
         RunEnv runenv
     }
 
-    String output_bam = "~{sample}.dedup.bam"
-    String output_metrics = "~{sample}.dedup.metrics"
-    Int javamem = runenv.memory - 2
+    String output_bam_bn = basename(bam, ".bam")
+    String output_bam = "~{output_bam_bn}.dedup.bam"
+    String output_metrics = "~{output_bam_bn}.dedup.metrics"
     command <<<
-        java -Xmx~{javamem}g -jar /usr/picard/picard.jar MarkDuplicates \
+        java -Xmx~{runenv.memory - 2}g -jar /usr/picard/picard.jar MarkDuplicates \
             --INPUT ~{bam} \
             --OUTPUT ~{output_bam} \
             --METRICS_FILE ~{output_metrics} \

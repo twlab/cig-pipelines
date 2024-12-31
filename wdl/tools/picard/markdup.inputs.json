@@ -1,5 +1,4 @@
 {
-  "picard.markdup.name": "{{NAME}}",
   "picard.markdup.bam": "{{BAM}}",
   "picard.markdup.docker": "mgibio/picard:2.27.4"
 }
