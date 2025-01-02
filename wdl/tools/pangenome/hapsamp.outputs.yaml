@@ -1,0 +1,4 @@
+pangenome_hapsamp.generate_r_index:
+- ri
+pangenome_hapsamp.generate_haplotypes_for_hapsamp:
+- hap

@@ -1,0 +1,8 @@
+{
+  "pangenome_hapsamp.gbz": "{{DIST}}",
+  "pangenome_hapsamp.gbz": "{{GBZ}}",
+  "pangenome_hapsamp.gbz": "{{MIN}}",
+  "pangenome_hapsamp.docker": "quay.io/vgteam/vg:v1.55.0",
+  "pangenome_hapsamp.cpu": 12,
+  "pangenome_hapsamp.memory": 120
+}
