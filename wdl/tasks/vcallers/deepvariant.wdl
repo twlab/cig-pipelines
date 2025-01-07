@@ -80,7 +80,7 @@ task NEW_run_deepvariant {
   command <<<
     set -ex
     ln ~{bam} ~{basename(bam)}
-    ln ~{bai} ~{basename(bai)}
+    ln ~{bai} ~{basename(bam, ".bam")}.bai
     ln ~{ref_fasta} ~{basename(ref_fasta)}
     ln ~{ref_fai} ~{basename(ref_fai)}
     ln ~{ref_dict} ~{basename(ref_dict)}

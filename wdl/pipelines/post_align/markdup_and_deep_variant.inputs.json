@@ -1,17 +1,18 @@
 {
-  "markdup_and_deepvariant.sample": "{{SAMPLE}}",
   "markdup_and_deepvariant.bam": "{{BAM}}",
-  "markdup_and_deepvariant.bai": "{{BAI}}",
   "markdup_and_deepvariant.idx": "{{IDX}}",
   "markdup_and_deepvariant.markduper": "{{PICARD_OR_SAMBLASTER}}",
   "markdup_and_deepvariant.markdup_params": "",
   "markdup_and_deepvariant.deepvariant_docker": "google/deepvariant:1.5.0",
   "markdup_and_deepvariant.deepvariant_cpu": 20,
   "markdup_and_deepvariant.deepvariant_memory": 96,
-  "markdup_and_deepvariant.markdup_docker": "mgibio/picard:v3.3.0-noble",
+  "markdup_and_deepvariant.markdup_docker": "{{MARKDUP_DOCKER}}",
   "markdup_and_deepvariant.markdup_cpu": 4,
   "markdup_and_deepvariant.markdup_memory": 20,
+  "markdup_and_deepvariant.samtools_docker": "mgibio/samtools:1.21-noble",
+  "markdup_and_deepvariant.samtools_cpu": 1,
+  "markdup_and_deepvariant.samtools_memory": 4,
   "markdup_and_deepvariant.utils_docker": "mgibio/linux-tk:latest",
   "markdup_and_deepvariant.utils_cpu": 1,
-  "markdup_and_deepvariant.utils_memory": 4 
+  "markdup_and_deepvariant.utils_memory": 4
 }

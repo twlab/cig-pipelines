@@ -1,0 +1,13 @@
+markdup_and_deepvariant.picard_markdup:
+  - dedup_bam
+  - metrics
+markdup_and_deepvariant.samblaster_markdup:
+  - dedup_bam
+markdup_and_deepvariant.run_index:
+  - bai
+markdup_and_deepvariant.dv:
+  - vcf
+  - vcf_tbi
+  - gvcf
+  - gvcf_tbi
+  - report

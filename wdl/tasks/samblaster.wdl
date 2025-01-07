@@ -3,6 +3,7 @@ version development
 import "../structs/runenv.wdl"
 
 task run_samblaster {
+  # !!! The "bam"  must be name sorted and in SAM format !!!
   input {
     File bam
     RunEnv runenv
@@ -20,7 +21,7 @@ task run_samblaster {
   # --ignoreUnmated        Suppress abort on unmated alignments. Use only when sure input is read-id grouped,
   # -q --quiet                Output fewer statistics.
   command <<<
-    samblaster -M --input ~{bam} --output ~{output_bam}
+    samtools view -h ~{bam} | samblaster -M | samtools view -bh -o ~{output_bam}
   >>>
 
   output {
