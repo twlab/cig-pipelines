@@ -127,7 +127,9 @@ workflow genome_wgs_from_bam {
     sample=sample,
     bam=realign.indel_realigned_bam,
     bai=realign.indel_realigned_bam_index,
-    reference_path=reference.path,
+    ref_fasta=reference.fasta,
+    ref_fai=reference.fai,
+    ref_dict=reference.dict,
     runenv=dv_runenv,
   }
 

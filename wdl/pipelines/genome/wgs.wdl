@@ -192,11 +192,13 @@ workflow genome_wgs {
   File final_bam = select_first([realign.indel_realigned_bam, samtools_sort.sorted_bam])
   File final_bai = select_first([realign.indel_realigned_bam_index, align_index.bai])
 
- call deepvariant.run_deepvariant as dv { input:
-  sample=sample,
+  call deepvariant.run_deepvariant as dv { input:
+    sample=sample,
     bam=final_bam,
     bai=final_bai,
-    reference_path=reference.path,
+    ref_fasta=reference.fasta,
+    ref_fai=reference.fai,
+    ref_dict=reference.dict,
     runenv=dv_runenv,
   }
 

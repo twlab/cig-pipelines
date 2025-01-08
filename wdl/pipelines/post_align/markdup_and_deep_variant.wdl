@@ -81,7 +81,7 @@ workflow markdup_and_deepvariant {
     runenv=samtools_runenv,
   }
 
-  call deepvariant.NEW_run_deepvariant as dv { input:
+  call deepvariant.run_deepvariant as dv { input:
     sample=basename(dedup_bam, ".dedup.bam"),
     bam=dedup_bam,
     bai=run_index.bai,
