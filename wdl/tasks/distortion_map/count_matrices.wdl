@@ -10,6 +10,7 @@ task generate {
   }
 
   # --db                                       Path to the SQLite database.
+  # --threads                                  Number of threads to use.
   # --reference_intervals_file                 Path to the file containing reference intervals.
   # --aligned_reference_count_matrix_file      Path to save the aligned in reference count matrix in .mtx format.
   # --lifted_aligned_source_count_matrix_file  Path to save the lifted aligned in source count matrix in .mtx format.
@@ -17,6 +18,7 @@ task generate {
   command <<<
     /apps/scripts/generate_count_matrices.py \
       --db ~{db} \
+      --threads ~{runenv.cpu} \
       --reference_intervals_file ~{reference_intervals} \
       --aligned_reference_count_matrix_file aligned_reference_count.mtx \
       --lifted_aligned_source_count_matrix_file lifted_aligned_source_count.mtx \

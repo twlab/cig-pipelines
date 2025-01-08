@@ -14,6 +14,8 @@
   "distortion_map.wgsim_fraction_indels": 0,
   "distortion_map.wgsim_prob_indel_extentsion": 0,
   "distortion_map.wgsim_seed": 0,
+  "distortion_map.interval_window_length": 24000,
+  "distortion_map.interval_window_stride": 24000,
   "distortion_map.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",
   "distortion_map.bedtools_cpu": 1,
   "distortion_map.bedtools_memory": 4,

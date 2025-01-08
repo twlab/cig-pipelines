@@ -25,6 +25,8 @@ workflow distortion_map {
       Int wgsim_number_pairs
       Int wgsim_read1_length
       Int wgsim_read2_length
+      Int interval_window_length
+      Int interval_window_stride
       Float wgsim_mutation_rate
       Float wgsim_fraction_indels
       Float wgsim_prob_indel_extentsion
@@ -200,8 +202,8 @@ workflow distortion_map {
     call intervals.create_intervals { input:
       db=load_db.db,
       reference_sizes=reference.sizes,
-      window_length=100000,
-      window_stride=100000,
+      window_length=interval_window_length,
+      window_stride=interval_window_stride,
       runenv=distortion_map_runenv,
     }
 
