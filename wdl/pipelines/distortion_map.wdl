@@ -41,6 +41,8 @@ workflow distortion_map {
       String distortion_map_docker
       Int distortion_map_cpu
       Int distortion_map_memory
+      Int distortion_map_big_cpu
+      Int distortion_map_big_memory
       String minimap2_docker
       Int minimap2_cpu
       Int minimap2_memory
@@ -102,6 +104,13 @@ workflow distortion_map {
     "docker": distortion_map_docker,
     "cpu": distortion_map_cpu,
     "memory": distortion_map_memory,
+    "disks": 20,
+  }
+
+  RunEnv distortion_map_big_runenv = {
+    "docker": distortion_map_docker,
+    "cpu": distortion_map_big_cpu,
+    "memory": distortion_map_big_memory,
     "disks": 20,
   }
 
@@ -223,7 +232,7 @@ workflow distortion_map {
     call count_matrices.generate as count_mtx { input:
       db=load_db.db,
       reference_intervals=create_intervals.reference_intervals,
-      runenv=distortion_map_runenv,
+      runenv=distortion_map_big_runenv,
     }
   }
 
