@@ -216,18 +216,18 @@ workflow distortion_map {
       runenv=distortion_map_runenv,
     }
 
-    call coverage.generate_simulated_coverage { input:
-      db=load_db.db,
-      simulated_intervals=create_intervals.simulated_intervals,
-      batch_size=100000,
-      runenv=distortion_map_runenv,
-    }
-
-    call coverage.generate_simulated_no_lift_over_coverage { input:
-      db=load_db.db,
-      simulated_intervals=create_intervals.simulated_intervals,
-      runenv=distortion_map_runenv,
-    }
+#    call coverage.generate_simulated_coverage { input:
+#      db=load_db.db,
+#      simulated_intervals=create_intervals.simulated_intervals,
+#      batch_size=100000,
+#      runenv=distortion_map_runenv,
+#    }
+#
+#    call coverage.generate_simulated_no_lift_over_coverage { input:
+#      db=load_db.db,
+#      simulated_intervals=create_intervals.simulated_intervals,
+#      runenv=distortion_map_runenv,
+#    }
 
     call count_matrices.generate as count_mtx { input:
       db=load_db.db,
