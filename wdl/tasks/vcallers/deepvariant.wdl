@@ -10,6 +10,7 @@ task run_deepvariant {
     File ref_fasta
     File ref_fai
     File ref_dict
+    String model_type = "WGS"
     RunEnv runenv
   }
 
@@ -28,7 +29,7 @@ task run_deepvariant {
       customized_model_param="--customized_model=~{reference_path}/${model_name}"
     fi
     /opt/deepvariant/bin/run_deepvariant \
-      --model_type=WGS \
+      --model_type=~{model_type} \
       --ref=~{basename(ref_fasta)} \
       ${customized_model_param} \
       --reads=~{basename(bam)} \
