@@ -241,7 +241,7 @@ workflow distortion_map {
     output_fn="merged.ref.mtx",
     runenv=distortion_map_runenv,
   }
-  
+
   call count_matrices.merge as merge_src_matrices { input:
     matrices=count_mtx.lifted_aligned_source_count_matrix,
     output_fn="merged.src.mtx",
@@ -253,9 +253,19 @@ workflow distortion_map {
     runenv=distortion_map_runenv,
   }
 
+  call count_matrices.normalize as normalize_merged_ref_matrix { input:
+    matrix=merge_ref_matrices.matrix,
+    runenv=distortion_map_runenv,
+  }
+
+  call count_matrices.normalize as normalize_merged_src_matrix { input:
+    matrix=merge_src_matrices.matrix,
+    runenv=distortion_map_runenv,
+  }
+
   call metrics.calculate as calculate_metrics { input:
-    normalized_aligned_reference_matrix=merge_ref_matrices.matrix,
-    normalized_lifted_aligned_source_matrix=merge_src_matrices.matrix,
+    normalized_aligned_reference_matrix=normalize_merged_ref_matrix.normalized_matrix,
+    normalized_lifted_aligned_source_matrix=normalize_merged_src_matrix.normalized_matrix,
     interval_mapping=merge_intervals.merged_intervals,
     runenv=distortion_map_runenv,
   }

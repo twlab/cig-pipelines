@@ -39,6 +39,33 @@ task generate {
   }
 }
 
+task normalize {
+  input {
+    File matrix
+    RunEnv runenv
+  }
+
+  # --input   Path to the input merged count matrix
+  # --output  Path to save the normalized count matrix
+  String output_file = basename(matrix, ".mtx") + ".normalized.mtx"
+  command <<<
+    /apps/scripts/normalize_count_matrices.py \
+      --input ~{matrix} \
+      --output ~{output_file}
+  >>>
+
+  output {
+    File normalized_matrix = glob(output_file)[0]
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: "~{runenv.memory} GB"
+    #disks: runenv.disks
+  }
+}
+
 task merge {
   input {
     Array[File] matrices
