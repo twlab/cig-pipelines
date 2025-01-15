@@ -5,6 +5,7 @@ import "wdl/tasks/abra2.wdl"
 import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
+import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/qc/fastqc.wdl"
 import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/gatk/realigner_target_creator.wdl"
@@ -47,6 +48,9 @@ workflow genome_wgs {
     String gatk_docker
     Int gatk_cpu
     Int gatk_memory
+    String markdup_docker
+    Int markdup_cpu
+    Int markdup_memory
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
@@ -102,6 +106,13 @@ workflow genome_wgs {
     "docker": abra2_docker,
     "cpu": abra2_cpu,
     "memory": abra2_memory,
+    "disks": 20,
+  }
+
+  RunEnv markduper_runenv = {
+    "docker": markdup_docker,
+    "cpu": markdup_cpu,
+    "memory": markdup_memory,
     "disks": 20,
   }
 
@@ -182,20 +193,20 @@ workflow genome_wgs {
     }
   }
 
-  if ( !realign_bam ) {
-    call samtools.index as align_index { input:
-      bam=align.bam,
-      runenv=samtools_runenv,
-    } 
+  call markdup.run_markdup as picard_markdup { input:
+    bam=select_first([realign.indel_realigned_bam, samtools_sort.sorted_bam]), # select realign first if true
+    runenv=markduper_runenv,
   }
 
-  File final_bam = select_first([realign.indel_realigned_bam, samtools_sort.sorted_bam])
-  File final_bai = select_first([realign.indel_realigned_bam_index, align_index.bai])
+  call samtools.index as samtools_index { input:
+    bam=picard_markdup.dedup_bam,
+    runenv=samtools_runenv,
+  }
 
   call deepvariant.run_deepvariant as dv { input:
     sample=sample,
-    bam=final_bam,
-    bai=final_bai,
+    bam=picard_markdup.dedup_bam,
+    bai=samtools_index.bai,
     ref_fasta=reference.fasta,
     ref_fai=reference.fai,
     ref_dict=reference.dict,
@@ -203,13 +214,13 @@ workflow genome_wgs {
   }
 
   call samtools.stat as samtools_stat { input:
-    bam=final_bam,
+    bam=picard_markdup.dedup_bam,
     runenv=samtools_runenv,
   } 
 
   output {
-    File bam = final_bam
-    File bai = final_bai
+    File bam = picard_markdup.dedup_bam
+    File bai = samtools_index.bai
     File bam_stats = samtools_stat.stats
     File vcf = dv.vcf
     File vcf_tvi = dv.vcf_tbi

@@ -7,6 +7,7 @@ import "wdl/tasks/qc/fastqc.wdl"
 import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/pangenome/extract_ref.wdl"
+import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 import "wdl/tasks/vg/giraffe.wdl"
@@ -52,6 +53,9 @@ workflow pangenome_wgs {
     String kmc_docker
     Int kmc_cpu
     Int kmc_memory
+    String markdup_docker
+    Int markdup_cpu
+    Int markdup_memory
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
@@ -122,6 +126,13 @@ workflow pangenome_wgs {
     "docker": abra2_docker,
     "cpu": abra2_cpu,
     "memory": abra2_memory,
+    "disks": 20,
+  }
+
+  RunEnv markduper_runenv = {
+    "docker": markdup_docker,
+    "cpu": markdup_cpu,
+    "memory": markdup_memory,
     "disks": 20,
   }
 
@@ -222,10 +233,20 @@ workflow pangenome_wgs {
     runenv=abra2_renenv,
   } 
 
+  call markdup.run_markdup as picard_markdup { input:
+    bam=realign.indel_realigned_bam,
+    runenv=markduper_runenv,
+  }
+
+  call samtools.index as samtools_index { input:
+    bam=picard_markdup.dedup_bam,
+    runenv=samtools_runenv,
+  }
+
   call deepvariant.run_deepvariant as dv { input:
     sample=sample,
-    bam=realign.indel_realigned_bam,
-    bai=realign.indel_realigned_bam_index,
+    bam=picard_markdup.dedup_bam,
+    bai=samtools_index.bai,
     ref_fasta=reference.fasta,
     ref_fai=reference.fai,
     ref_dict=reference.dict,
@@ -240,8 +261,8 @@ workflow pangenome_wgs {
   output {
     File gam = run_giraffe.gam
     File gam_stats = vg_stats.stats
-    File bam = realign.indel_realigned_bam
-    File bai = realign.indel_realigned_bam_index
+    File bam = picard_markdup.dedup_bam
+    File bai = samtools_index.bai
     File bam_stats = samtools_stat.stats
     File dv_vcf = dv.vcf
   }
