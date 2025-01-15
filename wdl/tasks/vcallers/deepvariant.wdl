@@ -24,14 +24,9 @@ task run_deepvariant {
     ln ~{ref_fasta} ~{basename(ref_fasta)}
     ln ~{ref_fai} ~{basename(ref_fai)}
     ln ~{ref_dict} ~{basename(ref_dict)}
-    model_name=$(find ~{reference_path} -name model\* | xargs -I% basename % | awk -F. '{print $1}' | sort -u | head -1)
-    if [[ ! -z "${model_name}" ]]; then
-      customized_model_param="--customized_model=~{reference_path}/${model_name}"
-    fi
     /opt/deepvariant/bin/run_deepvariant \
       --model_type=~{model_type} \
       --ref=~{basename(ref_fasta)} \
-      ${customized_model_param} \
       --reads=~{basename(bam)} \
       --output_vcf=~{output_vcf} \
       --output_gvcf=~{output_gvcf} \
