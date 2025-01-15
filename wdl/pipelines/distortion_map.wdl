@@ -129,7 +129,8 @@ workflow distortion_map {
   call split.run_split_by_chromosome as splitter { input:
     fasta=query.fasta,
     fai=query.fai,
-    chrs=query.chromosomes,
+    chrs=["chr1"],
+    #chrs=query.chromosomes,
     runenv=samtools_runenv,
   }
 
@@ -166,7 +167,7 @@ workflow distortion_map {
     }
 
     # Align Sim Reads to REF then Convert Alignments to BED
-    call align.run_bwa_mem2 as align_to_ref { input:
+    call align.run_bwa_mem as align_to_ref { input:
       sample=sample,
       library=sample+"-lib1",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
@@ -179,7 +180,7 @@ workflow distortion_map {
     }
 
     # Align Sim Reads to QUERY then Convert Alignments to BED & Lift Over
-    call align.run_bwa_mem2 as align_to_query { input:
+    call align.run_bwa_mem as align_to_query { input:
       sample=sample,
       library=sample+"-lib1",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],

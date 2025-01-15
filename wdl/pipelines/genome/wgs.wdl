@@ -134,7 +134,7 @@ workflow genome_wgs {
     sample=sample,
     library=sample+"-lib1",
     fastqs=fastqs,
-    reference=reference.path,
+    idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa],
     runenv=bwa_runenv,
   }
 
