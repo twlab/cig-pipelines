@@ -3,7 +3,7 @@
   "markdup_and_deepvariant.idx": "{{IDX}}",
   "markdup_and_deepvariant.markduper": "{{PICARD_OR_SAMBLASTER}}",
   "markdup_and_deepvariant.markdup_params": "",
-  "markdup_and_deepvariant.deepvariant_docker": "google/deepvariant:1.5.0",
+  "markdup_and_deepvariant.deepvariant_docker": "google/deepvariant:1.8.0",
   "markdup_and_deepvariant.deepvariant_cpu": 20,
   "markdup_and_deepvariant.deepvariant_memory": 96,
   "markdup_and_deepvariant.markdup_docker": "{{MARKDUP_DOCKER}}",
