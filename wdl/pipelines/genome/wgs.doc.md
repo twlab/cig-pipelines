@@ -18,15 +18,10 @@ flowchart TB;
   s6[[GATK REALIGNER TARGET CREATOR]];
   s7[[BEDTOOLS EXPAND TARGETS]];
   s8[[ABRA2 REALIGN]];
-  s9[[DEEPVARIANT]];
-  s10[[SAMTOOLS STAT]];
-
-  o0([FaastQC Output Files])
-  o1([BAM])
-  o2([BAI])
-  o3([BAM STAT])
-  o4([VCF])
-  o5([VCF TBI])
+  s9[[PICARD MARKDUP]];
+  s10[[SAMTOOLS INDEX]];
+  s11[[DEEPVARIANT]];
+  s12[[SAMTOOLS STAT]];
 
   i2-->s0;
   i3-->s1;
@@ -40,10 +35,20 @@ flowchart TB;
     s6--TARGETS-->s7; i4-->s7;
     s4--LEFT SHIFT BAM-->s8; s7--EXPANDED TARGETS-->s8;
   end;
-  s8--REALIGN BAM/BAI-->s9;
-  s8--REALIGN BAM-->s10;
+  s8--REALIGN BAM-->s9;
+  s9--REALIGN/MARKDUP BAM-->s10;
+  s9--REALIGN/MARKDUP BAM-->s11;
+  s9--REALIGN/MARKDUP BAM-->s12;
+  s10--BAI-->s11;
 
-  s0-->o0; s8-->o1; s8-->o2; s9-->o4; s9-->o5; s10-->o3;
+  o0([FastQC Output Files])
+  o1([BAM])
+  o2([BAI])
+  o3([BAM STAT])
+  o4([VCF])
+  o5([VCF TBI])
+
+  s0-->o0; s9-->o1; s10-->o2; s11-->o4; s1-->o5; s12-->o3;
 ```
 ## Pipeline Files
 * wgs.wdl          - WDL pipeline
