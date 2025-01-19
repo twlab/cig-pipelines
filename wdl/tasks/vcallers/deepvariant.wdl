@@ -27,6 +27,7 @@ task run_deepvariant {
     ln ~{ref_dict} ~{basename(ref_dict)}
     if test ! -z "~{pangenome_gbz}"; then
       pangenome_param="--pangenome ~{pangenome_gbz}"
+    fi
 
     /opt/deepvariant/bin/run_deepvariant \
       --model_type=~{model_type} \
