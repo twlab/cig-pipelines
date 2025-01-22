@@ -129,8 +129,8 @@ workflow distortion_map {
   call split.run_split_by_chromosome as splitter { input:
     fasta=query.fasta,
     fai=query.fai,
-    chrs=["chr1"],
-    #chrs=query.chromosomes,
+    #chrs=["chr1"],
+    chrs=query.chromosomes,
     runenv=samtools_runenv,
   }
 
@@ -209,7 +209,7 @@ workflow distortion_map {
       runenv=distortion_map_runenv,
     }
 
-    call intervals.create_intervals { input:
+    call intervals.create_intervals as intervals { input:
       db=load_db.db,
       reference_sizes=reference.sizes,
       window_length=interval_window_length,
@@ -232,7 +232,7 @@ workflow distortion_map {
 
     call count_matrices.generate as count_mtx { input:
       db=load_db.db,
-      reference_intervals=create_intervals.reference_intervals,
+      reference_intervals=intervals.reference_intervals,
       runenv=distortion_map_big_runenv,
     }
   }
@@ -249,11 +249,6 @@ workflow distortion_map {
     runenv=distortion_map_runenv,
   }
 
-  call intervals.merge as merge_intervals { input:
-    intervals=count_mtx.interval_mapping,
-    runenv=distortion_map_runenv,
-  }
-
   call count_matrices.normalize as normalize_merged_ref_matrix { input:
     matrix=merge_ref_matrices.matrix,
     runenv=distortion_map_runenv,
@@ -267,7 +262,7 @@ workflow distortion_map {
   call metrics.calculate as calculate_metrics { input:
     normalized_aligned_reference_matrix=normalize_merged_ref_matrix.normalized_matrix,
     normalized_lifted_aligned_source_matrix=normalize_merged_src_matrix.normalized_matrix,
-    interval_mapping=merge_intervals.merged_intervals,
+    interval_mapping=select_first(count_mtx.interval_mapping),
     runenv=distortion_map_runenv,
   }
 }
