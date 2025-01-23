@@ -1,8 +1,10 @@
-pangenome_wgs.gam_stats:
+pangenome_wgs.run_giraffe:
+  - gam
+pangenome_wgs.vg_stats:
   - stats
-genome_wgs.picard_markdup:
+pangenome_wgs.picard_markdup:
   - dedup_bam
-genome_wgs.samtools_index:
+pangenome_wgs.samtools_index:
   - bai
 pangenome_wgs.run_fastqc:
   - output_files
