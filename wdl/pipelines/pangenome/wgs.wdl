@@ -250,7 +250,6 @@ workflow pangenome_wgs {
     ref_fasta=reference.fasta,
     ref_fai=reference.fai,
     ref_dict=reference.dict,
-    pangenome_gbz=gbz,
     runenv=dv_runenv,
   }
 
