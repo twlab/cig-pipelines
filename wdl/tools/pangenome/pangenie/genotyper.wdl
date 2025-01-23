@@ -49,7 +49,7 @@ workflow pangenie_genotyper {
   }
 
   output {
-    File vcf = run_genotyper.vcf_gz
+    File vcf = run_genotyper.vcf
     File vcf_tbi = run_genotyper.vcf_tbi
     File histo = run_genotyper.histo
   }
