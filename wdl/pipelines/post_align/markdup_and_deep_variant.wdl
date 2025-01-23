@@ -1,7 +1,6 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/samblaster.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/samtools/index.wdl" as samtools_index
@@ -9,10 +8,9 @@ import "wdl/tasks/vcallers/deepvariant.wdl"
 
 workflow markdup_and_deepvariant {
   input {
+    String sample
     File bam
-    File idx         # tarred reference with FASTA, DICT, FAI
-    String markduper # picard or samblaster
-    String markdup_params
+    File idx                   # tarred reference with FASTA, DICT, FAI
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
@@ -60,30 +58,19 @@ workflow markdup_and_deepvariant {
     runenv=utils_runenv,
   }
 
-  if ( markduper == "picard") {
-    call markdup.run_markdup as picard_markdup { input:
-      bam=bam,
-      runenv=markduper_runenv,
-    }
+  call markdup.run_markdup as picard_markdup { input:
+    bam=bam,
+    runenv=markduper_runenv,
   }
-  if ( markduper == "samblaster") {
-    # Currently does not work as the BAM needs to be name sorted and in SAM format
-    call samblaster.run_samblaster as samblaster_markdup { input:
-      bam=bam,
-      runenv=markduper_runenv,
-    }
-  } 
-
-  File dedup_bam = select_first([picard_markdup.dedup_bam, samblaster_markdup.dedup_bam])
 
   call samtools_index.run_index { input:
-    bam=dedup_bam,
+    bam=picard_markdup.dedup_bam,
     runenv=samtools_runenv,
   }
 
   call deepvariant.run_deepvariant as dv { input:
-    sample=basename(dedup_bam, ".dedup.bam"),
-    bam=dedup_bam,
+    sample=sample,
+    bam=picard_markdup.dedup_bam,
     bai=run_index.bai,
     ref_fasta=reference.fasta,
     ref_fai=reference.fai,

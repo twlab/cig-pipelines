@@ -10,7 +10,6 @@ task run_deepvariant {
     File ref_fasta
     File ref_fai
     File ref_dict
-    File? pangenome_gbz
     String model_type = "WGS"
     RunEnv runenv
   }
@@ -25,14 +24,10 @@ task run_deepvariant {
     ln ~{ref_fasta} ~{basename(ref_fasta)}
     ln ~{ref_fai} ~{basename(ref_fai)}
     ln ~{ref_dict} ~{basename(ref_dict)}
-    if test ! -z "~{pangenome_gbz}"; then
-      pangenome_param="--pangenome ~{pangenome_gbz}"
-    fi
 
     /opt/deepvariant/bin/run_deepvariant \
       --model_type=~{model_type} \
       --ref=~{basename(ref_fasta)} \
-      ${pangenome_param} \
       --reads=~{basename(bam)} \
       --output_vcf=~{output_vcf} \
       --output_gvcf=~{output_gvcf} \
