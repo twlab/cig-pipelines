@@ -50,7 +50,6 @@ task run_deepvariant {
     String vcf_tbi = glob("~{output_vcf}.tbi")[0]
     String gvcf = glob("~{output_gvcf}")[0]
     String gvcf_tbi = glob("~{output_gvcf}.tbi")[0]
-    String report = glob("*.html")[0]
   }
 
   runtime {
