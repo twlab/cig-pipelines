@@ -1,49 +1,49 @@
 version development
 
 import "wdl/structs/runenv.wdl"
+import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
-workflow deep_variant {
-  meta {
-    author: "Eddie Belter"
-    version: "1.2"
-    description: "Call variants with Deep Variant"
-  }
-
+workflow deepvariant {
   input {
-    String sample
+    File sample
     File bam
     File bai
-    File ref_fasta
-    File ref_fai
-    File ref_dict
-    String docker
-    Int cpu
-    Int memory
+    File idx
+    String deepvariant_docker
+    Int deepvariant_cpu
+    Int deepvariant_memory
+    String utils_docker
+    Int utils_cpu
+    Int utils_memory
   }
 
-  RunEnv runenv = {
-    "docker": docker,
-    "cpu": cpu,
-    "memory": memory,
+  RunEnv utils_runenv = {
+    "docker": utils_docker,
+    "cpu": utils_cpu,
+    "memory": utils_memory,
     "disks": 20,
   }
 
-  call deepvariant.NEW_run_deepvariant as dv { input:
+  RunEnv dv_runenv = {
+    "docker": deepvariant_docker,
+    "cpu": deepvariant_cpu,
+    "memory": deepvariant_memory,
+    "disks": 20,
+  }
+
+  call idx.run_untar_idx as reference { input:
+    idx=idx,
+    runenv=utils_runenv,
+  }
+
+  call deepvariant.run_deepvariant as dv { input:
     sample=sample,
     bam=bam,
     bai=bai,
-    ref_fasta=ref_fasta,
-    ref_fai=ref_fai,
-    ref_dict=ref_dict,
-    runenv=runenv,
-  }
-
-  output {
-    File vcf = dv.vcf
-    File vcf_tbi = dv.vcf_tbi
-    File gvcf = dv.gvcf
-    File gvcf_tbi = dv.gvcf_tbi
-    File report = dv.report
+    ref_fasta=reference.fasta,
+    ref_fai=reference.fai,
+    ref_dict=reference.dict,
+    runenv=dv_runenv,
   }
 }

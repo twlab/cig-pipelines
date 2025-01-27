@@ -1,11 +1,12 @@
 {
-  "deep_variant.sample": "{{SAMPLE}}",
-  "deep_variant.bam": "{{BAM}}",
-  "deep_variant.bai": "{{BAI}}",
-  "deep_variant.ref_fasta": "{{REF_FASTA}}",
-  "deep_variant.ref_fai": "{{REF_FAI}}",
-  "deep_variant.ref_dict": "{{REF_DICT}}",
-  "deep_variant.docker": "google/deepvariant:1.5.0",
-  "deep_variant.cpu": 8,
-  "deep_variant.memory": 96
+  "deepvariant.sample": "{{SAMPLE}}",
+  "deepvariant.bam": "{{BAM}}",
+  "deepvariant.bai": "{{BAI}}",
+  "deepvariant.idx": "{{IDX}}",
+  "deepvariant.deepvariant_docker": "google/deepvariant:1.8.0",
+  "deepvariant.deepvariant_cpu": 20,
+  "deepvariant.deepvariant_memory": 96,
+  "deepvariant.utils_docker": "mgibio/linux-tk:latest",
+  "deepvariant.utils_cpu": 1,
+  "deepvariant.utils_memory": 4
 }
