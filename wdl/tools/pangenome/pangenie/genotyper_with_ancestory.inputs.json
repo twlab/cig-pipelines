@@ -1,0 +1,14 @@
+{
+  "pangenie_genotyper_with_ancestory.sample": "{{SAMPLE}}",
+  "pangenie_genotyper_with_ancestory.fastqs": [{{FASTQS}}],
+  "pangenie_genotyper_with_ancestory.index": "{{INDEX}}",
+  "pangenie_genotyper_with_ancestory.snvstory_resource": "{{RESOURCE}}",
+  "pangenie_genotyper_with_ancestory.snvstory_mode": "WGS",
+  "pangenie_genotyper_with_ancestory.snvstory_genome_ver": "38",
+  "pangenie_genotyper_with_ancestory.docker": "mgibio/pangenie:v3.0.2-focal",
+  "pangenie_genotyper_with_ancestory.cpu": 8,
+  "pangenie_genotyper_with_ancestory.memory": 96,
+  "pangenie_genotyper_with_ancestory.snvstory_docker": "mgibio/snvstory:v2.3-buster",
+  "pangenie_genotyper_with_ancestory.snvstory_cpu": 2,
+  "pangenie_genotyper_with_ancestory.snvstory_memory": 24
+}
