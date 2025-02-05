@@ -224,6 +224,5 @@ workflow genome_wgs {
     File bam_stats = samtools_stat.stats
     File vcf = dv.vcf
     File vcf_tvi = dv.vcf_tbi
-    File dv_report = dv.report
   }
 }
