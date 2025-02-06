@@ -1,4 +1,4 @@
 pangenie_genotyper.run_genotyper:
-  - vcf_gz
+  - vcf
   - vcf_tbi
   - histo

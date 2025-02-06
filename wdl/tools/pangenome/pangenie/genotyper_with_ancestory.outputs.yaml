@@ -1,5 +1,5 @@
 pangenie_genotyper_with_ancestory.run_genotyper:
-  - vcf_gz
+  - vcf
   - vcf_tbi
   - histo
 pangenie_genotyper_with_ancestory.run_igm_churchill_ancestry:
