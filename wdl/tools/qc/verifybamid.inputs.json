@@ -1,0 +1,8 @@
+{
+  "verifybamid.bam": "{{BAM}}",
+  "verifybamid.index": "{{INDEX}}",
+  "verifybamid.snvstory_genome_ver": "38",
+  "verifybamid.docker": "mgibio/pangenie:v3.0.2-focal",
+  "verifybamid.cpu": 8,
+  "verifybamid.memory": 96
+}
