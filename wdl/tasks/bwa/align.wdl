@@ -44,18 +44,12 @@ task run_bwamem_with_sort {
   input {
     String sample
     String library
+    String rg_id
     String platform = "ILLUMINA"
-    String? platform_unit
+    String platform_unit
     Array[File] fastqs
     Array[File] idx_files
     RunEnv runenv
-  }
-
-  if ( platform_unit ) {
-    String rg_ig = "~{library}_~{platform_unit}"
-  }
-  if ( ! platform_unit ) {
-    String rg_ig = "~{library}"
   }
 
   String bam = "~{sample}.bam"
