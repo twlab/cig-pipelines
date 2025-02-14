@@ -44,9 +44,18 @@ task run_bwamem_with_sort {
   input {
     String sample
     String library
+    String platform = "ILLUMINA"
+    String? platform_unit
     Array[File] fastqs
     Array[File] idx_files
     RunEnv runenv
+  }
+
+  if ( platform_unit ) {
+    String rg_ig = "~{library}_~{platform_unit}"
+  }
+  if ( ! platform_unit ) {
+    String rg_ig = "~{library}"
   }
 
   String bam = "~{sample}.bam"
@@ -61,7 +70,7 @@ task run_bwamem_with_sort {
     bwa mem \
       -t ~{bwa_cpu} \
       -K 320000000 \
-      -R '@RG\tID:~{library}\tLB:~{library}\tSM:~{sample}\tPL:illumina' \
+      -R '@RG\tID:~{rg_id}\tLB:~{library}\tSM:~{sample}\tPL:~{platform}\tPU:~{platform_unit}' \
       $reference_fasta \
       ~{fastqs[0]} \
       ~{default="" fastqs[1]} | \
