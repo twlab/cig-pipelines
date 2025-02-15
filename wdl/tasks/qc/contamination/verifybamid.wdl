@@ -5,6 +5,7 @@ import "../../../structs/runenv.wdl"
 task run_verifybamid {
   input {
     File bam
+    File bai
     File ref_fasta
     File ref_fai
     Directory resource
@@ -13,12 +14,14 @@ task run_verifybamid {
   }
 
   command <<<
+    ln ~{bam} ./
+    ln ~{bai} ./
     ln ~{ref_fasta} ./
     ln ~{ref_fai} ./
-    verifybamid2 \
-      --SVDPrefix ~{resource}/~{svdprefix}
-      --Reference ~{ref_fasta} \
-      --BamFile ~{bam}
+    VerifyBamID \
+      --SVDPrefix ~{resource}/~{svdprefix} \
+      --Reference ~{basename(ref_fasta)} \
+      --BamFile ~{basename(bam)}
   >>>
 
   output {
