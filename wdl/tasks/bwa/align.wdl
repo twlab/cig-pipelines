@@ -52,7 +52,7 @@ task run_bwamem_with_sort {
     RunEnv runenv
   }
 
-  String bam = "~{sample}.bam"
+  String bam = "~{sample}.sorted.bam"
   Int bwa_cpu = runenv.cpu - 2
   Int sort_cpu = runenv.cpu - bwa_cpu
   command <<<
@@ -78,6 +78,6 @@ task run_bwamem_with_sort {
   }
 
   output {
-    File bam = "~{bam}"
+    File bam = glob(bam)[0]
   }
 }
