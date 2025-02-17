@@ -4,6 +4,7 @@ import "../../../structs/runenv.wdl"
 
 task run_verifybamid {
   input {
+    String sample
     File bam
     File bai
     File ref_fasta
@@ -21,10 +22,11 @@ task run_verifybamid {
     VerifyBamID \
       --SVDPrefix ~{resource}/~{svdprefix} \
       --Reference ~{basename(ref_fasta)} \
-      --BamFile ~{basename(bam)}
+      --BamFile ~{basename(bam)} | tee ~{sample}.verifybamid2.txt
   >>>
 
   output {
+    File contamination = glob("~{sample}.verifybamid2.txt")[0]
     File ancestry = glob("result.Ancestry")[0]
     File selfsm = glob("result.selfSM")[0]
   }
