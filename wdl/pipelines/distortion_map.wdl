@@ -184,7 +184,7 @@ workflow distortion_map {
       sample=sample,
       library=sample+"-lib1",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
-      idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa], 
+      idx_files=[query.fasta, query.amb, query.ann, query.bwt, query.pac, query.sa], 
       runenv=bwa_runenv,
     }
     call bedtools.run_bam_to_bed as bam2bed_query { input:
