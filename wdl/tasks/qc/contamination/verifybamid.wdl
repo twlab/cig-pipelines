@@ -26,7 +26,7 @@ task run_verifybamid {
   >>>
 
   output {
-    File contamination = glob("~{sample}.verifybamid2.txt")[0]
+    File contamination_report = glob("~{sample}.verifybamid2.txt")[0]
     File ancestry = glob("result.Ancestry")[0]
     File selfsm = glob("result.selfSM")[0]
   }
