@@ -26,6 +26,7 @@ task run_deepvariant {
     ln ~{ref_dict} ~{basename(ref_dict)}
 
     /opt/deepvariant/bin/run_deepvariant \
+      --sample_name=~{sample} \
       --model_type=~{model_type} \
       --ref=~{basename(ref_fasta)} \
       --reads=~{basename(bam)} \
