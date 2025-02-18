@@ -13,13 +13,12 @@ task run_qc_report {
   }
 
   command <<<
-    smaht srbatch qc report
-    python /apps/scripts/generate_qc_report.py \
-      --ancestry-fof ~{write_lines(ancestry_files} \
-      --sex-files ~{write_lines(checksex_files)} \
-      --haplocheck-fof ~{write_lines(haplocheck_files} \
-      --verifybamid-fof ~{write_lines(verifybamid_files} \
-      --report-name ~{output_file}
+    smaht srbatch qc report \
+      --ancestry-fof ~{write_lines(ancestry_files)} \
+      --checksex-fof ~{write_lines(checksex_files)} \
+      --haplocheck-fof ~{write_lines(haplocheck_files)} \
+      --verifybamid-fof ~{write_lines(verifybamid_files)} \
+      -o ~{output_file}
   >>>
 
   output {
