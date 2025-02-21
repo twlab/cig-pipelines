@@ -9,18 +9,20 @@ task run_verifybamid {
     File bai
     File ref_fasta
     File ref_fai
-    Directory resource
-    String svdprefix
+    File resource
     RunEnv runenv
   }
 
+  svdprefix = basename(resource, "tar")
   command <<<
     ln ~{bam} ./
     ln ~{bai} ./
     ln ~{ref_fasta} ./
     ln ~{ref_fai} ./
+    mkdir ./resource
+    tar xvvf ~{resource} -C resource
     VerifyBamID \
-      --SVDPrefix ~{resource}/~{svdprefix} \
+      --SVDPrefix resource/~{svdprefix} \
       --Reference ~{basename(ref_fasta)} \
       --BamFile ~{basename(bam)} | tee ~{sample}.verifybamid2.txt
   >>>
