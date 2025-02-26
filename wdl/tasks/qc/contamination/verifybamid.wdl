@@ -13,7 +13,7 @@ task run_verifybamid {
     RunEnv runenv
   }
 
-  svdprefix = basename(resource, "tar")
+  String svdprefix = basename(resource, ".tar")
   command <<<
     ln ~{bam} ./
     ln ~{bai} ./
