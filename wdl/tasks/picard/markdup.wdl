@@ -5,6 +5,7 @@ import "../../structs/runenv.wdl"
 task run_markdup {
     input {
         File bam
+        String sort_order = "coordinate"
         RunEnv runenv
     }
 
@@ -17,6 +18,7 @@ task run_markdup {
             --OUTPUT ~{output_bam} \
             --METRICS_FILE ~{output_metrics} \
             --QUIET true \
+            --ASSUME_SORT_ORDER ~{sort_order} \
             --VALIDATION_STRINGENCY LENIENT
     >>>
 
