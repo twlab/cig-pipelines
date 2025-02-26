@@ -144,6 +144,8 @@ workflow genome_wgs {
   call align.run_bwa_mem as align { input:
     sample=sample,
     library=sample+"-lib1",
+    rg_id=sample+"-lib1",
+    platform_unit=sample+"-lib1",
     fastqs=fastqs,
     idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa],
     runenv=bwa_runenv,
