@@ -4,21 +4,22 @@ import "../../../structs/runenv.wdl"
 
 task run_haplocheck {
   input {
-    File vcf
+    File bam
+    File bai
     RunEnv runenv
   }
 
-  # VCF & results dirs need to be absolute paths
-  # filter vcf by chrM, putting file in path to pass to haplocheck
+  # BAM & results dirs need to be absolute paths
+  # BAI is required
+  # Will need to update version in the future
   command <<<
     set -x
-    mkdir vcfs results
+    mkdir bam results
+    bam_dn=$(readlink -f vcfs)
+    ln ~{bam} ${bam_dn}
+    ln ~{bai} ${bam_dn}
     results_dn=$(readlink -f results)
-    vcfs_dn=$(readlink -f vcfs)
-    vcf_bn=$(basename ~{vcf})
-    tabix ~{vcf}
-    bcftools view -r chrM -O z ~{vcf} > ${vcfs_dn}/${vcf_bn}
-    /apps/haplocheck/cloudgene run haplocheck@1.3.2 --files ${vcfs_dn} --format VCF --output ${results_dn}  --threads ~{runenv.cpu}
+    time /apps/haplocheck/cloudgene run haplocheck@1.3.2 --files ${bam_dn} --format bam --output ${results_dn}
   >>>
 
   output {
