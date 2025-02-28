@@ -14,12 +14,12 @@ task run_haplocheck {
   # Will need to update version in the future
   command <<<
     set -x
-    mkdir bam results
-    bam_dn=$(readlink -f vcfs)
-    ln ~{bam} ${bam_dn}
-    ln ~{bai} ${bam_dn}
+    mkdir data results
+    data_dn=$(readlink -f data)
     results_dn=$(readlink -f results)
-    time /apps/haplocheck/cloudgene run haplocheck@1.3.2 --files ${bam_dn} --format bam --output ${results_dn}
+    ln ~{bam} ${data_dn}/
+    ln ~{bai} ${data_dn}/
+    time /apps/haplocheck/cloudgene run haplocheck@1.3.2 --files ${data_dn} --format bam --output ${results_dn}
   >>>
 
   output {
