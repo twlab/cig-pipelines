@@ -5,7 +5,7 @@ import "../../structs/runenv.wdl"
 task run_igm_churchill_ancestry {
   input {
     File input_vcf
-    Directory resource
+    File resource
     String genome_ver = "38"
     String mode = "WGS"
     RunEnv runenv
@@ -14,13 +14,15 @@ task run_igm_churchill_ancestry {
   String output_dir = "out"
   command <<<
     set -x
+    mkdir resource
+    tar xvvf ~{resource} -C resource/
     mkdir -p ~{output_dir}
     export TMP_DIR=$(readlink -f ~{output_dir})
     export NUMBA_CACHE_DIR="${TMP_DIR}/numba"
     mkdir -p "${NUMBA_CACHE_DIR}"
     /opt/conda/bin/python3 -m igm_churchill_ancestry \
       --path ~{input_vcf} \
-      --resource ~{resource} \
+      --resource resource/ \
       --output-dir ~{output_dir} \
       --genome-ver ~{genome_ver} \
       --mode ~{mode}
