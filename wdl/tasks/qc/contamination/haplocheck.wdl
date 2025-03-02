@@ -4,6 +4,7 @@ import "../../../structs/runenv.wdl"
 
 task run_haplocheck {
   input {
+    String sample
     File bam
     File bai
     RunEnv runenv
@@ -12,6 +13,7 @@ task run_haplocheck {
   # BAM & results dirs need to be absolute paths
   # BAI is required
   # Will need to update version in the future
+  String bam_bn = basename(bam)
   command <<<
     set -x
     mkdir data results
@@ -20,6 +22,8 @@ task run_haplocheck {
     ln ~{bam} ${data_dn}/
     ln ~{bai} ${data_dn}/
     time /apps/haplocheck/cloudgene run haplocheck@1.3.2 --files ${data_dn} --format bam --output ${results_dn}
+    sed -i 's/~{bam_bn}/~{sample}/' ${results_dn}/contamination/contamination.txt
+    #sed -i 's/~{bam_bn}/~{sample}/' ${results_dn}/haplogroups/haplogroups.txt
   >>>
 
   output {
