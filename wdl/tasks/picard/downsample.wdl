@@ -23,6 +23,7 @@ task run_downsample {
 
   output {
     File output_bam = "~{output_bam}"
+    File? output_bai = glob("*.bai")[0]
     File metrics = "~{metrics_file}"
   }
 
