@@ -11,15 +11,15 @@ task run_sort {
   }
 
   String output_bam = basename(bam)
-  # Popular params:
-  # --write-index
   command <<<
-    samtools sort ~{params} -O ~{output_fmt} --write-index -o "~{output_bam}##idx##~{output_bam}.bai" ~{bam}
+    mkdir tmpsort
+    trap rm -rf tmpsort EXIT
+    samtools sort ~{params} -@ ~{runenv.cpu} -O ~{output_fmt} --write-index -o "~{output_bam}##idx##~{output_bam}.bai" ~{bam} -T tmpsort/sorted.nnnn.bam
   >>>
 
   output {
-    File output_bam = output_bam
-    File output_bai = glob("*.bai")[0]
+    File sorted_bam = output_bam
+    File sorted_bai = glob("*.bai")[0]
   }
 
   runtime {
