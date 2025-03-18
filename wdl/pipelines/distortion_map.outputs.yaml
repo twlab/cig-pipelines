@@ -1,10 +1,7 @@
-#distortion_map.run_wgsim:
-#distortion_map.align_to_ref:
-#distortion_map.run_bwa_mem as align_to_query:
-#distortion_map.generate_simulated_coverage:
-#  - coverage
-#distortion_map.generate_simulated_no_lift_over_coverage:
-#  - coverage
+distortion_map.count_mtx:
+  - interval_mapping
+distortion_map.load_db:
+  - db
 distortion_map.merge_ref_matrices:
   - matrix
 distortion_map.merge_src_matrices:
