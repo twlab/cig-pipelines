@@ -55,6 +55,7 @@ task run_calculate_probability {
     printf "Genome size:   %i\n" "${genome_size}"
     printf "Coverage:      %i\n" "~{coverage}"
     printf "Total bases:   %i\n" "${total_bases}"
+    printf "Read average:  %i\n" "${read_avg_length}"
     printf "Bases needed:  %i\n" "${bases_needed}"
     printf "Total reads:   %i\n" "${total_reads}"
     printf "Reads needed:  %i\n" "${reads_needed}"
@@ -62,7 +63,7 @@ task run_calculate_probability {
       echo "Needed bases exceeds total bases. Probability is 1."
       echo 1 > probability
     else
-      probability=$(perl -e "print(int(${reads_needed} / ${total_reads}))")
+      probability=$(perl -e "printf('%.4f', (${reads_needed} / ${total_reads}))")
       printf "Probability:  ${probability}\n"
       printf "${probability}" > probability
     fi
