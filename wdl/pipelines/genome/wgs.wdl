@@ -22,7 +22,7 @@ workflow genome_wgs {
   input {
     String sample
     Array[File] fastqs
-    File idx # tarred BWA index
+    File idx # tarred BWA index with DICT, FASTA, FAI
     Boolean generate_fastqc = false
     Boolean realign_bam = true
     Int targets_expansion_bases = 160
@@ -48,51 +48,15 @@ workflow genome_wgs {
     String gatk_docker
     Int gatk_cpu
     Int gatk_memory
-    String markdup_docker
-    Int markdup_cpu
-    Int markdup_memory
+    String picard_docker
+    Int picard_cpu
+    Int picard_memory
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
     String utils_docker
     Int utils_cpu
     Int utils_memory
-  }
-
-  # RunEnvs in order of usage
-  RunEnv utils_runenv = {
-    "docker": utils_docker,
-    "cpu": utils_cpu,
-    "memory": utils_memory,
-    "disks": 20,
-  }
-
-  RunEnv bwa_runenv = {
-    "docker": bwa_docker,
-    "cpu": bwa_cpu,
-    "memory": bwa_memory,
-    "disks": 20,
-  }
-
-  RunEnv samtools_runenv = {
-    "docker": samtools_docker,
-    "cpu": samtools_cpu,
-    "memory": samtools_memory,
-    "disks": 20,
-  }
-
-  RunEnv freebayes_renenv = {
-    "docker": freebayes_docker,
-    "cpu": freebayes_cpu,
-    "memory": freebayes_memory,
-    "disks": 20,
-  }
-
-  RunEnv gatk_renenv = {
-    "docker": gatk_docker,
-    "cpu": gatk_cpu,
-    "memory": gatk_memory,
-    "disks": 20,
   }
 
   RunEnv bedtools_runenv = {
@@ -109,10 +73,10 @@ workflow genome_wgs {
     "disks": 20,
   }
 
-  RunEnv markduper_runenv = {
-    "docker": markdup_docker,
-    "cpu": markdup_cpu,
-    "memory": markdup_memory,
+  RunEnv bwa_runenv = {
+    "docker": bwa_docker,
+    "cpu": bwa_cpu,
+    "memory": bwa_memory,
     "disks": 20,
   }
 
@@ -120,6 +84,42 @@ workflow genome_wgs {
     "docker": deepvariant_docker,
     "cpu": deepvariant_cpu,
     "memory": deepvariant_memory,
+    "disks": 20,
+  }
+
+
+  RunEnv freebayes_renenv = {
+    "docker": freebayes_docker,
+    "cpu": freebayes_cpu,
+    "memory": freebayes_memory,
+    "disks": 20,
+  }
+
+  RunEnv gatk_renenv = {
+    "docker": gatk_docker,
+    "cpu": gatk_cpu,
+    "memory": gatk_memory,
+    "disks": 20,
+  }
+
+  RunEnv picard_runenv = {
+    "docker": picard_docker,
+    "cpu": picard_cpu,
+    "memory": picard_memory,
+    "disks": 20,
+  }
+
+  RunEnv samtools_runenv = {
+    "docker": samtools_docker,
+    "cpu": samtools_cpu,
+    "memory": samtools_memory,
+    "disks": 20,
+  }
+
+  RunEnv utils_runenv = {
+    "docker": utils_docker,
+    "cpu": utils_cpu,
+    "memory": utils_memory,
     "disks": 20,
   }
 
@@ -197,7 +197,7 @@ workflow genome_wgs {
 
   call markdup.run_markdup as picard_markdup { input:
     bam=select_first([realign.indel_realigned_bam, samtools_sort.sorted_bam]), # select realign first if true
-    runenv=markduper_runenv,
+    runenv=picard_runenv,
   }
 
   call samtools.index as samtools_index { input:
