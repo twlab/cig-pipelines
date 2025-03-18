@@ -1,0 +1,6 @@
+{
+  "haplocheck.bams_tsv": "{{TSV}}",
+  "haplocheck.haplocheck_docker": "mgibio/haplocheck:v1.3.2-noble",
+  "haplocheck.haplocheck_memory": 20,
+  "haplocheck.haplocheck_cpu": 4
+}
