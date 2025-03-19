@@ -10,6 +10,7 @@ import "wdl/tasks/qc/fastqc.wdl"
 import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/samtools.wdl"
+import "wdl/tasks/trimmers/fastp.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
 workflow genome_wgs {
@@ -26,6 +27,8 @@ workflow genome_wgs {
     Boolean generate_fastqc = false
     Boolean realign_bam = true
     Int targets_expansion_bases = 160
+    String? trimmer_name
+    String? trimmer_params
     # dockers and resources
     String abra2_docker
     Int abra2_cpu
@@ -54,6 +57,9 @@ workflow genome_wgs {
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
+    String? trimmer_docker
+    Int? trimmer_cpu
+    Int? trimmer_memory
     String utils_docker
     Int utils_cpu
     Int utils_memory
@@ -86,7 +92,6 @@ workflow genome_wgs {
     "memory": deepvariant_memory,
     "disks": 20,
   }
-
 
   RunEnv freebayes_renenv = {
     "docker": freebayes_docker,
@@ -123,6 +128,11 @@ workflow genome_wgs {
     "disks": 20,
   }
 
+  call idx.run_untar_idx as reference { input:
+    idx=idx,
+    runenv=utils_runenv,
+  }
+
   if ( generate_fastqc ) {
     RunEnv runenv_fastqc = {
       "docker": fastqc_docker,
@@ -136,17 +146,30 @@ workflow genome_wgs {
     }
   }
 
-  call idx.run_untar_idx as reference { input:
-    idx=idx,
-    runenv=utils_runenv,
+  if ( trimmer_name != "" ) {
+    RunEnv trimmer_runenv = {
+      "docker": trimmer_docker,
+      "cpu": trimmer_cpu,
+      "memory": trimmer_memory,
+      "disks": 20,
+    }
+    if ( trimmer_name == "fastp") {
+      call fastp.run_fastp as trimmer { input:
+        fastqs=fastqs,
+        params=trimmer_params,
+        runenv=trimmer_runenv,
+      }
+    }
   }
+
+  Array[File] trimmed_fastqs = select_first([trimmer.trimmed_fastqs, fastqs])
 
   call align.run_bwa_mem as align { input:
     sample=sample,
     library=sample+"-lib1",
     rg_id=sample+"-lib1",
     platform_unit=sample+"-lib1",
-    fastqs=fastqs,
+    fastqs=trimmed_fastqs,
     idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa],
     runenv=bwa_runenv,
   }

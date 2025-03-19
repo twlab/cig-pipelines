@@ -7,6 +7,8 @@
   "genome_wgs.idx": "{{IDX}}",
   "genome_wgs.targets_expansion_bases": 160,
   "genome_wgs.generate_fastqc": true,
+  "genome_wgs.trimmer_name": "fastp",
+  "genome_wgs.trimmer_params": "",
   "genome_wgs.realign_bam": true,
   "genome_wgs.abra2_docker": "mgibio/abra2:v2.23-focal",
   "genome_wgs.abra2_cpu": 2,
@@ -35,6 +37,9 @@
   "genome_wgs.samtools_docker": "mgibio/samtools:v1.21-noble",
   "genome_wgs.samtools_cpu": 1,
   "genome_wgs.samtools_memory": 4, 
+  "genome_wgs.trimmer_docker": "mgibio/fastp:v0.23.4-noble",
+  "genome_wgs.trimmer_cpu": 2,
+  "genome_wgs.trimmer_memory": 16,
   "genome_wgs.utils_docker": "mgibio/linux-tk:latest",
   "genome_wgs.utils_cpu": 1,
   "genome_wgs.utils_memory": 4 

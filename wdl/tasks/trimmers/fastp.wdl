@@ -5,7 +5,7 @@ import "../../structs/runenv.wdl"
 task run_fastp {
   input {
     Array[File] fastqs # must be paired
-    String params
+    String? params
     RunEnv runenv
   }
 

@@ -9,6 +9,7 @@ import "wdl/tasks/gatk/realigner_target_creator.wdl"
 import "wdl/tasks/pangenome/extract_ref.wdl"
 import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/samtools.wdl"
+import "wdl/tasks/trimmers/fastp.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 import "wdl/tasks/vg/giraffe.wdl"
 import "wdl/tasks/vg/haplotypes.wdl"
@@ -31,6 +32,8 @@ workflow pangenome_wgs {
     File hap
     Int targets_expansion_bases = 160
     Boolean generate_fastqc = false
+    String? trimmer_name
+    String? trimmer_params
     # dockers
     String abra2_docker 
     Int abra2_cpu 
@@ -59,6 +62,9 @@ workflow pangenome_wgs {
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
+    String? trimmer_docker
+    Int? trimmer_cpu
+    Int? trimmer_memory
     String vg_docker
     Int vg_cpu
     Int vg_memory
@@ -155,6 +161,24 @@ workflow pangenome_wgs {
       runenv=runenv_fastqc,
     }
   }
+
+  if ( trimmer_name != "" ) {
+    RunEnv trimmer_runenv = {
+      "docker": trimmer_docker,
+      "cpu": trimmer_cpu,
+      "memory": trimmer_memory,
+      "disks": 20,
+    }
+    if ( trimmer_name == "fastp") {
+      call fastp.run_fastp as trimmer { input:
+        fastqs=fastqs,
+        params=trimmer_params,
+        runenv=trimmer_runenv,
+      }
+    }
+  }
+
+  Array[File] trimmed_fastqs = select_first([trimmer.trimmed_fastqs, fastqs])
 
   call haplotypes.generate_kmers_with_kmc as kmc { input:
     sample=sample,
