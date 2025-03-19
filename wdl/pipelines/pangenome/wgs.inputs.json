@@ -17,7 +17,7 @@
   "pangenome_wgs.bedtools_docker": "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1",
   "pangenome_wgs.bedtools_cpu": 1,
   "pangenome_wgs.bedtools_memory": 4, 
-  "pangenome_wgs.deepvariant_docker": "google/deepvariant:pangenome_aware_deepvariant-1.8.0",
+  "pangenome_wgs.deepvariant_docker": "google/deepvariant:1.8.0",
   "pangenome_wgs.deepvariant_cpu": 12,
   "pangenome_wgs.deepvariant_memory": 96,
   "pangenome_wgs.fastqc_docker": "mgibio/fastqc:v0.12.1-noble",
@@ -32,9 +32,9 @@
   "pangenome_wgs.kmc_docker": "mgibio/kmc:v3.2.4-noble",
   "pangenome_wgs.kmc_cpu": 8,
   "pangenome_wgs.kmc_memory": 120,
-  "pangenome_wgs.markdup_docker": "mgibio/picard:v3.3.0-noble",
-  "pangenome_wgs.markdup_cpu": 4,
-  "pangenome_wgs.markdup_memory": 20,
+  "pangenome_wgs.picard_docker": "mgibio/picard:v3.3.0-noble",
+  "pangenome_wgs.picard_cpu": 4,
+  "pangenome_wgs.picard_memory": 20,
   "pangenome_wgs.samtools_docker": "mgibio/samtools:v1.21-noble",
   "pangenome_wgs.samtools_cpu": 4,
   "pangenome_wgs.samtools_memory": 20,
@@ -43,6 +43,5 @@
   "pangenome_wgs.trimmer_memory": 16,
   "pangenome_wgs.vg_docker": "quay.io/vgteam/vg:v1.55.0",
   "pangenome_wgs.vg_cpu": 12,
-  "pangenome_wgs.vg_memory": 64,
-  "pangenome_wgs.utils_docker": "mgibio/linux-tk:latest"
+  "pangenome_wgs.vg_memory": 64
 }

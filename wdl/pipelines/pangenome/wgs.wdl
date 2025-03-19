@@ -56,9 +56,9 @@ workflow pangenome_wgs {
     String kmc_docker
     Int kmc_cpu
     Int kmc_memory
-    String markdup_docker
-    Int markdup_cpu
-    Int markdup_memory
+    String picard_docker
+    Int picard_cpu
+    Int picard_memory
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
@@ -68,42 +68,26 @@ workflow pangenome_wgs {
     String vg_docker
     Int vg_cpu
     Int vg_memory
-    String utils_docker
   }
 
-  # RunEnvs in order of usage
-  RunEnv runenv_kmc = {
-    "docker": kmc_docker,
-    "cpu": kmc_cpu,
-    "memory": kmc_memory,
+  RunEnv abra2_renenv = {
+    "docker": abra2_docker,
+    "cpu": abra2_cpu,
+    "memory": abra2_memory,
     "disks": 20,
   }
 
-  RunEnv runenv_giraffe = {
-    "docker": vg_docker,
-    "cpu": vg_cpu,
-    "memory": vg_memory,
+  RunEnv bedtools_runenv = {
+    "docker": bedtools_docker,
+    "cpu": bedtools_cpu,
+    "memory": bedtools_memory,
     "disks": 20,
   }
 
-  RunEnv runenv_vg = {
-    "docker": vg_docker,
-    "cpu": 8,
-    "memory": 64,
-    "disks": 20,
-  }
-
-  RunEnv runenv_idx = {
-    "docker": utils_docker,
-    "cpu": 1,
-    "memory": 4,
-    "disks": 20,
-  }
-
-  RunEnv samtools_runenv = {
-    "docker": samtools_docker,
-    "cpu": samtools_cpu,
-    "memory": samtools_memory,
+  RunEnv dv_runenv = {
+    "docker": deepvariant_docker,
+    "cpu": deepvariant_cpu,
+    "memory": deepvariant_memory,
     "disks": 20,
   }
 
@@ -121,36 +105,43 @@ workflow pangenome_wgs {
     "disks": 20,
   }
 
-  RunEnv bedtools_runenv = {
-    "docker": bedtools_docker,
-    "cpu": bedtools_cpu,
-    "memory": bedtools_memory,
+  RunEnv giraffe_runenv = {
+    "docker": vg_docker,
+    "cpu": vg_cpu,
+    "memory": vg_memory,
     "disks": 20,
   }
 
-  RunEnv abra2_renenv = {
-    "docker": abra2_docker,
-    "cpu": abra2_cpu,
-    "memory": abra2_memory,
+  RunEnv kmc_runenv = {
+    "docker": kmc_docker,
+    "cpu": kmc_cpu,
+    "memory": kmc_memory,
     "disks": 20,
   }
 
-  RunEnv markduper_runenv = {
-    "docker": markdup_docker,
-    "cpu": markdup_cpu,
-    "memory": markdup_memory,
+  RunEnv picard_runenv = {
+    "docker": picard_docker,
+    "cpu": picard_cpu,
+    "memory": picard_memory,
     "disks": 20,
   }
 
-  RunEnv dv_runenv = {
-    "docker": deepvariant_docker,
-    "cpu": deepvariant_cpu,
-    "memory": deepvariant_memory,
+  RunEnv samtools_runenv = {
+    "docker": samtools_docker,
+    "cpu": samtools_cpu,
+    "memory": samtools_memory,
+    "disks": 20,
+  }
+
+  RunEnv vg_runenv = {
+    "docker": vg_docker,
+    "cpu": 8,
+    "memory": 64,
     "disks": 20,
   }
 
   if ( generate_fastqc ) {
-    RunEnv runenv_fastqc = {
+    RunEnv fastqc_runenv = {
       "docker": fastqc_docker,
       "cpu": fastqc_cpu,
       "memory": fastqc_memory,
@@ -158,7 +149,7 @@ workflow pangenome_wgs {
     }
     call fastqc.run_fastqc { input:
       seqfiles=fastqs,
-      runenv=runenv_fastqc,
+      runenv=fastqc_runenv,
     }
   }
 
@@ -183,7 +174,7 @@ workflow pangenome_wgs {
   call haplotypes.generate_kmers_with_kmc as kmc { input:
     sample=sample,
     fastqs=fastqs,
-    runenv=runenv_kmc,
+    runenv=kmc_runenv,
   }
 
   call giraffe.run_giraffe_haplotype_mode as run_giraffe { input:
@@ -192,18 +183,18 @@ workflow pangenome_wgs {
     gbz=gbz,
     haplotypes=hap,
     kmers=kmc.kmers,
-    runenv=runenv_giraffe,
+    runenv=giraffe_runenv,
   }
 
   call stats.run_stats as vg_stats { input:
     gam=run_giraffe.gam,
-    runenv=runenv_vg,
+    runenv=vg_runenv,
   }
 
   call extract_ref.run_extract_ref as reference { input:
     name=reference_name,
     gbz=gbz,
-    runenv=runenv_vg,
+    runenv=vg_runenv,
   }
 
   call surject.run_surject { input:
@@ -212,7 +203,7 @@ workflow pangenome_wgs {
     library=sample+"-lib1",
     gbz=gbz,
     paths_list=reference.paths_list,
-    runenv=runenv_vg,
+    runenv=vg_runenv,
   }
 
   call samtools.sort as samtools_sort { input:
@@ -259,7 +250,7 @@ workflow pangenome_wgs {
 
   call markdup.run_markdup as picard_markdup { input:
     bam=realign.indel_realigned_bam,
-    runenv=markduper_runenv,
+    runenv=picard_runenv,
   }
 
   call samtools.index as samtools_index { input:
@@ -288,6 +279,9 @@ workflow pangenome_wgs {
     File bam = picard_markdup.dedup_bam
     File bai = samtools_index.bai
     File bam_stats = samtools_stat.stats
-    File dv_vcf = dv.vcf
+    File vcf = dv.vcf
+    File vcf_tbi = dv.vcf_tbi
+    File gvcf = dv.gvcf
+    File gvcf_tbi = dv.gvcf_tbi
   }
 }
