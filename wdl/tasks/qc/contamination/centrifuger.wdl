@@ -17,8 +17,21 @@ task run_centrifuger {
     tar xvvf ~{centrifuger_db} -C db/
     centrifuger_db_bn=$(find db -name '*.cfr' | xargs -I% basename % | awk -F. '{print $1}' | uniq)
     centrifuger_db_prefix="db/${centrifuger_db_bn}"
-    samtools fastq ~{bam} -@ ~{runenv.cpu} -n -1 R1.fastq -2 R2.fastq
-    centrifuger -x "${centrifuger_db_prefix}" -1 R1.fastq -2 R2.fastq -t ~{runenv.cpu} > centrifuger.output.tsv
+    samtools fastq ~{bam} -@ ~{runenv.cpu} -n -0 R0.fastq -1 R1.fastq -2 R2.fastq
+    declare -a fq_params
+    if test -s R1.fastq; then
+        if test -s R2.fastq; then
+            fq_params=("-1" "R1.fastq" "-2" "R2.fastq")
+        else
+            fq_params=("-u" "R1.fastq")
+        fi
+    elif test -s R0.fastq; then
+        fq_params=("-u" "R0.fastq")
+    else
+        echo "Could not find FASTQs generated from ~{bam}"
+        exit 1
+    fi
+    centrifuger -x "${centrifuger_db_prefix}" "${fq_params[@]}" -t ~{runenv.cpu} > centrifuger.output.tsv
 
     mkdir taxon-db
     tar xvvf ~{centrifuger_taxon_db} -C taxon-db/
