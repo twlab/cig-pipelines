@@ -179,7 +179,7 @@ workflow pangenome_wgs {
 
   call giraffe.run_giraffe_haplotype_mode as run_giraffe { input:
     sample=sample,
-    fastqs=fastqs,
+    fastqs=trimmed_fastqs,
     gbz=gbz,
     haplotypes=hap,
     kmers=kmc.kmers,
