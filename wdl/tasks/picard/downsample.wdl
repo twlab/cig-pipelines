@@ -68,6 +68,7 @@ task run_calculate_probability {
       printf "${probability}" > probability
     fi
     printf "Wrote probability to file: probability\n"
+    sleep 30s
   >>>
 
   output {
