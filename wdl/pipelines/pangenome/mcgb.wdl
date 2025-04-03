@@ -10,23 +10,26 @@ workflow pangenome_mcgb {
     File seqfile
     Array[String] graph_types = ["clip", "full"]
     Boolean run_panacus= true
-    String docker = "mgibio/cactus:2.5.0-focal"
-    Int cpu
-    Int memory
+    String cactus_docker
+    Int cactus_cpu
+    Int cactus_memory
+    String panacus_docker
+    Int panacus_cpu
+    Int panacus_memory
   }
 
-  # Run Envss in order of use
+  # Run Envs
   RunEnv runenv_mcgb = {
-    "docker": docker,
-    "cpu": cpu,
-    "memory": memory,
+    "docker": cactus_docker,
+    "cpu": cactus_cpu,
+    "memory": cactus_memory,
     "disks": 20,
   }
 
   RunEnv runenv_panacus = {
-    "docker": "mgibio/panacus:0.2.3-buster",
-    "cpu": 1,
-    "memory": 24,
+    "docker": panacus_docker,
+    "cpu": panacus_cpu,
+    "memory": panacus_memory,
     "disks": 20,
   }
 
