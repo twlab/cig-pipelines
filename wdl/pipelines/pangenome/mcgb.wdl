@@ -6,7 +6,7 @@ import "wdl/tasks/pangenome/panacus.wdl"
 workflow pangenome_mcgb {
   input {
     String name
-    String ref
+    Array[String] ref
     File seqfile
     Array[String] graph_types = ["clip", "full"]
     Boolean run_panacus= true
@@ -84,7 +84,7 @@ workflow pangenome_mcgb {
 task run_cactus_minigraph {
   input {
     String name
-    String ref
+    Array[String] ref
     File seqfile
     RunEnv runenv
   }
@@ -94,7 +94,7 @@ task run_cactus_minigraph {
   command <<<
     set -e
     export OMP_NUM_THREADS=1
-    cactus-minigraph ~{jobstore} ~{seqfile} ~{sv_gfa} --reference ~{ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-minigraph ~{jobstore} ~{seqfile} ~{sv_gfa} --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
@@ -112,7 +112,7 @@ task run_cactus_minigraph {
 task run_cactus_graphmap {
   input {
     String name
-    String ref
+    Array[String] ref
     File seqfile
     File sv_gfa
     RunEnv runenv
@@ -126,7 +126,7 @@ task run_cactus_graphmap {
     set -e
     export OMP_NUM_THREADS=1
     cp ~{seqfile} ~{updated_seqfile}
-    cactus-graphmap ~{jobstore} ~{updated_seqfile} ~{sv_gfa} ~{paf} --outputFasta ~{fasta} --reference ~{ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap ~{jobstore} ~{updated_seqfile} ~{sv_gfa} ~{paf} --outputFasta ~{fasta} --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
@@ -146,7 +146,7 @@ task run_cactus_graphmap {
 
 task run_cactus_graphmap_split {
   input {
-    String ref
+    Array[String] ref
     File seqfile
     File sv_gfa
     File paf
@@ -159,7 +159,7 @@ task run_cactus_graphmap_split {
     set -e
     export OMP_NUM_THREADS=1
     sed -i 's,_MINIGRAPH_\t.*,_MINIGRAPH_\t~{minigraph_fasta},' ~{seqfile}
-    cactus-graphmap-split ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outDir chroms --reference ~{ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-split ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outDir chroms --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
@@ -176,7 +176,7 @@ task run_cactus_graphmap_split {
 
 task run_cactus_align {
   input {
-    String ref
+    Array[String] ref
     Directory chroms
     RunEnv runenv
   }
@@ -187,7 +187,7 @@ task run_cactus_align {
     export OMP_NUM_THREADS=1
     ln -s ~{chroms} chroms
     find chroms/seqfiles/ -type f | while read -r sf; do sed -i 's,file:///.*/execution/,,' $sf; done
-    cactus-align ~{jobstore} chroms/chromfile.txt alignments --batch --pangenome --reference ~{ref} --outVG --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
+    cactus-align ~{jobstore} chroms/chromfile.txt alignments --batch --pangenome --reference ~{sep=' ' ref} --outVG --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
@@ -205,7 +205,7 @@ task run_cactus_align {
 task run_cactus_graphmap_join {
   input {
     String name
-    String ref
+    Array[String] ref
     Array[String] graph_types
     Directory alignments
     RunEnv runenv
@@ -220,7 +220,7 @@ task run_cactus_graphmap_join {
     set -e
     export OMP_NUM_THREADS=1
     ln -s ~{alignments} alignments
-    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{ref} --vcf ~{sep=' ' graph_types} --gfa ~{sep=' ' graph_types} --giraffe ~{sep=' ' graph_types} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{sep=' ' ref} --vcf ~{sep=' ' graph_types} --gfa ~{sep=' ' graph_types} --giraffe ~{sep=' ' graph_types} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
   >>>
 
   runtime {
