@@ -16,13 +16,14 @@ import "wdl/tasks/samtools/split.wdl"
 workflow distortion_map {
     input {
       String sample
+      Array[String]? chrs
       File query_idx          # tar file with ref fasta, fai, and aligner index
       File reference_idx      # tar file with ref fasta, fai, and aligner index
       File query_to_ref_paf
+      Int wgsim_coverage
       Float wgsim_base_error
       Int wgsim_out_distance
       Int wgsim_stdev
-      Int wgsim_number_pairs
       Int wgsim_read1_length
       Int wgsim_read2_length
       Int interval_window_length
@@ -126,23 +127,30 @@ workflow distortion_map {
   }
 
   # Split the QUERY FASTA by Chromosome
+  Array[String] splitter_chrs = select_first([chrs, query.chromosomes])
   call split.run_split_by_chromosome as splitter { input:
     fasta=query.fasta,
     fai=query.fai,
-    #chrs=["chr1"],
-    chrs=query.chromosomes,
+    chrs=select_first([chrs, query.chromosomes]),
     runenv=samtools_runenv,
   }
 
   # Process Each QUERY Chromosome
   scatter (chromosome_fasta in splitter.chromosome_fastas) {
     # Simulate reads from query chromosome
+    call wgsim.calc_read_pairs_needed { input:
+      fasta=chromosome_fasta,
+      coverage=wgsim_coverage,
+      read_length=wgsim_read1_length,
+      runenv=samtools_runenv,
+    }
+
     call wgsim.run_wgsim { input:
       fasta=chromosome_fasta,
       base_error=wgsim_base_error,
       out_distance=wgsim_out_distance,
       stdev=wgsim_stdev,
-      number_pairs=wgsim_number_pairs,
+      number_pairs=calc_read_pairs_needed.read_pairs_needed,
       read1_length=wgsim_read1_length,
       read2_length=wgsim_read2_length,
       mutation_rate=wgsim_mutation_rate,
@@ -170,6 +178,8 @@ workflow distortion_map {
     call align.run_bwa_mem as align_to_ref { input:
       sample=sample,
       library=sample+"-lib1",
+      rg_id=sample+"-lib1",
+      platform_unit="ILLUMINA",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa], 
       runenv=bwa_runenv,
@@ -183,6 +193,8 @@ workflow distortion_map {
     call align.run_bwa_mem as align_to_query { input:
       sample=sample,
       library=sample+"-lib1",
+      rg_id=sample+"-lib1",
+      platform_unit="ILLUMINA",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       idx_files=[query.fasta, query.amb, query.ann, query.bwt, query.pac, query.sa], 
       runenv=bwa_runenv,

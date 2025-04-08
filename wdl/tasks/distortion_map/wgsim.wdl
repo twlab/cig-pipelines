@@ -61,3 +61,40 @@ task extract_source_positions {
     #disks : select_first([runenv.disks,"local-disk 100 SSD"])
   }
 }
+
+task calc_read_pairs_needed {
+  input {
+    File fasta
+    Int coverage
+    Int read_length
+    RunEnv runenv
+  }
+
+  command <<<
+    set -ex
+    samtools faidx ~{fasta}
+    sequence_length=$(head -1 ~{fasta}.fai | awk '{print $2}')
+    bases_needed=$(perl -e "printf('%i', (~{coverage} * ${sequence_length}) / 2)")
+    read_pairs_needed=$(perl -e "printf('%i', ${bases_needed} / ( ~{read_length} * 2))")
+
+    printf "Coverage:           %i\n" "~{coverage}"
+    printf "Sequence length:    %i\n" "${sequence_legth}"
+    printf "Bases needed:       %i\n" "${bases_needed}"
+    printf "Read Pairs needed:  %i\n" "${read_pairs_needed}"
+
+    echo ${read_pairs_needed} > read_pairs_needed
+    printf "Wrote read pairs needed to file: read_pairs_needed\n"
+    sleep 30s
+  >>>
+
+  output {
+    Int read_pairs_needed = read_int("read_pairs_needed")
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: runenv.memory + " GB"
+    #disks : select_first([runenv.disks,"local-disk 100 SSD"])
+  }
+}
