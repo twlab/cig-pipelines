@@ -1,0 +1,3 @@
+centrifuger.run_centrifuger:
+  - summary_output_file
+#  - centrifuger_output_file 
