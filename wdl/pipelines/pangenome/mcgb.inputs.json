@@ -4,10 +4,10 @@
     "pangenome_mcgb.ref": [{{REFS}}],
     "pangenome_mcgb.graph_types": ["clip", "full"],
     "pangenome_mcgb.run_panacus": true,
-    "pangenome_mcgb.cactus_docker": "mgibio/cactus:2.5.0-focal",
+    "pangenome_mcgb.cactus_docker": "quay.io/comparative-genomics-toolkit/cactus:v2.9.7",
     "pangenome_mcgb.cactus_cpu": 16,
     "pangenome_mcgb.cactus_memory": 96,
-    "pangenome_mcgb.panacus_docker": "mgibio/panacus:0.2.3-buster",
+    "pangenome_mcgb.panacus_docker": "mgibio/panacus:0.2.4-buster",
     "pangenome_mcgb.panacus_cpu": 1,
     "pangenome_mcgb.panacus_memory": 24
 }
