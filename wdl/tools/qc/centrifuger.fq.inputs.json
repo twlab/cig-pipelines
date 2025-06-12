@@ -1,0 +1,9 @@
+{
+  "centrifuger.fastqs": ["{{FQ1}}", "{{FQ2}}"],
+  "centrifuger.centrifuger_db": "{{CENTRIFUGER_DB}}",
+  "centrifuger.centrifuger_taxon_db": "{{CENTRIFUGER_TAXON_DB}}",
+  "centrifuger.centrifuger_cutoff_percentage": "{{CENTRIFUGER_CUTOFF_PERCENTAGE}}",
+  "centrifuger.docker": "mgibio/centrifuger:v1.0.4-focal",
+  "centrifuger.cpu": 4,
+  "centrifuger.memory": 24
+}
