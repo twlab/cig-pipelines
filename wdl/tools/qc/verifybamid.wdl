@@ -1,22 +1,19 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/qc/verifybamid.wdl"
+import "wdl/tasks/qc/contamination/verifybamid.wdl"
 
-workflow verify_bam_id {
+workflow verifybamid {
   input {
-    File bam
-    Directory index
     String sample
-    Directory snvstory_resource
-    String snvstory_genome_ver = "38"
-    String snvstory_mode = "WGS"
+    File bam
+    File bai
+    File ref_fasta
+    File ref_fai
+    File resource
     String docker
     Int cpu
     Int memory
-    String snvstory_docker
-    Int snvstory_cpu
-    Int snvstory_memory
   }
 
   RunEnv runenv_verifybamid = {
@@ -27,7 +24,12 @@ workflow verify_bam_id {
   }
 
   call verifybamid.run_verifybamid { input:
-    input_bam=bam
+    sample=sample,
+    bam=bam,
+    bai=bai,
+    ref_fasta=ref_fasta,
+    ref_fai=ref_fai,
+    resource=resource,
     runenv=runenv_verifybamid,
   }
 }

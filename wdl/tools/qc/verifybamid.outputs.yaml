@@ -1,9 +1,4 @@
-pangenie_genotyper_with_ancestory.run_genotyper:
-  - vcf_gz
-  - vcf_tbi
-  - gvcf_gz
-  - gvcf_tbi
-  - histo
-pangenie_genotyper_with_ancestory.run_igm_churchill_ancestry:
- - csv_file
- - pickle_file
+verifybamid.run_verifybamid:
+  - contamination_report
+  - ancestry
+  - selfsm

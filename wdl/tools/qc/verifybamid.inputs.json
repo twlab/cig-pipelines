@@ -1,8 +1,11 @@
 {
+  "verifybamid.sample": "{{SAMPLE}}",
   "verifybamid.bam": "{{BAM}}",
-  "verifybamid.index": "{{INDEX}}",
-  "verifybamid.snvstory_genome_ver": "38",
-  "verifybamid.docker": "mgibio/pangenie:v3.0.2-focal",
-  "verifybamid.cpu": 8,
-  "verifybamid.memory": 96
+  "verifybamid.bai": "{{BAI}}",
+  "verifybamid.ref_fasta": "{{REF_FASTA}}",
+  "verifybamid.ref_fai": "{{REF_FAI}}",
+  "verifybamid.resource": "{{RESOURCE}}",
+  "verifybamid.docker": "griffan/verifybamid2@sha256:d98d7aba98d5b22d9a81cc93c976d4a83e83f57a10eec9116892c15d5576bd01",
+  "verifybamid.cpu": 12,
+  "verifybamid.memory": 24
 }
