@@ -4,6 +4,7 @@ import "../../../structs/runenv.wdl"
 
 task run_centrifuger {
   input {
+    String sample
     Array[File] fastqs
     File centrifuger_db
     File centrifuger_taxon_db
@@ -11,22 +12,24 @@ task run_centrifuger {
     RunEnv runenv
   }
  
+  output_tsv = "~{sample}.centrifuger.tsv"
+  summary_tsv = "~{sample}.centrifuger.summary.tsv"
   command <<<
     set -ex
     mkdir db
     tar xvvf ~{centrifuger_db} -C db/
     centrifuger_db_bn=$(find db -name '*.cfr' | xargs -I% basename % | awk -F. '{print $1}' | uniq)
     centrifuger_db_prefix="db/${centrifuger_db_bn}"
-    centrifuger -x "${centrifuger_db_prefix}" -1 ~{fastqs[0]} -2 ~{fastqs[1]} -t ~{runenv.cpu} > centrifuger.output.tsv
+    centrifuger -x "${centrifuger_db_prefix}" -1 ~{fastqs[0]} -2 ~{fastqs[1]} -t ~{runenv.cpu} > ~{output_tsv}
 
     mkdir taxon-db
     tar xvvf ~{centrifuger_taxon_db} -C taxon-db/
-    summarize_centrifuger.py --centrifuger_output centrifuger.output.tsv --taxon_db taxon-db --summary_output centrifuger.summary --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage} --csv
+    summarize_centrifuger.py --centrifuger_output ~{output_tsv} --taxon_db taxon-db --summary_output ~{summary_tsv} --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage}
   >>>
 
   output {
-    File centrifuger_output_file = glob("centrifuger.output.tsv")[0]
-    File summary_output_file = glob("centrifuger.summary.csv")[0]
+    File centrifuger_output_file = glob("~{output_tsv}")[0]
+    File summary_output_file = glob("~{summary_tsv}")[0]
   }
 
   runtime {
@@ -39,6 +42,7 @@ task run_centrifuger {
 
 task run_centrifuger_bam {
   input {
+    String sample
     File bam
     File centrifuger_db
     File centrifuger_taxon_db
@@ -46,6 +50,8 @@ task run_centrifuger_bam {
     RunEnv runenv
   }
 
+  output_tsv = "~{sample}.centrifuger.tsv"
+  summary_tsv = "~{sample}.centrifuger.summary.tsv"
   command <<<
     set -x
     mkdir db
@@ -66,16 +72,16 @@ task run_centrifuger_bam {
         echo "Could not find FASTQs generated from ~{bam}"
         exit 1
     fi
-    centrifuger -x "${centrifuger_db_prefix}" "${fq_params[@]}" -t ~{runenv.cpu} > centrifuger.output.tsv
+    centrifuger -x "${centrifuger_db_prefix}" "${fq_params[@]}" -t ~{runenv.cpu} > ~{output_tsv}
 
     mkdir taxon-db
     tar xvvf ~{centrifuger_taxon_db} -C taxon-db/
-    summarize_centrifuger.py --centrifuger_output centrifuger.output.tsv --taxon_db taxon-db --summary_output centrifuger.summary --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage} --csv
+    summarize_centrifuger.py --centrifuger_output ~{output_tsv} --taxon_db taxon-db --summary_output ~{summary_tsv} --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage}
   >>>
 
   output {
-    File centrifuger_output_file = glob("centrifuger.output.tsv")[0]
-    File summary_output_file = glob("centrifuger.summary.csv")[0]
+    File centrifuger_output_file = glob("~{output_tsv}")[0]
+    File summary_output_file = glob("~{summary_tsv}")[0]
   }
 
   runtime {
