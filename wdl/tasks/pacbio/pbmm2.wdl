@@ -4,12 +4,13 @@ import "../../structs/runenv.wdl"
 
 task run_align {
   input {
+    String sample
     File bam
     File reference_mmi
     RunEnv runenv
   }
 
-  String output_bam = basename(bam)
+  String output_bam = "~{sample}.bam"
   Int threads = runenv.cpu - 4
   Int sort_threads = runenv.cpu - threads
   command <<<
