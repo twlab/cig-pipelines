@@ -11,10 +11,11 @@ task run_bwa_mem {
     String platform_unit
     Array[File] fastqs
     Array[File] idx_files
+    Boolean use_sample_as_bam_basename = true
     RunEnv runenv
   }
 
-  String bam = "~{sample}.bam"
+  String bam = if use_sample_as_bam_basename then "~{sample}.bam" else "~{rg_id}.bam"
   Int bwa_cpu = runenv.cpu - 1
   command <<<
     mkdir ref
