@@ -12,8 +12,8 @@ task run_centrifuger {
     RunEnv runenv
   }
  
-  output_tsv = "~{sample}.centrifuger.tsv"
-  summary_tsv = "~{sample}.centrifuger.summary.tsv"
+  String output_tsv = "~{sample}.centrifuger.tsv"
+  String summary_tsv = "~{sample}.centrifuger.summary.tsv"
   command <<<
     set -ex
     mkdir db
@@ -50,8 +50,8 @@ task run_centrifuger_bam {
     RunEnv runenv
   }
 
-  output_tsv = "~{sample}.centrifuger.tsv"
-  summary_tsv = "~{sample}.centrifuger.summary.tsv"
+  String output_tsv = "~{sample}.centrifuger.tsv"
+  String summary_tsv = "~{sample}.centrifuger.summary.tsv"
   command <<<
     set -x
     mkdir db
