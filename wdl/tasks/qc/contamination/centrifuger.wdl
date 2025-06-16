@@ -13,7 +13,7 @@ task run_centrifuger {
   }
  
   String output_tsv = "~{sample}.centrifuger.tsv"
-  String summary_tsv = "~{sample}.centrifuger.summary.tsv"
+  String summary_bn = "~{sample}.centrifuger.summary"
   command <<<
     set -ex
     mkdir db
@@ -24,12 +24,12 @@ task run_centrifuger {
 
     mkdir taxon-db
     tar xvvf ~{centrifuger_taxon_db} -C taxon-db/
-    summarize_centrifuger.py --centrifuger_output ~{output_tsv} --taxon_db taxon-db --summary_output ~{summary_tsv} --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage}
+    summarize_centrifuger.py --centrifuger_output ~{output_tsv} --taxon_db taxon-db --summary_output ~{summary_bn} --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage}
   >>>
 
   output {
     File centrifuger_output_file = glob("~{output_tsv}")[0]
-    File summary_output_file = glob("~{summary_tsv}")[0]
+    File summary_output_file = glob("~{summary_bn}.tsv")[0]
   }
 
   runtime {
@@ -51,7 +51,7 @@ task run_centrifuger_bam {
   }
 
   String output_tsv = "~{sample}.centrifuger.tsv"
-  String summary_tsv = "~{sample}.centrifuger.summary.tsv"
+  String summary_bn = "~{sample}.centrifuger.summary"
   command <<<
     set -x
     mkdir db
@@ -76,12 +76,12 @@ task run_centrifuger_bam {
 
     mkdir taxon-db
     tar xvvf ~{centrifuger_taxon_db} -C taxon-db/
-    summarize_centrifuger.py --centrifuger_output ~{output_tsv} --taxon_db taxon-db --summary_output ~{summary_tsv} --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage}
+    summarize_centrifuger.py --centrifuger_output ~{output_tsv} --taxon_db taxon-db --summary_output ~{summary_bn} --threads ~{runenv.cpu} --cutoff_percentage ~{cutoff_percentage}
   >>>
 
   output {
     File centrifuger_output_file = glob("~{output_tsv}")[0]
-    File summary_output_file = glob("~{summary_tsv}")[0]
+    File summary_output_file = glob("~{summary_bn}.tsv")[0]
   }
 
   runtime {
