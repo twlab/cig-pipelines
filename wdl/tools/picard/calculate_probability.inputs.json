@@ -1,0 +1,8 @@
+{
+  "calculate_probability.samtools_stat_file": "{{STATS}}",
+  "calculate_probability.genome_size_gb": {{GENOME_SIZE_GB}},
+  "calculate_probability.coverage": {{COVERAGE}},
+  "calculate_probability.docker": "mgibio/smahtqc:v4.6-buster",
+  "calculate_probability.cpu": 1,
+  "calculate_probability.memory": 4
+}

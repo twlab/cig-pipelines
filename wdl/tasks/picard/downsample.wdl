@@ -44,21 +44,24 @@ task run_calculate_probability {
   }
 
   command <<<
-    set -ex
-    genome_size=$((~{genome_size_gb} * 1000000000))
-    bases_needed=$((~{coverage} * ${genome_size}))
+    set -e
     total_bases=$(<~{samtools_stat_file} grep "total length" | awk -F"\t" '{print $3}')
     total_reads=$(<~{samtools_stat_file} grep "total sequences" | awk -F"\t" '{print $3}')
     read_avg_length=$(<~{samtools_stat_file} grep "average length" | awk -F"\t" '{print $3}')
-    reads_needed=$(perl -e "print(int(~{coverage} * ${genome_size} / ${read_avg_length}))")
 
-    printf "Genome size:   %i\n" "${genome_size}"
-    printf "Coverage:      %i\n" "~{coverage}"
-    printf "Total bases:   %i\n" "${total_bases}"
-    printf "Read average:  %i\n" "${read_avg_length}"
-    printf "Bases needed:  %i\n" "${bases_needed}"
-    printf "Total reads:   %i\n" "${total_reads}"
-    printf "Reads needed:  %i\n" "${reads_needed}"
+    genome_size=$((~{genome_size_gb} * 1000000000))
+    bases_needed=$((~{coverage} * ${genome_size}))
+    reads_needed=$(perl -e "print(int(~{coverage} * ${genome_size} / ${read_avg_length}))")
+    current_coverage=$(perl -e "printf('%f', (${total_bases} / ${genome_size}))")
+
+    printf "Genome size:          %i\n" "${genome_size}"
+    printf "Coverage:             %i\n" "~{coverage}"
+    printf "Bases:                %i\n" "${total_bases}"
+    printf "Reads:                %i\n" "${total_reads}"
+    printf "Average read length:  %i\n" "${read_avg_length}"
+    printf "Bases needed:         %i\n" "${bases_needed}"
+    printf "Reads needed:         %i\n" "${reads_needed}"
+    printf "Current coverage:     %.1fX\n" "${current_coverage}"
     if test "${total_bases}" -lt "${bases_needed}"; then
       echo "Needed bases exceeds total bases. Probability is 1."
       echo 1 > probability
