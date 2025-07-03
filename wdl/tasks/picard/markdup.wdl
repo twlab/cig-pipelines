@@ -19,7 +19,7 @@ task run_markdup {
             --METRICS_FILE ~{output_metrics} \
             --QUIET true \
             --ASSUME_SORT_ORDER ~{sort_order} \
-            --VALIDATION_STRINGENCY LENIENT
+            --VALIDATION_STRINGENCY SILENT
     >>>
 
     output {
