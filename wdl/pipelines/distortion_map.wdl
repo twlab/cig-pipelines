@@ -20,7 +20,7 @@ workflow distortion_map {
       File query_idx          # tar file with ref fasta, fai, and aligner index
       File reference_idx      # tar file with ref fasta, fai, and aligner index
       File query_to_ref_paf
-      Int wgsim_coverage
+      Array[Int] wgsim_coverages
       Float wgsim_base_error
       Int wgsim_out_distance
       Int wgsim_stdev
@@ -137,126 +137,131 @@ workflow distortion_map {
 
   # Process Each QUERY Chromosome
   scatter (chromosome_fasta in splitter.chromosome_fastas) {
-    # Simulate reads from query chromosome
-    call wgsim.calc_read_pairs_needed { input:
-      fasta=chromosome_fasta,
-      coverage=wgsim_coverage,
-      read_length=wgsim_read1_length,
-      runenv=samtools_runenv,
-    }
 
-    call wgsim.run_wgsim { input:
-      fasta=chromosome_fasta,
-      base_error=wgsim_base_error,
-      out_distance=wgsim_out_distance,
-      stdev=wgsim_stdev,
-      number_pairs=calc_read_pairs_needed.read_pairs_needed,
-      read1_length=wgsim_read1_length,
-      read2_length=wgsim_read2_length,
-      mutation_rate=wgsim_mutation_rate,
-      fraction_indels=wgsim_fraction_indels,
-      prob_indel_extentsion=wgsim_prob_indel_extentsion,
-      seed=wgsim_seed,
-      runenv=wgsim_runenv,
-    }
+    # Iterate over the coverages
+    scatter (wgsim_coverage in wgsim_coverages) {
 
-    # Extract Source Locations from FASTQs
-    call wgsim.extract_source_positions { input:
-      fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
-      runenv=wgsim_runenv,
-    }
-    call liftover.run_liftover as liftover_source_positions_to_ref { input:
-      paf=query_to_ref_paf,
-      bed=extract_source_positions.source_positions,
-      mapping_qual=5,
-      alignment_length=50000,
-      max_seq_divergence=1,
-      runenv=minimap2_runenv,
-    }
-
-    # Align Sim Reads to REF then Convert Alignments to BED
-    call align.run_bwa_mem as align_to_ref { input:
-      sample=sample,
-      library=sample+"-lib1",
-      rg_id=sample+"-lib1",
-      platform_unit="ILLUMINA",
-      fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
-      idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa], 
-      runenv=bwa_runenv,
-    }
-    call bedtools.run_bam_to_bed as bam2bed_ref { input:
-      bam=align_to_ref.bam,
-      runenv=bedtools_runenv,
-    }
-
-    # Align Sim Reads to QUERY then Convert Alignments to BED & Lift Over
-    call align.run_bwa_mem as align_to_query { input:
-      sample=sample,
-      library=sample+"-lib1",
-      rg_id=sample+"-lib1",
-      platform_unit="ILLUMINA",
-      fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
-      idx_files=[query.fasta, query.amb, query.ann, query.bwt, query.pac, query.sa], 
-      runenv=bwa_runenv,
-    }
-    call bedtools.run_bam_to_bed as bam2bed_query { input:
-      bam=align_to_query.bam,
-      runenv=bedtools_runenv,
-    }
-    call liftover.run_liftover as liftover_query_alignments_to_ref { input:
-      paf=query_to_ref_paf,
-      bed=bam2bed_query.bedfile,
-      mapping_qual=5,
-      alignment_length=50000,
-      max_seq_divergence=1,
-      runenv=minimap2_runenv,
-    }
-
-    call db.load_db { input:
-      source_positions=extract_source_positions.source_positions,
-      lifted_source=liftover_source_positions_to_ref.bedfile,
-      aligned_ref=bam2bed_ref.bedfile,
-      aligned_source=bam2bed_query.bedfile,
-      lifted_aligned_source=liftover_query_alignments_to_ref.bedfile,
-      runenv=distortion_map_runenv,
-    }
-
-    call intervals.create_intervals as intervals { input:
-      db=load_db.db,
-      reference_sizes=reference.sizes,
-      window_length=interval_window_length,
-      window_stride=interval_window_stride,
-      runenv=distortion_map_runenv,
-    }
-
-#    call coverage.generate_simulated_coverage { input:
-#      db=load_db.db,
-#      simulated_intervals=create_intervals.simulated_intervals,
-#      batch_size=100000,
-#      runenv=distortion_map_runenv,
-#    }
-#
-#    call coverage.generate_simulated_no_lift_over_coverage { input:
-#      db=load_db.db,
-#      simulated_intervals=create_intervals.simulated_intervals,
-#      runenv=distortion_map_runenv,
-#    }
-
-    call count_matrices.generate as count_mtx { input:
-      db=load_db.db,
-      reference_intervals=intervals.reference_intervals,
-      runenv=distortion_map_big_runenv,
+      # Simulate reads from query chromosome
+      call wgsim.calc_read_pairs_needed { input:
+        fasta=chromosome_fasta,
+        coverage=wgsim_coverage,
+        read_length=wgsim_read1_length,
+        runenv=samtools_runenv,
+      }
+  
+      call wgsim.run_wgsim { input:
+        fasta=chromosome_fasta,
+        base_error=wgsim_base_error,
+        out_distance=wgsim_out_distance,
+        stdev=wgsim_stdev,
+        number_pairs=calc_read_pairs_needed.read_pairs_needed,
+        read1_length=wgsim_read1_length,
+        read2_length=wgsim_read2_length,
+        mutation_rate=wgsim_mutation_rate,
+        fraction_indels=wgsim_fraction_indels,
+        prob_indel_extentsion=wgsim_prob_indel_extentsion,
+        seed=wgsim_seed,
+        runenv=wgsim_runenv,
+      }
+  
+      # Extract Source Locations from FASTQs
+      call wgsim.extract_source_positions { input:
+        fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
+        runenv=wgsim_runenv,
+      }
+      call liftover.run_liftover as liftover_source_positions_to_ref { input:
+        paf=query_to_ref_paf,
+        bed=extract_source_positions.source_positions,
+        mapping_qual=5,
+        alignment_length=50000,
+        max_seq_divergence=1,
+        runenv=minimap2_runenv,
+      }
+  
+      # Align Sim Reads to REF then Convert Alignments to BED
+      call align.run_bwa_mem as align_to_ref { input:
+        sample=sample,
+        library=sample+"-lib1",
+        rg_id=sample+"-lib1",
+        platform_unit="ILLUMINA",
+        fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
+        idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa], 
+        runenv=bwa_runenv,
+      }
+      call bedtools.run_bam_to_bed as bam2bed_ref { input:
+        bam=align_to_ref.bam,
+        runenv=bedtools_runenv,
+      }
+  
+      # Align Sim Reads to QUERY then Convert Alignments to BED & Lift Over
+      call align.run_bwa_mem as align_to_query { input:
+        sample=sample,
+        library=sample+"-lib1",
+        rg_id=sample+"-lib1",
+        platform_unit="ILLUMINA",
+        fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
+        idx_files=[query.fasta, query.amb, query.ann, query.bwt, query.pac, query.sa], 
+        runenv=bwa_runenv,
+      }
+      call bedtools.run_bam_to_bed as bam2bed_query { input:
+        bam=align_to_query.bam,
+        runenv=bedtools_runenv,
+      }
+      call liftover.run_liftover as liftover_query_alignments_to_ref { input:
+        paf=query_to_ref_paf,
+        bed=bam2bed_query.bedfile,
+        mapping_qual=5,
+        alignment_length=50000,
+        max_seq_divergence=1,
+        runenv=minimap2_runenv,
+      }
+  
+      call db.load_db { input:
+        source_positions=extract_source_positions.source_positions,
+        lifted_source=liftover_source_positions_to_ref.bedfile,
+        aligned_ref=bam2bed_ref.bedfile,
+        aligned_source=bam2bed_query.bedfile,
+        lifted_aligned_source=liftover_query_alignments_to_ref.bedfile,
+        runenv=distortion_map_runenv,
+      }
+  
+      call intervals.create_intervals as intervals { input:
+        db=load_db.db,
+        reference_sizes=reference.sizes,
+        window_length=interval_window_length,
+        window_stride=interval_window_stride,
+        runenv=distortion_map_runenv,
+      }
+  
+  #    call coverage.generate_simulated_coverage { input:
+  #      db=load_db.db,
+  #      simulated_intervals=create_intervals.simulated_intervals,
+  #      batch_size=100000,
+  #      runenv=distortion_map_runenv,
+  #    }
+  #
+  #    call coverage.generate_simulated_no_lift_over_coverage { input:
+  #      db=load_db.db,
+  #      simulated_intervals=create_intervals.simulated_intervals,
+  #      runenv=distortion_map_runenv,
+  #    }
+  
+      call count_matrices.generate as count_mtx { input:
+        db=load_db.db,
+        reference_intervals=intervals.reference_intervals,
+        runenv=distortion_map_big_runenv,
+      }
     }
   }
 
   call count_matrices.merge as merge_ref_matrices { input:
-    matrices=count_mtx.aligned_reference_count_matrix,
+    matrices=flatten(count_mtx.aligned_reference_count_matrix),
     output_fn="merged.ref.mtx",
     runenv=distortion_map_runenv,
   }
 
   call count_matrices.merge as merge_src_matrices { input:
-    matrices=count_mtx.lifted_aligned_source_count_matrix,
+    matrices=flatten(count_mtx.lifted_aligned_source_count_matrix),
     output_fn="merged.src.mtx",
     runenv=distortion_map_runenv,
   }
@@ -274,7 +279,7 @@ workflow distortion_map {
   call metrics.calculate as calculate_metrics { input:
     normalized_aligned_reference_matrix=normalize_merged_ref_matrix.normalized_matrix,
     normalized_lifted_aligned_source_matrix=normalize_merged_src_matrix.normalized_matrix,
-    interval_mapping=select_first(count_mtx.interval_mapping),
+    interval_mapping=select_first(flatten(count_mtx.interval_mapping)),
     runenv=distortion_map_runenv,
   }
 }
