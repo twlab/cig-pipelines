@@ -1,0 +1,10 @@
+{
+  "mm2_align_by_chromosome.query_fasta": "{{QUERY_FASTA}}",
+  "mm2_align_by_chromosome.query_fai": "{{QUERY_FAI}}",
+  "mm2_align_by_chromosome.ref_fasta": "{{REF_FASTA}}",
+  "mm2_align_by_chromosome.ref_fai": "{{REF_FAI}}",
+  "mm2_align_by_chromosome.mm2_params": "-x asm5 -L -c --cs=long -t 12",
+  "mm2_align_by_chromosome.mm2_docker": "mgibio/minimap2:2.26-buster",
+  "mm2_align_by_chromosome.mm2_cpu": 12,
+  "mm2_align_by_chromosome.mm2_memory": 64
+}
