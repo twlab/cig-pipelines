@@ -1,0 +1,7 @@
+{
+  "bwa_build_idx_by_chr.name": "{{NAME}}",
+  "bwa_build_idx_by_chr.ref_idx": "{{IDX}}",
+  "bwa_build_idx_by_chr.bwa_docker": "mgibio/bwa:0.7.17",
+  "bwa_build_idx_by_chr.bwa_cpu": 2,
+  "bwa_build_idx_by_chr.bwa_memory": 8
+}
