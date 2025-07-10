@@ -3,19 +3,34 @@ version development
 import "../../structs/runenv.wdl"
 
 task run_build_idx {
+  # Create an BWA index TAR with support files.
+  # CHM13v2.0.dict         samtools dict
+  # CHM13v2.0.fasta        unzipped fasta
+  # CHM13v2.0.fasta.amb    bwa index
+  # CHM13v2.0.fasta.ann    bwa index
+  # CHM13v2.0.fasta.bwt    bwa index
+  # CHM13v2.0.fasta.fai    samtools fai
+  # CHM13v2.0.fasta.pac    bwa index
+  # CHM13v2.0.fasta.sa     bwa index
+  # CHM13v2.0.fasta.sizes  TSV of chromosmes and lengths
+
   input {
     String name
-    File fasta_gz
+    File fasta
     RunEnv runenv
   }
 
-  String fasta = "${name}.fasta"
+  String fasta_bn = "${name}.fasta"
   command <<<
-    gunzip -c ~{fasta_gz} > ~{fasta}
-    samtools dict ~{fasta} -o ~{name}.dict
-    samtools faidx ~{fasta} -o ~{fasta}.fai
-    cut -f1 ~{fasta}.fai > ~{fasta}.sizes
-    bwa index -p ~{fasta} ~{fasta}
+    if [[ "~{fasta}" =~ \.gz$ ]]; then
+        gunzip -c ~{fasta} > ~{fasta_bn}
+    else
+        ln ~{fasta} ~{fasta_bn}
+    fi
+    samtools dict ~{fasta_bn} -o ~{name}.dict
+    samtools faidx ~{fasta_bn} -o ~{fasta_bn}.fai
+    cut -f1 ~{fasta_bn}.fai > ~{fasta_bn}.sizes
+    bwa index -p ~{fasta_bn} ~{fasta_bn}
     tar cvvf ~{name}.tar ~{name + ".*"}
   >>>
 

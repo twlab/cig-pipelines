@@ -1,15 +1,5 @@
 version development
 
-# Create an BWA index TAR with support files.
-# CHM13v2.0.dict        samtools dict
-# CHM13v2.0.fasta       unzipped fasta
-# CHM13v2.0.fasta.amb   bwa index
-# CHM13v2.0.fasta.ann   bwa index
-# CHM13v2.0.fasta.bwt   bwa index
-# CHM13v2.0.fasta.fai   samtools fai
-# CHM13v2.0.fasta.pac   bwa index
-# CHM13v2.0.fasta.sa    bwa index
-
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 
@@ -22,10 +12,10 @@ workflow bwa_build_idx {
 
     input {
         String name
-        File fasta_gz
-        String docker = "mgibio/bwa:0.7.17"
-        Int cpu = 2
-        Int memory = 8
+        File fasta # GZIP OK
+        String docker
+        Int cpu
+        Int memory
     }
 
     RunEnv runenv = {
@@ -37,7 +27,7 @@ workflow bwa_build_idx {
 
     call idx.run_build_idx { input:
         name=name,
-        fasta_gz=fasta_gz,
+        fasta=fasta,
         runenv=runenv
     }
 
