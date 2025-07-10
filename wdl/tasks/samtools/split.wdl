@@ -12,7 +12,7 @@ task run_split_by_chromosome {
     RunEnv runenv
   }
 
-  String bn = basename(fasta)
+  String bn = basename(fasta, ".fasta")
   command <<<
     for chr in ~{sep=' ' chrs}; do
       samtools faidx ~{fasta} --fai-idx ~{fai} "${chr}" -o "~{bn}.${chr}.fasta"
