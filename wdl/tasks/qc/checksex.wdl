@@ -21,7 +21,7 @@ task run_checksex {
   >>>
 
   output {
-    File output_file = glob("~{output_file}")[0]
+    File output_file = "~{output_file}"
   }
 
   runtime {
