@@ -18,7 +18,7 @@ task run_align_chromosome {
   command <<<
     samtools faidx ~{query_fasta} --fai-idx ~{query_fai} ~{chr} -o ~{query_name}.~{chr}.fasta
     samtools faidx ~{ref_fasta} --fai-idx ~{ref_fai} ~{chr} -o ~{ref_name}.~{chr}.fasta
-    minimap2 ~{params} -o ~{ref_name}.~{query_name}.paf ~{ref_fasta} ~{query_fasta}
+    minimap2 ~{params} -o ~{ref_name}.~{query_name}.~{chr}.paf ~{ref_fasta} ~{query_fasta}
   >>>
 
   output {
