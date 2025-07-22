@@ -1,0 +1,8 @@
+long_read_qc.align:
+  - aligned_bam
+  - aligned_bai
+long_read_qc.samtools_stat:
+  - stats
+long_read_qc.cpg_scores:
+  - bed
+  - bigwig

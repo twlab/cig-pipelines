@@ -1,0 +1,12 @@
+{
+  "pacbio.sample": "{{SAMPLE}}",
+  "pacbio.pbmm2_input": "{{PBMM2_INPUT}}",
+  "pacbio.reference_mmi": "{{REF_MMI}}",
+  "pacbio.pbmm2_params": "--preset HIFI --unmapped",
+  "pacbio.pbcpg_docker": "mgibio/pb-cpg-tools:2.3.2",
+  "pacbio.pbcpg_cpu": 16,
+  "pacbio.pbcpg_memory": 60,
+  "pacbio.pbmm2_docker": "mgibio/pbmm2:v1.13.1",
+  "pacbio.pbmm2_cpu": 16,
+  "pacbio.pbmm2_memory": 80
+}
