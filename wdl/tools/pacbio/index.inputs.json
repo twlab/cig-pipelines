@@ -1,0 +1,8 @@
+{
+  "pacbio_index.mmi_name": "{{MMI_NAME}}",
+  "pacbio_index.fasta": "{{FASTA}}",
+  "pacbio_index.params": "--preset HIFI --log-level INFO",
+  "pacbio_index.pbmm2_docker": "mgibio/pbmm2:v1.13.1",
+  "pacbio_index.pbmm2_cpu": 4,
+  "pacbio_index.pbmm2_memory": 24
+}
