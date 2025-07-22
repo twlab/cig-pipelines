@@ -7,6 +7,7 @@ task run_align {
     String sample
     File bam
     File reference_mmi
+    String params
     RunEnv runenv
   }
 
@@ -16,13 +17,13 @@ task run_align {
   command <<<
     set -eo pipefail
     mkdir tmpsort/
-    pbmm2 align --preset CCS -j ~{threads} --log-level INFO ~{reference_mmi} ~{bam} | samtools sort -@ ~{sort_threads} -T tmpsort/sorted.nnnn.bam -O bam -o ~{output_bam}##idx##~{output_bam}.bai --write-index
+    pbmm2 align ~{params} -j ~{threads} --log-level INFO ~{reference_mmi} ~{bam} | samtools sort -@ ~{sort_threads} -T tmpsort/sorted.nnnn.bam -O bam -o ~{output_bam}##idx##~{output_bam}.bai --write-index
     rm -rf tmpsort/
   >>>
 
   output {
-    File aligned_bam = glob("~{output_bam}")[0]
-    File aligned_bai = glob("~{output_bam}.bai")[0]
+    File aligned_bam = "~{output_bam}"
+    File aligned_bai = "~{output_bam}.bai"
   }
 
   runtime {
