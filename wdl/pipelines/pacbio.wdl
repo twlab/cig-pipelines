@@ -16,6 +16,7 @@ workflow pacbio {
     File pbmm2_input
     File reference_mmi
     String pbmm2_params
+    String pbcpg_params
     #Runtime
     String pbmm2_docker
     Int pbmm2_cpu
@@ -62,6 +63,7 @@ workflow pacbio {
   call cpg.run_cpg as cpg_scores { input:
     bam=align.aligned_bam,
     bai=align.aligned_bai,
+    params=pbcpg_params,
     runenv=pbcpg_runenv,
   }
 }
