@@ -17,7 +17,7 @@ task run_align {
   command <<<
     set -eo pipefail
     mkdir tmpsort/
-    pbmm2 align ~{params} -j ~{threads} --log-level INFO ~{reference_mmi} ~{bam} | samtools sort -@ ~{sort_threads} -T tmpsort/sorted.nnnn.bam -O bam -o ~{output_bam}##idx##~{output_bam}.bai --write-index
+    pbmm2 align ~{params} --sample ~{sample} -j ~{threads} --log-level INFO ~{reference_mmi} ~{bam} | samtools sort -@ ~{sort_threads} -T tmpsort/sorted.nnnn.bam -O bam -o ~{output_bam}##idx##~{output_bam}.bai --write-index
     rm -rf tmpsort/
   >>>
 

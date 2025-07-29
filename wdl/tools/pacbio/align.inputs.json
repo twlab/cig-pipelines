@@ -1,0 +1,9 @@
+{
+  "pbmm2_align.sample": "{{SAMPLE}}",
+  "pbmm2_align.mmi": "{{MMI}}",
+  "pbmm2_align.pbmm2_input": "{{PBMM2_INPUT}}",
+  "pbmm2_align.pbmm2_params": "--preset HIFI --unmapped",
+  "pbmm2_align.pbmm2_docker": "mgibio/pbmm2:v1.13.1",
+  "pbmm2_align.pbmm2_cpu": 12,
+  "pbmm2_align.pbmm2_memory": 60
+}

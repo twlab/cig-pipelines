@@ -1,0 +1,3 @@
+pbmm2_align.align:
+  - aligned_bam
+  - aligned_bai
