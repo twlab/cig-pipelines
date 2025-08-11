@@ -9,9 +9,9 @@ task run_bam_to_cram {
     RunEnv runenv
   }
 
-  String output_fn = basename(bam, ".bam") + ."cram"
+  String output_fn = basename(bam, ".bam") + ".cram"
   command <<<
-    samtools view -@ ~{runenv.cpu} -o ~{output_fn} -C -T ~{ref_fasta} ~{bam} 
+    samtools view -@ ~{runenv.cpu} -h -o ~{output_fn} -C -T ~{ref_fasta} ~{bam}
   >>>
 
   output {
