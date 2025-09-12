@@ -15,7 +15,7 @@ task run_qc_report {
   }
 
   command <<<
-    smaht qc report \
+    smaht qc gather \
       --alignment-fof ~{write_lines(alignment_files)} \
       --ancestry-fof ~{write_lines(ancestry_files)} \
       --centrifuger-fof ~{write_lines(centrifuger_files)} \
