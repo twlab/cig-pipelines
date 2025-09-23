@@ -1,0 +1,13 @@
+{
+  "deepvariant_pg.sample": "{{SAMPLE}}",
+  "deepvariant_pg.bam": "{{BAM}}",
+  "deepvariant_pg.bai": "{{BAI}}",
+  "deepvariant_pg.idx": "{{IDX}}",
+  "deepvariant_pg.gbz": "{{GBZ}}",
+  "deepvariant_pg.deepvariant_docker": "google/deepvariant:pangenome_aware_deepvariant-head784362481",
+  "deepvariant_pg.deepvariant_cpu": 12,
+  "deepvariant_pg.deepvariant_memory": 64,
+  "deepvariant_pg.utils_docker": "mgibio/linux-tk:latest",
+  "deepvariant_pg.utils_cpu": 1,
+  "deepvariant_pg.utils_memory": 4
+}

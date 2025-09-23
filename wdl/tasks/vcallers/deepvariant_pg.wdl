@@ -2,7 +2,7 @@ version development
 
 import "../../structs/runenv.wdl"
 
-task run_deepvariant {
+task run_deepvariant_pg {
   input {
     String sample
     File bam
@@ -10,12 +10,14 @@ task run_deepvariant {
     File ref_fasta
     File ref_fai
     File ref_dict
+    File gbz
     String model_type = "WGS"
     RunEnv runenv
   }
 
   String output_vcf = "~{sample}.vcf.gz"
   String output_gvcf = "~{sample}.g.vcf.gz"
+  # --gbz_shared_memory_size_gb: Optional. Size of the shared memory region to create. (default: '12') (an integer)
   command <<<
     set -ex
     ln ~{bam} ~{basename(bam)}
@@ -24,14 +26,16 @@ task run_deepvariant {
     ln ~{ref_fai} ~{basename(ref_fai)}
     ln ~{ref_dict} ~{basename(ref_dict)}
 
-    /opt/deepvariant/bin/run_deepvariant \
-      --sample_name=~{sample} \
+    /opt/deepvariant/bin/run_pangenome_aware_deepvariant \
       --model_type=~{model_type} \
       --ref=~{basename(ref_fasta)} \
+      --pangenome ~{gbz} \
       --reads=~{basename(bam)} \
+      --sample_name_reads=~{sample} \
       --output_vcf=~{output_vcf} \
       --output_gvcf=~{output_gvcf} \
       --num_shards=~{runenv.cpu}
+
     set +e
     printf "Validating VCF: %s\n" "~{output_vcf}" 1>&2
     bcftools view "~{output_vcf}" > /dev/null
@@ -56,6 +60,7 @@ task run_deepvariant {
     docker: runenv.docker
     cpu: runenv.cpu
     memory: runenv.memory + " GB"
-    disks : runenv.disks
+    disks: runenv.disks
+    shm_size: "12g" # docker shared memory size
   }
 }
