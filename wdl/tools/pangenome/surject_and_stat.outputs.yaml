@@ -1,0 +1,4 @@
+surject_and_stat.vg_surject:
+  - bam
+surject_and_stat.samtools_stat:
+  - stats

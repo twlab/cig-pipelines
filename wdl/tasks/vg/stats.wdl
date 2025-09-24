@@ -36,7 +36,7 @@ task run_stats {
   # -p, --threads N       number of threads to use [all available]
   # -v, --verbose         output longer reports
   command <<<
-    vg stats -p ~{runenv.cpu - 1} -a ~{gam} > ~{output_stats}
+    vg stats -p ~{runenv.cpu} -a ~{gam} > ~{output_stats}
   >>>
 
   output {

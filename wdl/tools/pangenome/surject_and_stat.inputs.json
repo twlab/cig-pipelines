@@ -1,0 +1,12 @@
+{
+  "surject_and_stat.sample": "{{SAMPLE}}",
+  "surject_and_stat.gam": "{{GAM}}",
+  "surject_and_stat.reference_name": "{{REF}}",
+  "surject_and_stat.gbz": "{{GBZ}}",
+  "surject_and_stat.samtools_docker": "mgibio/samtools:v1.21-noble",
+  "surject_and_stat.samtools_cpu": 1,
+  "surject_and_stat.samtools_memory": 4,
+  "surject_and_stat.vg_docker": "quay.io/vgteam/vg:v1.55.0",
+  "surject_and_stat.vg_cpu": 8,
+  "surject_and_stat.vg_memory": 64
+}
