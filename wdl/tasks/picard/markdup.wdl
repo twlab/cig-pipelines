@@ -6,6 +6,7 @@ task run_markdup {
     input {
         File bam
         String sort_order = "coordinate"
+        String params = ""
         RunEnv runenv
     }
 
@@ -19,7 +20,8 @@ task run_markdup {
             --METRICS_FILE ~{output_metrics} \
             --QUIET true \
             --ASSUME_SORT_ORDER ~{sort_order} \
-            --VALIDATION_STRINGENCY SILENT
+            --VALIDATION_STRINGENCY SILENT \
+            ~{params}
     >>>
 
     output {
