@@ -12,8 +12,8 @@ task run_align {
   }
 
   String output_bam = "~{sample}.bam"
-  Int threads = runenv.cpu - 4
-  Int sort_threads = runenv.cpu - threads
+  Int threads = runenv.cpu - 2
+  Int sort_threads = 2
   command <<<
     set -eo pipefail
     mkdir tmpsort/
@@ -45,8 +45,8 @@ task run_align_output_cram {
   }
 
   String output_cram = "~{sample}.cram"
-  Int threads = runenv.cpu - 4
-  Int sort_threads = runenv.cpu - threads
+  Int threads = runenv.cpu - 2
+  Int sort_threads = 2
   command <<<
     set -eo pipefail
     mkdir tmpsort/
