@@ -8,7 +8,7 @@ import "wdl/tasks/pangenome/pangenie.wdl"
 workflow pangenie_genotyper_with_ancestory {
   input {
     Array[File] fastqs
-    Directory index
+    File index
     String sample
     Directory snvstory_resource
     String snvstory_genome_ver = "38"

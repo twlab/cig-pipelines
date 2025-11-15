@@ -28,15 +28,19 @@ import "../../structs/runenv.wdl"
 task run_genotyper {
   input {
      File fastq
-     Directory index
+     File index
      String sample
      RunEnv runenv
   }
 
   command <<<
     set -e
-    index_name=$(basename ~{index})
-    index_subd="~{index}/${index_name}"
+    mkdir -p index
+    tar xvvf ~{index} -C index
+    index_name=$(find index -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+    index_subd="index/${index_name}/${index_name}"
+    printf "Index name: ${index_name}\n" 1>&2
+    printf "Index subd: index/${index_name}/${index_name}\n" 1>&2
     printf "Running Pangenie...\n" 1>&2
     PanGenie -i ~{fastq} -f ${index_subd} -s ~{sample} -o ~{sample} -t ~{runenv.cpu} -j ~{runenv.cpu}
     printf "Running Pangenie complete...\n" 1>&2

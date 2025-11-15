@@ -7,7 +7,7 @@ import "wdl/tasks/pangenome/pangenie.wdl"
 workflow pangenie_genotyper {
   input {
     Array[File] fastqs
-    Directory index
+    File index
     String sample
     String docker
     Int cpu
