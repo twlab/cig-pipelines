@@ -11,12 +11,12 @@ workflow snvstory {
 
   input {
     File vcf
-    Directory resource
-    String genome_ver = "38"
-    String mode = "WGS"
-    String docker = "mgibio/snvstory:v1.1-buster"
-    Int cpu = 2
-    Int memory = 24
+    File resource
+    String genome_ver
+    String mode
+    String docker
+    Int cpu
+    Int memory
   }
 
   RunEnv snvstory_runenv = {
