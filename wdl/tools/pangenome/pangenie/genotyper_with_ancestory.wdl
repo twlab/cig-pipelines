@@ -7,10 +7,11 @@ import "wdl/tasks/pangenome/pangenie.wdl"
 
 workflow pangenie_genotyper_with_ancestory {
   input {
+    String sample
     Array[File] fastqs
     File index
-    String sample
-    Directory snvstory_resource
+    String pangenie_params = ""
+    File snvstory_resource
     String snvstory_genome_ver = "38"
     String snvstory_mode = "WGS"
     String docker
@@ -49,9 +50,10 @@ workflow pangenie_genotyper_with_ancestory {
   }
 
   call pangenie.run_genotyper { input:
+    sample=sample,
     fastq=combined_fastq.concatenated_file,
     index=index,
-    sample=sample,
+    params=params,
     runenv=runenv_pangenie,
   }
 

@@ -9,6 +9,7 @@ workflow pangenie_genotyper {
     Array[File] fastqs
     File index
     String sample
+    String params = ""
     String docker
     Int cpu
     Int memory
@@ -42,9 +43,10 @@ workflow pangenie_genotyper {
   }
 
   call pangenie.run_genotyper { input:
+    sample=sample,
     fastq=combined_fastq.concatenated_file,
     index=index,
-    sample=sample,
+    params=params,
     runenv=runenv_pangenie,
   }
 

@@ -2,6 +2,7 @@
   "pangenie_genotyper_with_ancestory.sample": "{{SAMPLE}}",
   "pangenie_genotyper_with_ancestory.fastqs": [{{FASTQS}}],
   "pangenie_genotyper_with_ancestory.index": "{{INDEX}}",
+  "pangenie_genotyper_with_ancestory.params": "{{PARAMS}}",
   "pangenie_genotyper_with_ancestory.snvstory_resource": "{{RESOURCE}}",
   "pangenie_genotyper_with_ancestory.snvstory_mode": "WGS",
   "pangenie_genotyper_with_ancestory.snvstory_genome_ver": "38",

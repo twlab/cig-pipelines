@@ -27,9 +27,10 @@ import "../../structs/runenv.wdl"
 # 
 task run_genotyper {
   input {
+     String sample
      File fastq
      File index
-     String sample
+     String params
      RunEnv runenv
   }
 
@@ -42,7 +43,7 @@ task run_genotyper {
     printf "Index name: ${index_name}\n" 1>&2
     printf "Index subd: index/${index_name}/${index_name}\n" 1>&2
     printf "Running Pangenie...\n" 1>&2
-    PanGenie -i ~{fastq} -f ${index_subd} -s ~{sample} -o ~{sample} -t ~{runenv.cpu} -j ~{runenv.cpu}
+    PanGenie -i ~{fastq} -f ${index_subd} -s ~{sample} -o ~{sample} -t ~{runenv.cpu} -j ~{runenv.cpu} ~{params}
     printf "Running Pangenie complete...\n" 1>&2
     vcf=$(find . -name \*.vcf)
     printf "VCF: %s\n" ${vcf} 1>&2
