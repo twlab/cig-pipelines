@@ -28,3 +28,30 @@ task run_sort {
     memory: "~{runenv.memory} GB"
   }
 }
+
+task run_sort_cram {
+  input {
+    File cram
+    File reference
+    String params = "" # --write-index
+    String output_cram_fn
+    RunEnv runenv
+  }
+
+  command <<<
+    set -e
+    mkdir tmpsort
+    trap 'rm -rf tmpsort' EXIT
+    samtools sort ~{params} --reference ~{reference} -@ ~{runenv.cpu} -O CRAM -o ~{output_cram_fn} ~{cram} -T tmpsort/sorted.nnnn.cram
+  >>>
+
+  output {
+    File sorted_cram = "~{output_cram_fn}"
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: "~{runenv.memory} GB"
+  }
+}

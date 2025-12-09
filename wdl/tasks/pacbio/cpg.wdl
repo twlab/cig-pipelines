@@ -11,7 +11,7 @@ task run_cpg {
     RunEnv runenv
   }
 
-  String output_prefix = basename(bam, ".bam") 
+  String output_prefix = basename(bam, ".bam")
   command <<<
     ln -s ~{bam} .
     ln -s ~{bai} .
@@ -27,6 +27,43 @@ task run_cpg {
     File bed = glob("~{output_prefix}*.bed")[0]
     File bigwig = glob("~{output_prefix}*.bw")[0]
     # also has log file
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: runenv.memory + " GB"
+    disks : runenv.disks
+  }
+}
+
+task run_cpg_cram {
+  input {
+    File cram
+    File crai
+    File reference
+    String model = "/opt/pb-CpG-tools-v2.3.2-x86_64-unknown-linux-gnu/models/pileup_calling_model.v1.tflite"
+    String params = "" # --min-coverage[default: 4] --min-mapq [default: 1]
+    RunEnv runenv
+  }
+
+  String output_prefix = basename(cram, ".cram")
+  command <<<
+    ln -s ~{cram} .
+    ln -s ~{crai} .
+    aligned_bam_to_cpg_scores \
+      --model ~{model} \
+      --bam ~{basename(cram)} \
+      --ref ~{reference} \
+      --output-prefix ~{output_prefix} \
+      --threads ~{runenv.cpu} \
+      ~{params}
+  >>>
+  # Combine these tasks into one with ~{if reference then "--ref ~{reference}" else ""}
+
+  output {
+    File bed = glob("~{output_prefix}*.bed")[0]
+    File bigwig = glob("~{output_prefix}*.bw")[0]
   }
 
   runtime {
