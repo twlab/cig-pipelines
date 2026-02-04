@@ -7,15 +7,13 @@
 title: Distortion Map Pipeline
 ---
 flowchart TB;
-  i1([Query FASTA]);
-  i2([Chromsomes]);
+  i1([Query Chromsomes TSV]);
 
-  s1[[Split Query by Chromosome]];
   s21[[Generate Simulated Reads]];
-  s22[[Extract Source Poistions]];
-  s23[[Liftover Sorce Poisitons to REF]];
+  s22[[Extract SOURCE Read Poistions]];
+  s23[[Liftover SOURCE Read Poisitons to REF]];
 
-  s31[[Map Reads to Ref]];
+  s31[[Map Reads to REF]];
   s32[[BAM to BED]];
 
   s41[[Map Reads to Query]];
@@ -26,30 +24,32 @@ flowchart TB;
   s62[[Create Intervals]]
   s63[[Generate Count Matrices]];
 
-  s101[[Merge & Normalize Count Matrices and Merge Intervals]];
-  s102[[Calculate Distortion Metrics]];
+  s101[[Merge & Normalize REF Count Matrices]];
+  s102[[Merge & Normalize SOURCE Count Matrices]];
+  s111[[Merge Intervals **NEW**]];
+  s121[[Calculate Distortion Metrics]];
 
   o1([Metrics]);
  
-  i1-->s1; i2-->s1;
-  s1--Query Chromosome FASTAs-->s21;
+  i1-->s21;
   subgraph sg1 ["SCATTER BY CHROMOSOME"]
-    s21--Reads-->s31;
-    s21--Reads-->s41;
-    s21--Reads-->s22-->s23--Lift Over Source Positions-->s61;
-    s22--Source Poistions-->s61
-    subgraph sgq ["REF"]
-      s31--Alignments-->s32
-    end
+    s21--Simulated Reads-->s31;
+    s21--Simulated Reads-->s41;
+    s21--Simulated Reads-->s22-->s23--Simulated Reads Lift Over Positions-->s61;
+    s22--Simulated Reads Positions-->s61
     subgraph sgr ["QUERY"]
       s41--Alignments-->s42--BED-->s43
-      s42--Query Alignemnts-->s61;
+      s42--Query Alignment Poisitions-->s61;
     end
-    s32--Ref Alignments-->s61;
-    s43--Lift Over-->s61;
-    s61--DB-->s62--Intervals-->s63;
+    subgraph sgq ["REFERENCE"]
+      s31--Alignments-->s32
+    end
+    s32--Ref Alignment Positions-->s61;
+    s43--Query Liftover Positions-->s61;
+    s61--DB-->s62--DB / Intervals-->s63;
   end
-  s63--Matrices per Chromosome-->s101--Merged Matrices & Intervals-->s102
-
-  s102-->o1
+  s63--REF Matrices per Chromosome-->s101--Merged REF Matrices-->s121
+  s63--Intervals per Chromosome-->s111--Merged Intervals-->s121
+  s63--SOURCE Matrices per Chromosome-->s102--Merged SOURCE Matrices-->s121
+  s121-->o1
 ```
