@@ -7,17 +7,18 @@
 title: Distortion Map Pipeline
 ---
 flowchart TB;
-  i1([Query FASTA]);
-  i2([Chromsomes]);
+  s11[[SCATTER BY CHOMOSOME Extract Chromosome FASTAs]]
+  s12[[MiniMap2 QUERY to REF]]
 
-  s1[[Split Query by Chromosome]];
   s21[[Generate Simulated Reads]];
-  s22[[Extract Source Poistions]];
-  s23[[Liftover Sorce Poisitons to REF]];
+  s22[[Extract SOURCE Read Poistions]];
+  s23[[Liftover SOURCE Read Poisitons to REF]];
 
-  s31[[Map Reads to Ref]];
+  s30[[Build REF BWA Chromsome Index]]
+  s31[[Map Reads to REF]];
   s32[[BAM to BED]];
 
+  s40[[Build QUERY BWA Chromsome Index]]
   s41[[Map Reads to Query]];
   s42[[BAM to BED]];
   s43[[Liftover Alignments to REF]];
@@ -26,30 +27,45 @@ flowchart TB;
   s62[[Create Intervals]]
   s63[[Generate Count Matrices]];
 
-  s101[[Merge & Normalize Count Matrices and Merge Intervals]];
-  s102[[Calculate Distortion Metrics]];
+  s101[[Merge & Normalize REF Count Matrices]];
+  s102[[Merge & Normalize SOURCE Count Matrices]];
+  s111[[Merge Intervals]];
+  s121[[Calculate Distortion Metrics]];
 
   o1([Metrics]);
  
-  i1-->s1; i2-->s1;
-  s1--Query Chromosome FASTAs-->s21;
-  subgraph sg1 ["SCATTER BY CHROMOSOME"]
-    s21--Reads-->s31;
-    s21--Reads-->s41;
-    s21--Reads-->s22-->s23--Lift Over Source Positions-->s61;
-    s22--Source Poistions-->s61
-    subgraph sgq ["REF"]
-      s31--Alignments-->s32
+  subgraph sg1 [" "]
+    subgraph qry ["QUERY"]
+      s40--QUERY BWA IDX-->s41--Alignments-->s42--BED-->s43;
     end
-    subgraph sgr ["QUERY"]
-      s41--Alignments-->s42--BED-->s43
-      s42--Query Alignemnts-->s61;
-    end
-    s32--Ref Alignments-->s61;
-    s43--Lift Over-->s61;
-    s61--DB-->s62--Intervals-->s63;
-  end
-  s63--Matrices per Chromosome-->s101--Merged Matrices & Intervals-->s102
 
-  s102-->o1
+    subgraph sim ["SIMULATE READS"]
+      s21--Simulated Reads-->s22
+      s22--Simulated Reads-->s23;
+    end
+
+    s11--REF & QUERY CHR-->s12;
+    s11--QUERY CHR-->s21;
+    s11--REF CHR-->s30;
+    s11--QUERY CHR-->s40;
+    s12--PAF-->s23;
+    s12--PAF-->s43;
+
+    s21--Simulated Reads-->s31;
+    s21--Simulated Reads-->s41;
+    s22--Simulated Reads Positions-->s61
+
+    subgraph ref ["REFERENCE"]
+      s30--REF BWA IDX-->s31--Alignments-->s32;
+    end
+
+    s23--Simulated Reads Lift Over Positions-->s61
+    s32--Ref Alignment Positions-->s61;
+    s43--Query Liftover Positions-->s61;
+    s61--DB-->s62--DB / Intervals-->s63;
+  end
+  s63--REF Matrices per Chromosome-->s101--Merged REF Matrices-->s121;
+  s63--Intervals per Chromosome-->s111--Merged Intervals-->s121;
+  s63--SOURCE Matrices per Chromosome-->s102--Merged SOURCE Matrices-->s121;
+  s121-->o1
 ```
