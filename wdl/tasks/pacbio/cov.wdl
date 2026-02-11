@@ -10,26 +10,25 @@ task extract_haplotype_reads_from_reference_aligned_cram {
   }
 
   input {
-    File haplotype1_aln_cram
-    File haplotype1_aln_ref
-    File haplotype2_aln_cram
-    File haplotype2_aln_ref
-    File reference_aln_cram
-    File reference_aln_ref
+    Array[String] haplotype_names
+    Array[File] haplotype_reads_fofs
+    File crams_and_refs_tsv
     RunEnv runenv
   }
 
+  String hap1_output_cram = "out/~{haplotype_names[0]}.cov.cram"
+  String hap2_output_cram = "out/~{haplotype_names[1]}.cov.cram"
   command <<<
     mkdir out/
-    printf "%s\t%s\n" ~{haplotype1_aln_cram} ~{haplotype1_aln_ref} > crams_and_ref.tsv
-    printf "%s\t%s\n" ~{haplotype2_aln_cram} ~{haplotype2_aln_ref} >> crams_and_ref.tsv
-    printf "%s\t%s\n" ~{reference_aln_cram} ~{reference_aln_ref} >> crams_and_ref.tsv
-    phase-coverage TSV crams_and_refs.tsv -d out/
+    printf "%s\t%s\n" "~{haplotype_reads_fofs[0]}" "~{hap1_output_cram}" > haplotypes_and_sources.tsv
+    printf "%s\t%s\n" "~{haplotype_reads_fofs[1]}" "~{hap2_output_cram}" >> haplotypes_and_sources.tsv
+    cat ~{crams_and_refs_tsv} >> haplotypes_and_sources.tsv
+    phase-coverage haplotypes_and_sources.tsv -d out/
   >>>
 
   output {
-    File haplotype1_coverage_cram = basename(haplotype1_aln_cram, ".cram") + ".cov.cram"
-    File haplotype2_coverage_cram = basename(haplotype2_aln_cram, ".cram") + ".cov.cram"
+    File hap1_cram = hap1_output_cram
+    File hap2_cram = hap2_output_cram
     File stats = "out/phase-coverage.stats.yaml"
   }
 

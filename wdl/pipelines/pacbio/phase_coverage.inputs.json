@@ -1,16 +1,5 @@
 {
-  "phase_coverage.haplotype1_aligned_cram": "{{HAP1_ALN_CRAM}}",
-  "phase_coverage.haplotype1_aligned_reference": "{{HAP1_ALN_REF}}",
-  "phase_coverage.haplotype2_aligned_cram": "{{HAP2_ALN_CRAM}}",
-  "phase_coverage.haplotype2_aligned_reference": "{{HAP2_ALN_REF}}",
-  "phase_coverage.reference_aligned_cram": "{{REF_ALN_CRAM}}",
-  "phase_coverage.reference_aligned_ref": "{{REF_ALN_REF}}",
-  "phase_coverage.phasing_docker": "mgibio/phase:v0.1-bookworm",
-  "phase_coverage.phasing_cpu": 1,
-  "phase_coverage.phasing_memory": 24,
-  "phase_coverage.seqtools_docker": "mgibio/seqtools:latest-noble",
-  "phase_coverage.seqtools_sort_cpu": 4,
-  "phase_coverage.seqtools_sort_memory": 32,
-  "phase_coverage.seqtools_genomecov_cpu": 1,
-  "phase_coverage.seqtools_genomecov_memory": 24
+  "phase_coverage.haplotypes_tsv": "{{HAPS_TSV}}",
+  "phase_coverage.sources_tsv": "{{SRCS_TSV}}",
+  "phase_coverage.seqtools_docker": "mgibio/seqtools:latest-noble"
 }

@@ -1,18 +1,4 @@
-phase_merge_call_cpg.run_phase_crams:
-  - stats
-phase_merge_call_cpg.merge_haplotype1_crams:
- - merged_cram
- - merged_crai
-phase_merge_call_cpg.merge_haplotype2_crams:
- - merged_cram
- - merged_crai
-phase_merge_call_cpg.haplotype1_samtools_stats:
-  - stats
-phase_merge_call_cpg.haplotype2_samtools_stats:
-  - stats
-phase_merge_call_cpg.haplotype1_cpg:
-  - bed
-  - bigwig
-phase_merge_call_cpg.haplotype2_cpg:
-  - bed
-  - bigwig
+phase_coverage.hap1_merge_bgs:
+  - bg
+phase_coverage.hap2_merge_bgs:
+  - bg
