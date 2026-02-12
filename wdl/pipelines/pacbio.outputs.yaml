@@ -1,7 +1,7 @@
 long_read_qc.align:
   - aligned_bam
   - aligned_bai
-long_read_qc.samtools_stat:
+long_read_qc.samtools_stats:
   - stats
 long_read_qc.cpg_scores:
   - bed

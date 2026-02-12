@@ -3,7 +3,7 @@ version development
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/pacbio/pbmm2.wdl"
 import "wdl/tasks/pacbio/cpg.wdl"
-import "wdl/tasks/samtools/stat.wdl" as samtools_stat
+import "wdl/tasks/samtools/stats.wdl" as samtools_stats
 
 workflow pacbio {
   meta {
@@ -55,8 +55,8 @@ workflow pacbio {
     runenv=pbmm2_runenv,
   }
 
-  call samtools_stat.run_stat as samtools_stat { input:
-    bam=align.aligned_bam,
+  call samtools_stats.run_stats as samtools_stats { input:
+    sam_file=align.aligned_bam,
     runenv=samtools_runenv,
   }
 
