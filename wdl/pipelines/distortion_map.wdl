@@ -11,15 +11,11 @@ import "wdl/tasks/distortion_map/metrics.wdl"
 import "wdl/tasks/distortion_map/intervals.wdl"
 import "wdl/tasks/distortion_map/wgsim.wdl"
 import "wdl/tasks/minimap2/liftover.wdl"
-import "wdl/tasks/samtools/split.wdl"
 
 workflow distortion_map {
     input {
       String sample
-      Array[String]? chrs
-      File query_idx          # tar file with ref fasta, fai, and aligner index
-      File reference_idx      # tar file with ref fasta, fai, and aligner index
-      File query_to_ref_paf
+      File chromosomes_tsv
       Array[Int] wgsim_coverages
       Float wgsim_base_error
       Int wgsim_out_distance
@@ -115,42 +111,39 @@ workflow distortion_map {
     "disks": 20,
   }
 
-  # Untar the Indexes
-  call idx.run_untar_idx as reference { input:
-    idx=reference_idx,
-    runenv=utils_runenv,
-  }
+  # Process Each Chromsome in TSV
+  Array[Array[String]] dm_chrs = read_tsv(chromosomes_tsv)
+  scatter(entry in dm_chrs) {
+    # chr query_idx ref_idx query_to_ref_paf
+    String chr = entry[0]
+    String query_idx = entry[1]
+    String reference_idx = entry[2]
+    String query_to_ref_paf = entry[3]
 
-  call idx.run_untar_idx as query { input:
-    idx=query_idx,
-    runenv=utils_runenv,
-  }
-
-  # Split the QUERY FASTA by Chromosome
-  Array[String] splitter_chrs = select_first([chrs, query.chromosomes])
-  call split.run_split_by_chromosome as splitter { input:
-    fasta=query.fasta,
-    fai=query.fai,
-    chrs=select_first([chrs, query.chromosomes]),
-    runenv=samtools_runenv,
-  }
-
-  # Process Each QUERY Chromosome
-  scatter (chromosome_fasta in splitter.chromosome_fastas) {
+    # Untar the Indexes
+    call idx.run_untar_idx as reference { input:
+      idx=reference_idx,
+      runenv=utils_runenv,
+    }
+  
+    call idx.run_untar_idx as query { input:
+      idx=query_idx,
+      runenv=utils_runenv,
+    }
 
     # Iterate over the coverages
     scatter (wgsim_coverage in wgsim_coverages) {
 
       # Simulate reads from query chromosome
       call wgsim.calc_read_pairs_needed { input:
-        fasta=chromosome_fasta,
+        fasta=query.fasta,
         coverage=wgsim_coverage,
         read_length=wgsim_read1_length,
         runenv=samtools_runenv,
       }
   
       call wgsim.run_wgsim { input:
-        fasta=chromosome_fasta,
+        fasta=query.fasta,
         base_error=wgsim_base_error,
         out_distance=wgsim_out_distance,
         stdev=wgsim_stdev,
@@ -160,7 +153,7 @@ workflow distortion_map {
         mutation_rate=wgsim_mutation_rate,
         fraction_indels=wgsim_fraction_indels,
         prob_indel_extentsion=wgsim_prob_indel_extentsion,
-        seed=wgsim_seed,
+        seed=wgsim_seed+wgsim_coverage,
         runenv=wgsim_runenv,
       }
   
@@ -232,19 +225,6 @@ workflow distortion_map {
         window_stride=interval_window_stride,
         runenv=distortion_map_runenv,
       }
-  
-  #    call coverage.generate_simulated_coverage { input:
-  #      db=load_db.db,
-  #      simulated_intervals=create_intervals.simulated_intervals,
-  #      batch_size=100000,
-  #      runenv=distortion_map_runenv,
-  #    }
-  #
-  #    call coverage.generate_simulated_no_lift_over_coverage { input:
-  #      db=load_db.db,
-  #      simulated_intervals=create_intervals.simulated_intervals,
-  #      runenv=distortion_map_runenv,
-  #    }
   
       call count_matrices.generate as count_mtx { input:
         db=load_db.db,
