@@ -1,0 +1,14 @@
+{
+  "align_and_cpg.sample": "{{SAMPLE}}",
+  "align_and_cpg.pbmm2_input": "{{INPUT}}",
+  "align_and_cpg.reference_mmi": "{{MMI}}",
+  "align_and_cpg.reference_fasta": "{{FASTA}}",
+  "align_and_cpg.pbmm2_params": "--preset HIFI --unmapped",
+  "align_and_cpg.pbcpg_params": "--min-mapq 20",
+  "align_and_cpg.pbcpg_docker": "mgibio/pb-cpg-tools:2.3.2",
+  "align_and_cpg.pbcpg_cpu": 16,
+  "align_and_cpg.pbcpg_memory": 60,
+  "align_and_cpg.pbmm2_docker": "mgibio/pbmm2:v1.13.1",
+  "align_and_cpg.pbmm2_cpu": 12,
+  "align_and_cpg.pbmm2_memory": 60
+}

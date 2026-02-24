@@ -1,0 +1,8 @@
+align_and_cpg.align:
+  - aligned_cram
+  - aligned_cram
+align_and_cpg.samtools_stats:
+  - stats
+align_and_cpg.cpg_scores:
+  - bed
+  - bigwig

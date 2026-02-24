@@ -5,7 +5,7 @@ import "wdl/tasks/pacbio/pbmm2.wdl"
 import "wdl/tasks/pacbio/cpg.wdl"
 import "wdl/tasks/samtools/stats.wdl" as samtools_stats
 
-workflow pacbio {
+workflow align_and_cpg {
   meta {
     author: "Eddie Belter"
     version: "1.0"
@@ -14,6 +14,7 @@ workflow pacbio {
   input {
     String sample
     File pbmm2_input
+    File reference_fasta
     File reference_mmi
     String pbmm2_params
     String pbcpg_params
@@ -33,7 +34,7 @@ workflow pacbio {
     "disks": 20,
   }
 
-  RunEnv samtools_runenv = {
+  RunEnv stats_runenv = {
     "docker": pbmm2_docker,
     "cpu": 4,
     "memory": 16,
@@ -47,23 +48,34 @@ workflow pacbio {
     "disks": 20,
   }
 
-  call pbmm2.run_align as align { input:
+  call pbmm2.run_align_output_cram as align { input:
     sample=sample,
     bam=pbmm2_input,
     reference_mmi=reference_mmi,
+    reference_fasta=reference_fasta,
     params="~{pbmm2_params} --sample ~{sample}",
     runenv=pbmm2_runenv,
   }
 
   call samtools_stats.run_stats as samtools_stats { input:
-    sam_file=align.aligned_bam,
-    runenv=samtools_runenv,
+    sam_file=align.aligned_cram,
+    reference=reference_fasta,
+    runenv=stats_runenv,
   }
 
-  call cpg.run_cpg as cpg_scores { input:
-    bam=align.aligned_bam,
-    bai=align.aligned_bai,
+  call cpg.run_cpg_cram as cpg_calls { input:
+    cram=align.aligned_cram,
+    crai=align.aligned_crai,
+    reference=reference_fasta,
     params=pbcpg_params,
     runenv=pbcpg_runenv,
+  }
+
+  output {
+    File cram = align.aligned_cram
+    File crai = align.aligned_crai
+    File stats = samtools_stats.stats
+    File cpg_bed = cpg_calls.bed
+    File cpg_bigwig = cpg_calls.bigwig
   }
 }
