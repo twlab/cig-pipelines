@@ -50,12 +50,13 @@ task run_align_output_cram {
   command <<<
     set -eo pipefail
     mkdir tmpsort/
-    pbmm2 align ~{params} --sample ~{sample} -j ~{threads} --log-level INFO ~{reference_mmi} ~{bam} | samtools sort -@ ~{sort_threads} -T tmpsort/sorted.nnnn.bam -O CRAM --reference ~{reference_fasta} -o ~{output_cram}
+    pbmm2 align ~{params} --sample ~{sample} -j ~{threads} --log-level INFO ~{reference_mmi} ~{bam} | samtools sort -@ ~{sort_threads} -T tmpsort/sorted.nnnn.bam -O CRAM --reference ~{reference_fasta} -o ~{output_cram}##idx##~{output_cram}.crai --write-index
     rm -rf tmpsort/
   >>>
 
   output {
     File aligned_cram = "~{output_cram}"
+    File aligned_crai = "~{output_cram}.crai"
   }
 
   runtime {
