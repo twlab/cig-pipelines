@@ -20,8 +20,10 @@ task run_build_idx {
     RunEnv runenv
   }
 
-  String fasta_bn = "${name}.fasta"
+  String fasta_bn = "~{name}.fasta"
   command <<<
+    mkdir ref
+    cd ref
     if [[ "~{fasta}" =~ \.gz$ ]]; then
         gunzip -c ~{fasta} > ~{fasta_bn}
     else
@@ -30,8 +32,9 @@ task run_build_idx {
     samtools dict ~{fasta_bn} -o ~{name}.dict
     samtools faidx ~{fasta_bn} -o ~{fasta_bn}.fai
     cut -f1 ~{fasta_bn}.fai > ~{fasta_bn}.sizes
+    awk 'BEGIN {OFS="\t"} {print $1, $2}' ~{fasta_bn}.fai > ~{fasta_bn}.sizes
     bwa index -p ~{fasta_bn} ~{fasta_bn}
-    tar cvvf ~{name}.tar ~{name + ".*"}
+    tar cvvf ../~{name}.tar ~{name + ".*"}
   >>>
 
   runtime {
@@ -41,7 +44,16 @@ task run_build_idx {
   }
 
   output {
-    File idx = "${name}.tar"
+    File idx = "~{name}.tar"
+    File dict = "ref/~{name}.dict"
+    File fai = "ref/~{fasta_bn}.fai"
+    File FASTA = "ref/~{fasta_bn}"
+    File sizes = "ref/~{fasta_bn}.sizes"
+    File amb = "ref/~{fasta_bn}.amb"
+    File ann = "ref/~{fasta_bn}.ann"
+    File bwt = "ref/~{fasta_bn}.bwt"
+    File pac = "ref/~{fasta_bn}.pac"
+    File sa = "ref/~{fasta_bn}.sa"
   }
 }
 
