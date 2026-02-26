@@ -2,15 +2,16 @@ version development
 
 import "../../structs/runenv.wdl"
 
-task run_stat {
+task run_stats {
   input {
-    File bam
+    File sam_file
+    File? reference
     RunEnv runenv
   }
 
-  String stat_fn = "~{basename(bam)}.stat"
+  String stat_fn = "~{basename(sam_file)}.stat"
   command <<<
-    samtools stat -@ ~{runenv.cpu} ~{bam} > ~{stat_fn}
+    samtools stat -@ ~{runenv.cpu}  ~{if (defined(reference)) then "--reference ~{reference}" else ""} ~{sam_file} > ~{stat_fn}
   >>>
 
   output {
