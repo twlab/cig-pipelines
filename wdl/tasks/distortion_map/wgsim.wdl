@@ -71,18 +71,21 @@ task calc_read_pairs_needed {
   }
 
   command <<<
-    set -ex
+    set -e
     samtools faidx ~{fasta}
     sequence_length=$(head -1 ~{fasta}.fai | awk '{print $2}')
-    bases_needed=$(perl -e "printf('%i', (~{coverage} * ${sequence_length}) / 2)")
-    read_pairs_needed=$(perl -e "printf('%i', ${bases_needed} / ( ~{read_length} * 2))")
+    bases_needed=$(perl -e "printf('%i', (~{coverage} * ${sequence_length}))")
+    read_pairs_needed=$(perl -e "printf('%i', ${bases_needed} / (~{read_length} * 2))")
+    estimated_coverage=$(perl -e "printf('%.2f', (${read_pairs_needed} * ~{read_length} * 2) / ${sequence_length})")
 
     printf "Coverage:           %i\n" "~{coverage}"
-    printf "Sequence length:    %i\n" "${sequence_legth}"
+    printf "Read length:        %i\n" "~{read_length}"
+    printf "Sequence length:    %i\n" "${sequence_length}"
     printf "Bases needed:       %i\n" "${bases_needed}"
     printf "Read Pairs needed:  %i\n" "${read_pairs_needed}"
+    printf "Est coverage:       %.2f\n" "${estimated_coverage}"
 
-    echo ${read_pairs_needed} > read_pairs_needed
+    echo "${read_pairs_needed}" > read_pairs_needed
     printf "Wrote read pairs needed to file: read_pairs_needed\n"
     sleep 30s
   >>>
