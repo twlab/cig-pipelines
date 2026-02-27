@@ -268,14 +268,13 @@ workflow distortion_map {
         runenv=minimap2_runenv_1cpu_48G,
       }
 
-      if ( i <= 3 ) { # chr 1 - 4
-         Runenv tmp_db_load_runenv = dm_runenv_1cpu_72G
+      call samtools_faidx.extract_chromosome_size as chr_size { input:
+        chr=chr,
+        fai=query_chr.fai[i],
+        runenv=dm_runenv_1cpu_4G,
       }
-      if ( i >= 4 && i <= 14 ) { # chr 5 - 15
-         Runenv tmp_db_load_runenv = dm_runenv_1cpu_48G
-      }
-      dm_load_db_runenv = select_first([tmp_db_load_runenv, dm_runenv_1cpu_24G])
-  
+      RunEnv dm_load_db_runenv = if ( chr_size.size >= 175000000 ) then dm_runenv_1cpu_72G else dm_runenv_1cpu_48G
+
       call db.load_db { input:
         source_positions=extract_source_positions.source_positions,
         lifted_source=liftover_source_positions_to_ref.bedfile,
