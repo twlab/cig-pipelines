@@ -1,5 +1,6 @@
 {
   "distortion_map.query_fasta": "{{QUERY_FASTA}}",
+  "distortion_map.query_fasta_fai": "{{QUERY_FAI}}",
   "distortion_map.query_fasta_gzi": "{{QUERY_GZI}}",
   "distortion_map.target_fasta": "{{TARGET_FASTA}}",
   "distortion_map.target_fasta_gzi": "{{TARGET_GZI}}",

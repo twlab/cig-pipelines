@@ -20,6 +20,7 @@ workflow distortion_map {
     File target_fasta           # target (ne: reference) full FASTA
     File target_fasta_gzi       # target GZI
     File query_fasta            # query full FASTA
+    File query_fasta_fai        # query FAI
     File query_fasta_gzi        # query GZI
     Array[Int] wgsim_coverages  # List coverages to run, must be different to avoid cromwell cache hit
     Float wgsim_base_error
@@ -133,10 +134,7 @@ workflow distortion_map {
   }
 
   # Get Chromosomes from Query FASTA
-  call samtools_faidx.extract_chromosome_names as chromosomes { input:
-    fasta=query_fasta,
-    runenv=dm_runenv_1cpu_4G,
-  }
+  Array[Array[String]] chromosomes = read_tsv(query_fasta_fai)
 
   # Prepare Query and Target Resources
   #  * BWA Indexes for Query Chromosomes
@@ -144,7 +142,8 @@ workflow distortion_map {
   #  * Minimap2 PAF for Query vs. Target
   String query_name = basename(query_fasta, ".fasta.gz")
   String target_name = basename(target_fasta, ".fasta.gz")
-  scatter (chr in chromosomes.names) {
+  scatter (chromosome in chromosomes) {
+    String chr = chromosome[0]
     # Query - extract chr fasta & build index
     call samtools_faidx.extract_chromosome as query_chr_fasta { input:
       fasta=query_fasta,
@@ -189,9 +188,9 @@ workflow distortion_map {
   }
 
   # Run Each Chromosome Through Each Coverage
-  Array[Int] chromosomes_i = range(length(chromosomes.names))
+  Array[Int] chromosomes_i = range(length(chromosomes))
   scatter (i in chromosomes_i) {
-    String chr = chromosomes.names[i]
+    String chr_name = chromosomes[i][0]
     scatter (wgsim_coverage in wgsim_coverages) {
       # Simulate reads from query chromosome
       call wgsim.calc_read_pairs_needed { input:
@@ -230,7 +229,7 @@ workflow distortion_map {
       }
   
       # Align Sim Reads to REF then Convert Alignments to BED
-      String sample = "~{query_name}_~{chr}"
+      String sample = "~{query_name}_~{chr_name}"
       call align.run_bwa_mem as align_to_ref { input:
         sample=sample,
         library=sample+"-lib1",
@@ -268,12 +267,9 @@ workflow distortion_map {
         runenv=minimap2_runenv_1cpu_48G,
       }
 
-      call samtools_faidx.extract_chromosome_size as chr_size { input:
-        chr=chr,
-        fai=query_chr.fai[i],
-        runenv=dm_runenv_1cpu_4G,
-      }
-      RunEnv dm_load_db_runenv = if ( chr_size.size >= 175000000 ) then dm_runenv_1cpu_72G else dm_runenv_1cpu_48G
+      # Use chromosome size to determine which runenvs to use
+      Int chr_size = chromosomes[i][1]
+      RunEnv dm_load_db_runenv = if ( chr_size >= 175000000 ) then dm_runenv_1cpu_72G else dm_runenv_1cpu_48G
 
       call db.load_db { input:
         source_positions=extract_source_positions.source_positions,
