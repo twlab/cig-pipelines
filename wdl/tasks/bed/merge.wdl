@@ -2,7 +2,7 @@ version development
 
 import "../../structs/runenv.wdl"
 
-task run_union_bedgraphs {
+task run_union_and_sum_bedgraphs {
   meta {
     author: "Eddie Belter"
     version: "0.1"
