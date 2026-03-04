@@ -12,16 +12,16 @@ task run_genomecov {
   input {
     File sam
     File ref
+    File output_bg
     RunEnv runenv
   }
 
-  String output_file = basename(sam, ".sam") + ".bg"
   command <<<
-    ~{if (defined(ref)) then "CRAM_REFERENCE=~{ref} " else ""} bedtools genomecov -ibam ~{sam} -bga > ~{output_file}
+    ~{if (defined(ref)) then "CRAM_REFERENCE=~{ref} " else ""} bedtools genomecov -ibam ~{sam} -bga > ~{output_bg}
   >>>
 
   output {
-    File bg = output_file
+    File bg = output_bg
   }
 
   runtime {
@@ -47,7 +47,7 @@ task run_extract_and_genomecov {
 
   String output_file = basename(sam, ".sam") + ".bg"
   command <<<
-    samtools view --qname-file ~{reads_fof} ~{if (defined(ref)) then "--reference ~{ref}" else ""} ~{sam} | bedtools genomecov -ibam - -bga > ~{output_file}
+    samtools view -h --qname-file ~{reads_fof} ~{if (defined(ref)) then "--reference ~{ref}" else ""} ~{sam} | samtools sort -@ ~{runenv.cpu - 1} -O bam - | bedtools genomecov -ibam - -bga > ~{output_file}
   >>>
 
   output {
