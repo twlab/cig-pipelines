@@ -45,7 +45,7 @@ workflow bwa_build_idx_by_chr {
   scatter (chromosome_fasta in splitter.chromosome_fastas) {
     call idx.run_build_idx { input:
       name=basename(chromosome_fasta, ".fasta"),
-      fasta_gz=chromosome_fasta,
+      fasta=chromosome_fasta,
       runenv=bwa_runenv
     }
   }
