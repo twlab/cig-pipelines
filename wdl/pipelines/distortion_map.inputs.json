@@ -19,7 +19,7 @@
   "distortion_map.bwa_docker": "mgibio/bwa:0.7.17",
   "distortion_map.bwa_cpu": 8,
   "distortion_map.bwa_memory": 48,
-  "distortion_map.dm_docker": "mgibio/distortionmap:0.3-py3.12-bookworm",
+  "distortion_map.dm_docker": "mgibio/distortionmap:1.0-py3.12-bookworm",
   "distortion_map.dm_generate_count_mtx_cpu": 16,
   "distortion_map.dm_generate_count_mtx_memory": 64,
   "distortion_map.minimap2_docker": "mgibio/minimap2:2.26-buster",
