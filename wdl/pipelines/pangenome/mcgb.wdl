@@ -9,6 +9,7 @@ workflow pangenome_mcgb {
     Array[String] ref
     File seqfile
     Array[String] graph_types = ["clip", "full"]
+    File config
     Boolean run_panacus= true
     String cactus_docker
     Int cactus_cpu
@@ -37,6 +38,7 @@ workflow pangenome_mcgb {
     name=name,
     ref=ref,
     seqfile=seqfile,
+    config=config,
     runenv=runenv_mcgb,
   }
 
@@ -45,6 +47,7 @@ workflow pangenome_mcgb {
     ref=ref,
     seqfile=seqfile,
     sv_gfa=run_cactus_minigraph.sv_gfa,
+    config=config,
     runenv=runenv_mcgb,
   }
 
@@ -54,12 +57,14 @@ workflow pangenome_mcgb {
     minigraph_fasta=run_cactus_graphmap.minigraph_fasta,
     paf=run_cactus_graphmap.paf,
     sv_gfa=run_cactus_minigraph.sv_gfa,
+    config=config,
     runenv=runenv_mcgb,
   }
 
   call run_cactus_align { input:
     ref=ref,
     chroms=run_cactus_graphmap_split.chroms,
+    config=config,
     runenv=runenv_mcgb,
   }
 
@@ -68,6 +73,7 @@ workflow pangenome_mcgb {
     ref=ref,
     alignments=run_cactus_align.alignments,
     graph_types=graph_types,
+    config=config,
     runenv=runenv_mcgb,
   }
 
@@ -86,6 +92,7 @@ task run_cactus_minigraph {
     String name
     Array[String] ref
     File seqfile
+    File config
     RunEnv runenv
   }
 
@@ -94,7 +101,7 @@ task run_cactus_minigraph {
   command <<<
     set -e
     export OMP_NUM_THREADS=1
-    cactus-minigraph ~{jobstore} ~{seqfile} ~{sv_gfa} --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-minigraph ~{jobstore} ~{seqfile} ~{sv_gfa} --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local --configFile ~{config}
   >>>
 
   runtime {
@@ -115,6 +122,7 @@ task run_cactus_graphmap {
     Array[String] ref
     File seqfile
     File sv_gfa
+    File config
     RunEnv runenv
   }
 
@@ -126,7 +134,7 @@ task run_cactus_graphmap {
     set -e
     export OMP_NUM_THREADS=1
     cp ~{seqfile} ~{updated_seqfile}
-    cactus-graphmap ~{jobstore} ~{updated_seqfile} ~{sv_gfa} ~{paf} --outputFasta ~{fasta} --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap ~{jobstore} ~{updated_seqfile} ~{sv_gfa} ~{paf} --outputFasta ~{fasta} --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local --configFile ~{config}
   >>>
 
   runtime {
@@ -151,6 +159,7 @@ task run_cactus_graphmap_split {
     File sv_gfa
     File paf
     File minigraph_fasta
+    File config
     RunEnv runenv
   }
 
@@ -159,7 +168,7 @@ task run_cactus_graphmap_split {
     set -e
     export OMP_NUM_THREADS=1
     sed -i 's,_MINIGRAPH_\t.*,_MINIGRAPH_\t~{minigraph_fasta},' ~{seqfile}
-    cactus-graphmap-split ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outDir chroms --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-split ~{jobstore} ~{seqfile} ~{sv_gfa} ~{paf} --outDir chroms --reference ~{sep=' ' ref} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local --configFile ~{config}
   >>>
 
   runtime {
@@ -178,6 +187,7 @@ task run_cactus_align {
   input {
     Array[String] ref
     Directory chroms
+    File config
     RunEnv runenv
   }
 
@@ -187,7 +197,7 @@ task run_cactus_align {
     export OMP_NUM_THREADS=1
     ln -s ~{chroms} chroms
     find chroms/seqfiles/ -type f | while read -r sf; do sed -i 's,file:///.*/execution/,,' $sf; done
-    cactus-align ~{jobstore} chroms/chromfile.txt alignments --batch --pangenome --reference ~{sep=' ' ref} --outVG --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local
+    cactus-align ~{jobstore} chroms/chromfile.txt alignments --batch --pangenome --reference ~{sep=' ' ref} --outVG --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 1}G --defaultDisk 100G --binariesMode local --configFile ~{config}
   >>>
 
   runtime {
@@ -208,6 +218,7 @@ task run_cactus_graphmap_join {
     Array[String] ref
     Array[String] graph_types
     Directory alignments
+    File config
     RunEnv runenv
   }
 
@@ -220,7 +231,7 @@ task run_cactus_graphmap_join {
     set -e
     export OMP_NUM_THREADS=1
     ln -s ~{alignments} alignments
-    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{sep=' ' ref} --vcf ~{sep=' ' graph_types} --gfa ~{sep=' ' graph_types} --giraffe ~{sep=' ' graph_types} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local
+    cactus-graphmap-join ~{jobstore} --vg alignments/*.vg --hal alignments/*.hal --outDir . --outName ~{name} --reference ~{sep=' ' ref} --vcf ~{sep=' ' graph_types} --gfa ~{sep=' ' graph_types} --giraffe ~{sep=' ' graph_types} --maxCores ~{runenv.cpu} --maxMemory ~{runenv.memory - 2}G --defaultDisk 100G --binariesMode local --configFile ~{config}
   >>>
 
   runtime {
