@@ -1,0 +1,11 @@
+align_and_dv.left_shift:
+  - output_bam_file
+align_and_dv.left_shift_index:
+  - bai
+align_and_dv.run_stats:
+  - stats
+align_and_dv.dv:
+  - vcf
+  - vcf_tbi
+  - gvcf
+  - gvcf_tbi

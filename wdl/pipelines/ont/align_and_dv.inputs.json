@@ -1,0 +1,22 @@
+{
+  "align_and_dv.sample": "{{SAMPLE}}",
+  "align_and_dv.reads": "{{READS}}",
+  "align_and_dv.ref_fasta": "{{REF_FASTA}}",
+  "align_and_dv.ref_fai": "{{REF_FAI}}",
+  "align_and_dv.ref_dict": "{{REF_DICT}}",
+  "align_and_dv.minimap2_params": "-ax map-ont",
+  "align_and_dv.deepvariant_docker": "google/deepvariant:1.9.0",
+  "align_and_dv.deepvariant_cpu": 8,
+  "align_and_dv.deepvariant_memory": 72,
+  "align_and_dv.freebayes_docker": "mgibio/freebayes:1.3.6-focal",
+  "align_and_dv.freebayes_cpu": 1,
+  "align_and_dv.freebayes_memory": 4,
+  "align_and_dv.minimap2_docker": "mgibio/minimap2:2.26-buster",
+  "align_and_dv.minimap2_cpu": 6,
+  "align_and_dv.minimap2_memory": 48,
+  "align_and_dv.samtools_docker": "mgibio/samtools:v1.21-noble",
+  "align_and_dv.samtools_cpu": 2,
+  "align_and_dv.samtools_memory": 8,
+  "align_and_dv.samtools_sort_cpu": 6,
+  "align_and_dv.samtools_sort_memory": 48
+}
