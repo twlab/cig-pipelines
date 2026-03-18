@@ -4,19 +4,19 @@ import "../../structs/runenv.wdl"
 
 task run_align {
   input {
-    File query_fasta
-    File target_fasta
+    File query
+    File target
     String output_fn = "paf"
     String params = ""
     RunEnv runenv
   }
 
   command <<<
-    minimap2 -t ~{runenv.cpu} -o ~{output_fn} ~{params} ~{target_fasta} ~{query_fasta}
+    minimap2 -t ~{runenv.cpu} -o ~{output_fn} ~{params} ~{target} ~{query}
   >>>
 
   output {
-    File paf = output_fn
+    File alignments = output_fn
   }
 
   runtime {

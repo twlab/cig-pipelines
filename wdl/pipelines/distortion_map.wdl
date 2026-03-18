@@ -172,9 +172,9 @@ workflow distortion_map {
 
     # MINIMAP2 - Query to Target PAF
     call minimap2_align.run_align as query_to_ref_paf { input:
-      query_fasta=query_chr_fasta.chr_fasta,
-      target_fasta=target_chr_fasta.chr_fasta,
-      output_fn="~{target_name}.~{query_name}.paf",
+      query=query_chr_fasta.chr_fasta,
+      target=target_chr_fasta.chr_fasta,
+      output_fn="~{target_name}.~{query_name}.alignments",
       params="-x asm5 -L -c --cs=long",
       runenv=dm_runenv_minimap2,
     }
@@ -220,7 +220,7 @@ workflow distortion_map {
         runenv=wgsim_runenv,
       }
       call liftover.run_liftover as liftover_source_positions_to_ref { input:
-        paf=query_to_ref_paf.paf[i],
+        paf=query_to_ref_paf.alignments[i],
         bed=extract_source_positions.source_positions,
         mapping_qual=5,
         alignment_length=50000,
@@ -259,7 +259,7 @@ workflow distortion_map {
         runenv=dm_runenv_1cpu_24G,
       }
       call liftover.run_liftover as liftover_query_alignments_to_ref { input:
-        paf=query_to_ref_paf.paf[i],
+        paf=query_to_ref_paf.alignments[i],
         bed=bam2bed_query.bedfile,
         mapping_qual=5,
         alignment_length=50000,
