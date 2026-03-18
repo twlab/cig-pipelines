@@ -1,52 +1,61 @@
 #!/usr/bin/env bash
-
-# wdl/tools/picard/collect_rna_seq_metrics.wdl
-
 set -e
-
-function cleanup() {
-    cd ${prev_dn}
-    rm -rf "${working_dn}"
-}
-trap cleanup EXIT
 
 if [ -z "${1}" ]; then
     echo USAGE: ${0} WDL && exit 2
 fi
 
-wdl="${1}"
+wdl=$(realpath "${1}")
+echo "WDL: ${wdl}"
 if [ ! -s "${wdl}" ]; then
     echo Given WDL "${wdl}" does not exist! && exit 2
 fi
-wdl_dn=$(readlink -f "${wdl}" | xargs -I% dirname %)
 
-working_dn=$(mktemp -d 2>/dev/null || mktemp -d -t 'build-imports-XXX')
-echo WDL: "${wdl}"
 import_wdls=($(grep import "${wdl}" | awk -F\" '{print $2}'))
 if [ ${#import_wdls[*]} == 0 ]; then
     echo "WDL has no imports, skipping!"
     exit 0
 fi
+
+# Get the imports directory
+wdl_dn=$(dirname "${wdl}")
+echo "Directory: ${wdl}"
+relative_dn=$(echo "${import_wdls[0]}" | awk -F/ '{print $1}')
+imports_dn="${wdl_dn}"
+while true; do
+    cbn=$(basename "${imports_dn}")
+    if test "${cbn}" == "${relative_dn}"; then
+        break
+    fi
+    imports_dn=$(dirname "${imports_dn}")
+done
+imports_dn=$(dirname "${imports_dn}")
+echo "Imports directory: ${imports_dn}"
+
+# Copy imports to working dir for zipping
+working_dn=$(mktemp -d 2>/dev/null || mktemp -d -t 'build-imports-XXX')
 for import_wdl in $(grep import "${wdl}" | awk -F\" '{print $2}'); do
-    if [ ! -e ${import_wdl} ]; then
+    import_wdl_fn="${imports_dn}/${import_wdl}"
+    if [ ! -e ${import_wdl_fn} ]; then
         echo "Missing import [${import_wdl}], cannot build imports." 
         exit 1
     fi
-    dest_bn=$(dirname ${import_wdl})
-    dest_dn="${working_dn}/${dest_bn}"
+    dest_bdn=$(dirname ${import_wdl})
+    dest_dn="${working_dn}/${dest_bdn}"
     mkdir -p "${dest_dn}"
-    cp "${import_wdl}" ${dest_dn}
-    import_wdl_imports="${import_wdl/.wdl/.imports.zip}"
+    cp "${import_wdl_fn}" ${dest_dn}
 done
 
-prev_dn=$(pwd -P)
+# Zip imports
 cd ${working_dn}
-zip_fn=$(basename "${wdl}" | sed 's/\.wdl/.imports.zip/')
+zip_fn="${wdl/\.wdl/.imports.zip}"
 zip -qr "${zip_fn}" .
-wdl_dn=$(dirname "${wdl}")
-cd "${prev_dn}/${wdl_dn}"
-cp -f "${working_dn}/${zip_fn}" .
 unzip -l "${zip_fn}"
-echo Created imports file: "${wdl_dn}/${zip_fn}"
+echo Created imports file: "${zip_fn}"
+
+function cleanup() {
+    rm -rf "${working_dn}"
+}
+trap cleanup EXIT
 
 exit
