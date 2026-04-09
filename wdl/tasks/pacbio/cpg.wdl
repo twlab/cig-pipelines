@@ -2,7 +2,7 @@ version development
 
 import "../../structs/runenv.wdl"
 
-task run_cpg {
+task run_cpg_bam {
   input {
     File bam
     File bai
@@ -37,33 +37,41 @@ task run_cpg {
   }
 }
 
-task run_cpg_cram {
+task run_cpg {
   input {
-    File cram
-    File crai
-    File reference
-    String model = "/opt/pb-CpG-tools-v2.3.2-x86_64-unknown-linux-gnu/models/pileup_calling_model.v1.tflite"
-    String params = "" # --min-coverage[default: 4] --min-mapq [default: 1]
+    File alignments       # BAM or CRAM
+    File alignments_idx   # BAI or CRAI
+    File reference_fasta  # for CRAM
+    String params = "" 
     RunEnv runenv
   }
 
-  String output_prefix = basename(cram, ".cram")
+  # Params
+  # --mode [default: model] [possible values: count, model]
+  # --model /opt/pb-CpG-tools-v2.3.2-x86_64-unknown-linux-gnu/models/pileup_calling_model.v1.tflite
+  # --min-coverage[default: 4]
+  # --min-mapq [default: 1]
+
+  #String output_prefix1 = basename(alignments, ".bam")
+  #String output_prefix = basename(alignments, ".cram")
+  String output_prefix = basename(basename(alignments, ".bam"), ".cram")
   command <<<
-    ln -s ~{cram} .
-    ln -s ~{crai} .
+    ln -s ~{alignments} .
+    ln -s ~{alignments_idx} .
     aligned_bam_to_cpg_scores \
-      --model ~{model} \
-      --bam ~{basename(cram)} \
-      --ref ~{reference} \
+      --bam ~{basename(alignments)} \
+      ~{if defined(reference_fasta) then "--ref ~{reference_fasta}" else ""} \
       --output-prefix ~{output_prefix} \
       --threads ~{runenv.cpu} \
       ~{params}
   >>>
-  # Combine these tasks into one with ~{if reference then "--ref ~{reference}" else ""}
 
   output {
-    File bed = glob("~{output_prefix}*.bed")[0]
-    File bigwig = glob("~{output_prefix}*.bw")[0]
+    File bed = "~{output_prefix}.combined.bed"
+    File bigwig = "~{output_prefix}.combined.bw"
+    #File bed = glob("~{output_prefix}*.bed")[0]
+    #File bigwig = glob("~{output_prefix}*.bw")[0]
+    # also has log file
   }
 
   runtime {

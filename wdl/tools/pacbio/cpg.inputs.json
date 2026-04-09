@@ -1,0 +1,9 @@
+{
+  "pbcpg.alignments": "{{ALN}}",
+  "pbcpg.alignments_idx": "{{ALN_IDX}}",
+  "pbcpg.reference_fasta": "{{REF}}",
+  "pbcpg.pbcpg_params": "--pileup-mode count --min-mapq 10",
+  "pbcpg.pbcpg_docker": "mgibio/pb-cpg-tools:2.3.2",
+  "pbcpg.pbcpg_cpu": 8,
+  "pbcpg.pbcpg_memory": 48
+}
