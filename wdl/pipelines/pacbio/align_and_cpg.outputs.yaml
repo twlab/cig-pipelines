@@ -5,4 +5,5 @@ align_and_cpg.samtools_stats:
   - stats
 align_and_cpg.cpg_calls:
   - bed
+  - bed_tbi
   - bigwig

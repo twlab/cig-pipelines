@@ -63,10 +63,10 @@ workflow align_and_cpg {
     runenv=stats_runenv,
   }
 
-  call cpg.run_cpg_cram as cpg_calls { input:
-    cram=align.aligned_cram,
-    crai=align.aligned_crai,
-    reference=reference_fasta,
+  call cpg.run_cpg as cpg_calls { input:
+    alignments=align.aligned_cram,
+    alignments_idx=align.aligned_crai,
+    reference_fasta=reference_fasta,
     params=pbcpg_params,
     runenv=pbcpg_runenv,
   }
