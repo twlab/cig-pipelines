@@ -6,7 +6,6 @@ if [ -z "${1}" ]; then
 fi
 
 wdl=$(realpath "${1}")
-echo "WDL: ${wdl}"
 if [ ! -s "${wdl}" ]; then
     echo Given WDL "${wdl}" does not exist! && exit 2
 fi
@@ -18,8 +17,9 @@ if [ ${#import_wdls[*]} == 0 ]; then
 fi
 
 # Get the imports directory
+echo "WDL: ${wdl}"
 wdl_dn=$(dirname "${wdl}")
-echo "Directory: ${wdl}"
+echo "WDL Directory: ${wdl_dn}"
 relative_dn=$(echo "${import_wdls[0]}" | awk -F/ '{print $1}')
 imports_dn="${wdl_dn}"
 while true; do
