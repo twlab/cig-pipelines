@@ -1,7 +1,7 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/ancestory/snvstory.wdl"
+import "wdl/tasks/ancestry/snvstory.wdl"
 
 workflow snvstory {
   meta {
