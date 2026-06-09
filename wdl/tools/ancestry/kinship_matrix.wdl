@@ -1,7 +1,7 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/kinship_matrix.wdl"
+import "wdl/tasks/ancestry/kinship_matrix.wdl"
 
 workflow kinship_matrix {
   input {
