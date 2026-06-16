@@ -1,9 +1,7 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/minimap2/align.wdl" as minimap2_align
-import "wdl/tasks/samtools/index.wdl" as samtools_index
 import "wdl/tasks/samtools/sort.wdl" as samtools_sort
 import "wdl/tasks/samtools/stats.wdl" as samtools_stats
 import "wdl/tasks/vcallers/deepvariant.wdl"
@@ -21,13 +19,11 @@ workflow align_and_dv {
     File ref_fai
     File ref_dict
     String minimap2_params
+    String deepvariant_model_type = "ONT_R104"
     #Runtime
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
-    String freebayes_docker
-    Int freebayes_cpu
-    Int freebayes_memory
     String minimap2_docker
     Int minimap2_cpu
     Int minimap2_memory
@@ -42,13 +38,6 @@ workflow align_and_dv {
     "docker": deepvariant_docker,
     "cpu": deepvariant_cpu,
     "memory": deepvariant_memory,
-    "disks": 20,
-  }
-
-  RunEnv freebayes_renenv = {
-    "docker": freebayes_docker,
-    "cpu": freebayes_cpu,
-    "memory": freebayes_memory,
     "disks": 20,
   }
 
@@ -86,36 +75,25 @@ workflow align_and_dv {
     runenv=samtools_sort_runenv,
   } 
 
-  call freebayes.run_left_shift_bam as left_shift { input:
-    in_bam_file=sorted.sorted_bam,
-    in_reference_file=ref_fasta,
-    in_reference_index_file=ref_fai,
-    runenv=freebayes_renenv,
-  }
-
-  call samtools_index.run_index as left_shift_index { input:
-    bam=left_shift.output_bam_file,
-    runenv=samtools_runenv,
-  } 
-
   call samtools_stats.run_stats { input:
-    sam_file=left_shift.output_bam_file,
+    sam_file=sorted.sorted_bam,
     runenv=samtools_runenv,
   } 
 
   call deepvariant.run_deepvariant as dv { input:
     sample=sample,
-    bam=left_shift.output_bam_file,
-    bai=left_shift_index.bai,
+    bam=sorted.sorted_bam,
+    bai=sorted.sorted_bai,
     ref_fasta=ref_fasta,
     ref_fai=ref_fai,
     ref_dict=ref_dict,
+    model_type=deepvariant_model_type,
     runenv=dv_runenv,
   }
 
   output {
-    File final_bam = left_shift.output_bam_file
-    File final_bai = left_shift_index.bai
+    File final_bam = sorted.sorted_bam
+    File final_bai = sorted.sorted_bai
     File stats = run_stats.stats
     File vcf = dv.vcf
     File vcf_tbi = dv.vcf_tbi
