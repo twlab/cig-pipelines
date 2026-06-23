@@ -24,7 +24,8 @@ task run_star_signals {
       --outWigStrand ~{strandedness} \
       --outWigReferencesPrefix ~{ref_prefix}
     for f in $(ls *.bg); do
-        mv "${f}" "~{bam_bn}.${f}"
+        sort -k1,1 -k2,2n < "${f}" > "~{bam_bn}.${f}"
+        rm -f "${f}"
     done
   >>>
 
