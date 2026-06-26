@@ -4,9 +4,9 @@ import "../../structs/runenv.wdl"
 
 task run_cpg {
   input {
-    File alignments       # BAM or CRAM
-    File alignments_idx   # BAI or CRAI
-    File reference_fasta  # for CRAM
+    File alignments        # BAM or CRAM
+    File alignments_idx    # BAI or CRAI
+    File? reference_fasta  # for CRAM
     String params = "" 
     RunEnv runenv
   }
@@ -32,7 +32,7 @@ task run_cpg {
   >>>
 
   output {
-    File bed = "~{output_prefix}.combined.bed"
+    File bed = "~{output_prefix}.combined.bed.gz"
     File bed_tbi = "~{output_prefix}.combined.bed.gz.tbi"
     File bigwig = "~{output_prefix}.combined.bw"
   }
