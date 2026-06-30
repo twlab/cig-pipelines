@@ -29,16 +29,10 @@ workflow genome_wgs {
     Int targets_expansion_bases = 160
     String? trimmer_name
     String? trimmer_params
-    # dockers and resources
-    String abra2_docker
-    Int abra2_cpu
-    Int abra2_memory
+    # resources
     String bwa_docker
     Int bwa_cpu
     Int bwa_memory
-    String bedtools_docker
-    Int bedtools_cpu
-    Int bedtools_memory
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
@@ -48,9 +42,6 @@ workflow genome_wgs {
     String freebayes_docker
     Int freebayes_cpu
     Int freebayes_memory
-    String gatk_docker
-    Int gatk_cpu
-    Int gatk_memory
     String picard_docker
     Int picard_cpu
     Int picard_memory
@@ -63,20 +54,16 @@ workflow genome_wgs {
     String utils_docker
     Int utils_cpu
     Int utils_memory
-  }
-
-  RunEnv bedtools_runenv = {
-    "docker": bedtools_docker,
-    "cpu": bedtools_cpu,
-    "memory": bedtools_memory,
-    "disks": 20,
-  }
-
-  RunEnv abra2_renenv = {
-    "docker": abra2_docker,
-    "cpu": abra2_cpu,
-    "memory": abra2_memory,
-    "disks": 20,
+    # realign resources
+    String? abra2_docker
+    Int? abra2_cpu
+    Int? abra2_memory
+    String? bedtools_docker
+    Int? bedtools_cpu
+    Int? bedtools_memory
+    String? gatk_docker
+    Int? gatk_cpu
+    Int? gatk_memory
   }
 
   RunEnv bwa_runenv = {
@@ -97,13 +84,6 @@ workflow genome_wgs {
     "docker": freebayes_docker,
     "cpu": freebayes_cpu,
     "memory": freebayes_memory,
-    "disks": 20,
-  }
-
-  RunEnv gatk_renenv = {
-    "docker": gatk_docker,
-    "cpu": gatk_cpu,
-    "memory": gatk_memory,
     "disks": 20,
   }
 
@@ -179,18 +159,37 @@ workflow genome_wgs {
     runenv=samtools_runenv,
   } 
 
-  if ( realign_bam ) {
-    call freebayes.run_left_shift_bam as left_shift { input:
-      in_bam_file=samtools_sort.sorted_bam,
-      in_reference_file=reference.fasta,
-      in_reference_index_file=reference.fai,
-      runenv=freebayes_renenv,
-    }
+  call freebayes.run_left_shift_bam as left_shift { input:
+    in_bam_file=samtools_sort.sorted_bam,
+    in_reference_file=reference.fasta,
+    in_reference_index_file=reference.fai,
+    runenv=freebayes_renenv,
+  }
 
-    call samtools.index as left_shift_index { input:
-      bam=left_shift.output_bam_file,
-      runenv=samtools_runenv,
-    } 
+  call samtools.index as left_shift_index { input:
+    bam=left_shift.output_bam_file,
+    runenv=samtools_runenv,
+  } 
+
+  if ( realign_bam ) {
+    RunEnv abra2_renenv = {
+      "docker": abra2_docker,
+      "cpu": abra2_cpu,
+      "memory": abra2_memory,
+      "disks": 20,
+    }
+    RunEnv bedtools_runenv = {
+      "docker": bedtools_docker,
+      "cpu": bedtools_cpu,
+      "memory": bedtools_memory,
+      "disks": 20,
+    }
+    RunEnv gatk_renenv = {
+      "docker": gatk_docker,
+      "cpu": gatk_cpu,
+      "memory": gatk_memory,
+      "disks": 20,
+    }
 
     call realigner_target_creator.run_realigner_target_creator as target_creator { input:
       in_bam_file=left_shift.output_bam_file,
