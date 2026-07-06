@@ -24,6 +24,7 @@ workflow genome_wgs {
     String sample
     Array[File] fastqs
     File idx # tarred BWA index with DICT, FASTA, FAI
+    String markdup_params = ""
     Boolean generate_fastqc = false
     Boolean realign_bam = true
     Int targets_expansion_bases = 160
@@ -144,7 +145,7 @@ workflow genome_wgs {
 
   Array[File] trimmed_fastqs = select_first([trimmer.trimmed_fastqs, fastqs])
 
-  call align.run_bwa_mem as align { input:
+  call align.run_bwamem_with_sort as align { input:
     sample=sample,
     library=sample+"-lib1",
     rg_id=sample+"-lib1",
@@ -154,22 +155,12 @@ workflow genome_wgs {
     runenv=bwa_runenv,
   }
 
-  call samtools.sort as samtools_sort { input:
-    bam=align.bam,
-    runenv=samtools_runenv,
-  } 
-
   call freebayes.run_left_shift_bam as left_shift { input:
-    in_bam_file=samtools_sort.sorted_bam,
+    in_bam_file=align.bam,
     in_reference_file=reference.fasta,
     in_reference_index_file=reference.fai,
     runenv=freebayes_renenv,
   }
-
-  call samtools.index as left_shift_index { input:
-    bam=left_shift.output_bam_file,
-    runenv=samtools_runenv,
-  } 
 
   if ( realign_bam ) {
     RunEnv abra2_renenv = {
@@ -189,6 +180,11 @@ workflow genome_wgs {
       "cpu": gatk_cpu,
       "memory": gatk_memory,
       "disks": 20,
+    }
+
+    call samtools.index as left_shift_index { input:
+      bam=left_shift.output_bam_file,
+      runenv=samtools_runenv,
     }
 
     call realigner_target_creator.run_realigner_target_creator as target_creator { input:
@@ -218,23 +214,14 @@ workflow genome_wgs {
   }
 
   call markdup.run_markdup as picard_markdup { input:
-    bam=select_first([realign.indel_realigned_bam, samtools_sort.sorted_bam]), # select realign first if true
+    bam=select_first([realign.indel_realigned_bam, left_shift.output_bam_file]),
+    params=markdup_params,
     runenv=picard_runenv,
   }
 
-  call samtools.index as samtools_index { input:
+  call samtools.index as markdup_index { input:
     bam=picard_markdup.dedup_bam,
     runenv=samtools_runenv,
-  }
-
-  call deepvariant.run_deepvariant as dv { input:
-    sample=sample,
-    bam=picard_markdup.dedup_bam,
-    bai=samtools_index.bai,
-    ref_fasta=reference.fasta,
-    ref_fai=reference.fai,
-    ref_dict=reference.dict,
-    runenv=dv_runenv,
   }
 
   call samtools.stat as samtools_stat { input:
@@ -242,9 +229,19 @@ workflow genome_wgs {
     runenv=samtools_runenv,
   } 
 
+  call deepvariant.run_deepvariant as dv { input:
+    sample=sample,
+    bam=picard_markdup.dedup_bam,
+    bai=markdup_index.bai,
+    ref_fasta=reference.fasta,
+    ref_fai=reference.fai,
+    ref_dict=reference.dict,
+    runenv=dv_runenv,
+  }
+
   output {
     File bam = picard_markdup.dedup_bam
-    File bai = samtools_index.bai
+    File bai = markdup_index.bai
     File bam_stats = samtools_stat.stats
     File vcf = dv.vcf
     File vcf_tvi = dv.vcf_tbi

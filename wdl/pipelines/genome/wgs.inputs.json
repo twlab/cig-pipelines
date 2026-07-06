@@ -5,6 +5,7 @@
     "{{FQ2}}"
   ],
   "genome_wgs.idx": "{{IDX}}",
+  "genome_wgs.markdup_params": "--SORTING_COLLECTION_SIZE_RATIO .15",
   "genome_wgs.targets_expansion_bases": 160,
   "genome_wgs.generate_fastqc": true,
   "genome_wgs.trimmer_name": "fastp",
