@@ -1,2 +1,2 @@
-samtools_stat.stat:
-  - stat_file
+samtools_stat.run_stats:
+  - stats

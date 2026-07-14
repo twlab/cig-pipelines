@@ -1,7 +1,7 @@
 {
-    "samtools_stat.bam": "{{BAM}}",
-    "samtools_stat.docker": "mgibio/samtools:1.15.1",
-    "samtools_stat.cpu": 1,
-    "samtools_stat.memory": 4,
-    "samtools_stat.disks": 20
+  "samtools_stats.sam_file": "{{SAM}}",
+  "samtools_stats.reference": "{{REF}}",
+  "samtools_stats.docker": "mgibio/samtools:v1.21-noble",
+  "samtools_stats.cpu": 1,
+  "samtools_stats.memory": 4
 }
