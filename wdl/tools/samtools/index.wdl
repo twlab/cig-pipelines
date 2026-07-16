@@ -1,30 +1,31 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/samtools.wdl"
+import "wdl/tasks/samtools/index.wdl"
 
-workflow index {
-    input {
-        File bam
-        String docker = "mgibio/samtools:1.15.1"
-        Int cpu = 1
-        Int memory = 4
-        Int disks = 20
-    }
+workflow samtools_index {
+  input {
+    File sam_file
+    File? reference
+    String docker
+    Int cpu
+    Int memory
+  }
 
-    RunEnv runenv = {
-      "docker": docker,
-      "cpu": cpu,
-      "memory": memory,
-      "disks": disks,
-    }
+  RunEnv runenv = {
+    "docker": docker,
+    "cpu": cpu,
+    "memory": memory,
+    "disks": 20,
+  }
 
-    call samtools.index as index { input:
-        bam=bam,
-        runenv=runenv
-    }
+  call index.new_run_index as run_index { input:
+    sam_file=sam_file,
+    reference=reference,
+    runenv=runenv
+  }
 
-    output {
-        File bai = index.bai
-    }
+  output {
+    File idx = run_index.idx
+  }
 }
