@@ -4,38 +4,48 @@ import "wdl/structs/runenv.wdl"
 import "wdl/tasks/bwa/align.wdl"
 
 workflow bwa_align {
-    meta {
-        author: "Eddie Belter"
-        version: "0.1"
-        description: "Align with BWA MEM"
-    }
+  meta {
+    author: "Eddie Belter"
+    version: "1.0"
+    description: "Align FASTQS with BWA MEM to output a sorted BAM."
+  }
 
-    input {
-        String sample
-        String library
-        Array[File] fastqs
-        Directory reference
-        String docker = "mgibio/bwa:0.7.17"
-        Int cpu = 8
-        Int memory = 48
-    }
+  input {
+    String sample
+    Array[File] fastqs
+    Array[File] idx_files
+    String? library
+    String? rg_id
+    String? platform_unit
+    String platform = "ILLUMINA"
+    String docker
+    Int cpu
+    Int memory
+  }
 
-    RunEnv runenv = {
-      "docker": docker,
-      "cpu": cpu,
-      "memory": memory,
-      "disks": 20,
-    }
+  String library_ = select_first([library, "~{sample}-lib1"])
+  String rg_id_ = select_first([rg_id, library_])
+  String platform_unit_ = select_first([platform_unit, rg_id_])
 
-    call align.run_bwa_mem { input:
-        sample=sample,
-        library=library,
-        fastqs=fastqs,
-        reference=reference,
-        runenv=runenv
-    }
+  RunEnv runenv = {
+    "docker": docker,
+    "cpu": cpu,
+    "memory": memory,
+    "disks": 20,
+  }
 
-    output {
-        File bam = run_bwa_mem.bam
-    }
+  call align.run_bwamem_with_sort as run_bwa { input:
+    sample=sample,
+    fastqs=fastqs,
+    idx_files=idx_files,
+    library=library_,
+    rg_id=rg_id_,
+    platform_unit=platform_unit_,
+    platform=platform,
+    runenv=runenv
+  }
+
+  output {
+    File bam = run_bwa.bam
+  }
 }

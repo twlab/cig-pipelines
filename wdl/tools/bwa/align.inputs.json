@@ -1,8 +1,11 @@
 {
-  "bwa_align.name": "{{NAME}}",
-  "bwa_align.library": "{{LIBRARY}}",
+  "bwa_align.sample": "{{SAMPLE}}",
   "bwa_align.fastqs": ["{{FQ1}}", "{{FQ2}}"],
-  "bwa_align.reference": "{{REF}}",
+  "bwa_align.idx_files": ["{{IDX}}"],
+  "bwa_align.library": "{{LIBRARY}}",
+  "bwa_align.rg_id": "{{RG_ID}}",
+  "bwa_align.platform_unit": "{{PU}}",
+  "bwa_align.platform": "ILLUMINA",
   "bwa_align.docker": "mgibio/bwa:0.7.17",
   "bwa_align.cpu": 4,
   "bwa_align.memory": 20
