@@ -1,0 +1,8 @@
+{
+  "freebayes_left_align.bam": "{{BAM}}",
+  "freebayes_left_align.reference_fasta": "{{FASTA}}",
+  "freebayes_left_align.reference_fai": "{{FAI}}",
+  "freebayes_left_align.docker": "mgibio/freebayes:1.3.6-focal",
+  "freebayes_left_align.cpu": 1,
+  "freebayes_left_align.memory": 4
+}

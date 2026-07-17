@@ -33,12 +33,10 @@ task run_left_shift_bam {
         > ~{out_prefix}.left_shifted.bam \
         --fasta-reference reference.fa \
         --compressed
-    #samtools index -b ~{out_prefix}.left_shifted.bam ~{out_prefix}.left_shifted.bam.bai
   >>>
 
   output {
     File output_bam_file = "~{out_prefix}.left_shifted.bam"
-    #File output_bam_index_file = "~{out_prefix}.left_shifted.bam.bai"
   }
 
   runtime {
