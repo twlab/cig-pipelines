@@ -1,0 +1,4 @@
+gatk_realigner_target_creator.target_creator:
+  - intervals
+  - targets
+  - expanded_targets

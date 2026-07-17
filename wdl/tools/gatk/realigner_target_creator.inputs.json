@@ -1,0 +1,10 @@
+{
+  "gatk_realigner_target_creator.bam": "{{BAM}}",
+  "gatk_realigner_target_creator.bai": "{{BAI}}",
+  "gatk_realigner_target_creator.reference_fasta": "{{FASTA}}",
+  "gatk_realigner_target_creator.reference_fai": "{{FAI}}",
+  "gatk_realigner_target_creator.reference_dict": "{{DICT}}",
+  "gatk_realigner_target_creator.docker": "docker://mgibio/gatk:v3.5-realigner-target-creator",
+  "gatk_realigner_target_creator.cpu": 4,
+  "gatk_realigner_target_creator.memory": 24 
+}

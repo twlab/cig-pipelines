@@ -2,7 +2,6 @@ version development
 
 import "wdl/structs/runenv.wdl"
 import "wdl/tasks/abra2.wdl"
-import "wdl/tasks/bed/bedtools.wdl"
 import "wdl/tasks/qc/fastqc.wdl"
 import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/gatk/realigner_target_creator.wdl"
@@ -38,9 +37,6 @@ workflow pangenome_wgs {
     String abra2_docker 
     Int abra2_cpu 
     Int abra2_memory 
-    String bedtools_docker
-    Int bedtools_cpu
-    Int bedtools_memory
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
@@ -74,13 +70,6 @@ workflow pangenome_wgs {
     "docker": abra2_docker,
     "cpu": abra2_cpu,
     "memory": abra2_memory,
-    "disks": 20,
-  }
-
-  RunEnv bedtools_runenv = {
-    "docker": bedtools_docker,
-    "cpu": bedtools_cpu,
-    "memory": bedtools_memory,
     "disks": 20,
   }
 
@@ -224,27 +213,21 @@ workflow pangenome_wgs {
   } 
 
   call realigner_target_creator.run_realigner_target_creator as target_creator { input:
-    in_bam_file=left_shift.output_bam_file,
-    in_bam_index_file=left_shift_index.bai,
-    in_reference_file=reference.fasta,
-    in_reference_index_file=reference.fai,
-    in_reference_dict_file=reference.dict,
+    bam=left_shift.output_bam_file,
+    bai=left_shift_index.bai,
+    reference_fasta=reference.fasta,
+    reference_fai=reference.fai,
+    reference_dict=reference.dict,
+    expand_bases=targets_expansion_bases,
     runenv=gatk_renenv,
   } 
-
-  call bedtools.run_slop as expand_targets { input:
-    bed_file=target_creator.output_target_bed_file,
-    reference_fai=reference.fai,
-    bases=targets_expansion_bases,
-    runenv=bedtools_runenv,
-  }
 
   call abra2.run_realigner as realign { input:
     in_bam_file=left_shift.output_bam_file,
     in_bam_index_file=left_shift_index.bai,
-    in_target_bed_file=expand_targets.slopped_bed_file,
     in_reference_file=reference.fasta,
     in_reference_index_file=reference.fai,
+    in_target_bed_file=target_creator.expanded_targets,
     runenv=abra2_renenv,
   } 
 
