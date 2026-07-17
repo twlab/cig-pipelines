@@ -1,8 +1,8 @@
 version development
 
-import "../structs/runenv.wdl"
+import "../../structs/runenv.wdl"
 
-task run_left_shift_bam {
+task run_left_align_bam {
   input {
     File in_bam_file
     File in_reference_file
@@ -10,7 +10,7 @@ task run_left_shift_bam {
     RunEnv runenv
   }
 
-  String out_prefix = basename(in_bam_file, ".bam")
+  String out_bam_file = basename(in_bam_file, '.bam') + ".left_aligned.bam"
   command <<<
     # Set the exit code of a pipeline to that of the rightmost command 
     # to exit with a non-zero status, or zero if all commands of the pipeline exit 
@@ -30,13 +30,13 @@ task run_left_shift_bam {
       
     bamleftalign \
         < ~{in_bam_file} \
-        > ~{out_prefix}.left_shifted.bam \
+        > ~{out_bam_file} \
         --fasta-reference reference.fa \
         --compressed
   >>>
 
   output {
-    File output_bam_file = "~{out_prefix}.left_shifted.bam"
+    File output_bam_file = out_bam_file
   }
 
   runtime {

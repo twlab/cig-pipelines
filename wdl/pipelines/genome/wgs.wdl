@@ -1,13 +1,13 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/abra2.wdl"
 import "wdl/tasks/bwa/align.wdl"
 import "wdl/tasks/bwa/idx.wdl"
 import "wdl/tasks/picard/markdup.wdl"
 import "wdl/tasks/qc/fastqc.wdl"
-import "wdl/tasks/freebayes.wdl"
 import "wdl/tasks/gatk/realigner_target_creator.wdl"
+import "wdl/tasks/realign/abra2.wdl"
+import "wdl/tasks/realign/freebayes.wdl"
 import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/trimmers/fastp.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
@@ -151,7 +151,7 @@ workflow genome_wgs {
     runenv=bwa_runenv,
   }
 
-  call freebayes.run_left_shift_bam as left_shift { input:
+  call freebayes.run_left_align_bam as left_align { input:
     in_bam_file=align.bam,
     in_reference_file=reference.fasta,
     in_reference_index_file=reference.fai,
@@ -172,14 +172,14 @@ workflow genome_wgs {
       "disks": 20,
     }
 
-    call samtools.index as left_shift_index { input:
-      bam=left_shift.output_bam_file,
+    call samtools.index as left_align_index { input:
+      bam=left_align.output_bam_file,
       runenv=samtools_runenv,
     }
 
     call realigner_target_creator.run_realigner_target_creator as target_creator { input:
-      bam=left_shift.output_bam_file,
-      bai=left_shift_index.bai,
+      bam=left_align.output_bam_file,
+      bai=left_align_index.bai,
       reference_fasta=reference.fasta,
       reference_fai=reference.fai,
       reference_dict=reference.dict,
@@ -188,8 +188,8 @@ workflow genome_wgs {
     }
 
     call abra2.run_realigner as realign { input:
-      in_bam_file=left_shift.output_bam_file,
-      in_bam_index_file=left_shift_index.bai,
+      in_bam_file=left_align.output_bam_file,
+      in_bam_index_file=left_align_index.bai,
       in_reference_file=reference.fasta,
       in_reference_index_file=reference.fai,
       in_target_bed_file=target_creator.expanded_targets,
@@ -198,7 +198,7 @@ workflow genome_wgs {
   }
 
   call markdup.run_markdup as picard_markdup { input:
-    bam=select_first([realign.indel_realigned_bam, left_shift.output_bam_file]),
+    bam=select_first([realign.indel_realigned_bam, left_align.output_bam_file]),
     params=markdup_params,
     runenv=picard_runenv,
   }
