@@ -1,0 +1,10 @@
+{
+  "abra2_realign.bam": "{{BAM}}",
+  "abra2_realign.bai": "{{BAI}}",
+  "abra2_realign.targets": "{{TARGETS}}",
+  "abra2_realign.reference_fasta": "{{FASTA}}",
+  "abra2_realign.reference_fai": "{{FAI}}",
+  "abra2_realign.docker": "docker://mgibio/abra2:v2.23-focal",
+  "abra2_realign.cpu": 4,
+  "abra2_realign.memory": 24
+}
