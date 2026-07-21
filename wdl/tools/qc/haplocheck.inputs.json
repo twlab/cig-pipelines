@@ -1,0 +1,8 @@
+{
+  "haplocheck.sample": "{{SAMPLE}}",
+  "haplocheck.bam": "{{BAM}}",
+  "haplocheck.bai": "{{BAI}}",
+  "haplocheck.docker": "mgibio/haplocheck:v1.3.2-noble",
+  "haplocheck.cpu": 4,
+  "haplocheck.memory": 24
+}
