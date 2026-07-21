@@ -1,4 +1,5 @@
 {
+  "centrifuger.sample": "{{SAMPLE}}",
   "centrifuger.fastqs": ["{{FQ1}}", "{{FQ2}}"],
   "centrifuger.centrifuger_db": "{{CENTRIFUGER_DB}}",
   "centrifuger.centrifuger_taxon_db": "{{CENTRIFUGER_TAXON_DB}}",

@@ -5,6 +5,7 @@ import "wdl/tasks/qc/contamination/centrifuger.wdl"
 
 workflow centrifuger {
   input {
+    String sample
     Array[File] fastqs
     File centrifuger_db
     File centrifuger_taxon_db
@@ -22,6 +23,7 @@ workflow centrifuger {
   }
 
   call centrifuger.run_centrifuger { input:
+    sample=sample,
     fastqs=fastqs,
     centrifuger_db=centrifuger_db,
     centrifuger_taxon_db=centrifuger_taxon_db,
