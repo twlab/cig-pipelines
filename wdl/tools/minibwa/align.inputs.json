@@ -1,0 +1,13 @@
+{
+  "minibwa_align.sample": "{{SAMPLE}}",
+  "minibwa_align.fastqs": ["{{FQ1}}", "{{FQ2}}"],
+  "minibwa_align.idx_files": ["{{IDX}}"],
+  "minibwa_align.library": "{{LIBRARY}}",
+  "minibwa_align.rg_id": "{{RG_ID}}",
+  "minibwa_align.platform_unit": "{{PU}}",
+  "minibwa_align.platform": "ILLUMINA",
+  "minibwa_align.bam_compression_level": 6,
+  "minibwa_align.docker": "mgibio/bwa:0.7.17",
+  "minibwa_align.cpu": 4,
+  "minibwa_align.memory": 20
+}

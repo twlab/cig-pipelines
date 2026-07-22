@@ -11,13 +11,10 @@ task run_minibwa {
     String platform_unit
 
     Array[File] fastqs
-    Array[File] idx_files
+    Array[File] idx_files # fasta l2b mbw
     String minibwa_params = ""
 
-    Int sort_cpu = 2
-    Int sort_memory = 4
-    Int sort_compression_level = 1
-
+    Int bam_compression_level = 6
     RunEnv runenv
   }
 
@@ -26,9 +23,9 @@ task run_minibwa {
 
   # Minibwa uses -t worker threads plus up to two additional I/O threads.
   # Reserve sort_cpu threads plus two potential minibwa I/O threads.
-  Int minibwa_cpu = if runenv.cpu > sort_cpu + 2
-    then runenv.cpu - sort_cpu - 2
-    else 1
+  Int sort_cpu = 2
+  Int sort_memory = 4
+  Int minibwa_cpu = runenv.cpu - 4
 
   command <<<
     set -euo pipefail
@@ -40,11 +37,6 @@ task run_minibwa {
 
     if [ "~{length(idx_files)}" -ne 3 ]; then
       echo "ERROR: Expected FASTA, L2B, and MBW inputs." >&2
-      exit 1
-    fi
-
-    if [ "~{sort_cpu}" -lt 1 ]; then
-      echo "ERROR: sort_cpu must be at least 1." >&2
       exit 1
     fi
 
@@ -86,7 +78,7 @@ task run_minibwa {
     | samtools sort \
         -@ ~{sort_cpu} \
         -m "~{sort_memory}"G \
-        -l ~{sort_compression_level} \
+        -l ~{bam_compression_level} \
         -T "~{sample}.sorttmp" \
         -O BAM \
         -o "~{bam}" \
