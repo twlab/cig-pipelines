@@ -1,4 +1,7 @@
 {
-  "picard.markdup.bam": "{{BAM}}",
-  "picard.markdup.docker": "mgibio/picard:2.27.4"
+  "picard_markdup.bam": "{{BAM}}",
+  "picard_markdup.params": "--SORTING_COLLECTION_SIZE_RATIO .15 {{PARAMS}}",
+  "picard_markdup.docker": "docker://mgibio/picard:v3.3.0-noble",
+  "picard_markdup.cpu": 1,
+  "picard_markdup.memory": 24
 }
