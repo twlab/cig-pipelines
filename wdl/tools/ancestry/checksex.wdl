@@ -1,7 +1,7 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/checksex.wdl"
+import "wdl/tasks/qc/checksex.wdl"
 
 workflow checksex {
   meta {
@@ -12,9 +12,10 @@ workflow checksex {
   input {
     File input_vcf
     File input_vcf_tbi
-    String docker = "mgibio/smahtqc:v1.0-buster"
-    Int cpu = 1
-    Int memory = 8
+    String seq_platform
+    String docker
+    Int cpu
+    Int memory
   }
 
   RunEnv runenv = {
@@ -27,6 +28,7 @@ workflow checksex {
   call checksex.run_checksex { input:
     input_vcf=input_vcf,
     input_vcf_tbi=input_vcf_tbi,
+    seq_platform=seq_platform,
     runenv=runenv,
   }
 
