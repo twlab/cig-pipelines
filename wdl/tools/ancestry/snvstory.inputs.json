@@ -4,6 +4,6 @@
   "snvstory.genome_ver": "38",
   "snvstory.mode": "WGS",
   "snvstory.docker": "mgibio/snvstory:v1.1-buster",
-  "snvstory.cpu": 2,
-  "snvstory.memory": 24
+  "snvstory.cpu": 1,
+  "snvstory.memory": 4
 }
