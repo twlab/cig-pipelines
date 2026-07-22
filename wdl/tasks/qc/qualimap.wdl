@@ -11,7 +11,7 @@ task run_qualimap {
   # --outdir ?
   command <<<
     ln -s ~{bam} .
-    qualimap bamqc -gd HUMAN -nt ~{runenv.cpu - 1} -outformat pdf -c --java-mem-size=~{runenv.memory - 2}G -bam ~{basename(bam)}
+    qualimap bamqc -gd HUMAN -nt ~{runenv.cpu} -outformat pdf -c --java-mem-size=~{runenv.memory - 1}G -bam ~{basename(bam)}
   >>>
 
   output {
