@@ -19,7 +19,7 @@ task run_fastp {
   >>>
 
   output {
-    Array[File] trimmed_fastqs = glob("trimmed.*.fastq.gz")
+    Array[File] trimmed_fastqs = [trimmed_fq1, trimmed_fq2]
   }
 
   runtime {

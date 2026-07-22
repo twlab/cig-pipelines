@@ -1,0 +1,7 @@
+{
+  "fastp_trimmer.fastqs": ["{{FQ1}}", "{{FQ2}}"],
+  "fastp_trimmer.params": "{{PARAMS}}",
+  "fastp_trimmer.docker": "docker://mgibio/fastp:v0.23.4-noble",
+  "fastp_trimmer.cpu": 1,
+  "fastp_trimmer.memory": 16 
+}
