@@ -14,6 +14,7 @@ task run_build_idx {
   }
 
   String fasta_bn = "~{name}.fasta"
+  String idx = "~{name}.minibwa.idx.tar"
 
   command <<<
     set -xeuo pipefail
@@ -67,7 +68,7 @@ task run_build_idx {
     done
 
     tar \
-      vvcf "../~{name}.tar" \
+      vvcf "../~{idx}" \
       "~{name}.dict" \
       "~{fasta_bn}" \
       "~{fasta_bn}.fai" \
@@ -75,7 +76,7 @@ task run_build_idx {
       "~{fasta_bn}.l2b" \
       "~{fasta_bn}.mbw"
 
-    tar tvvf "../~{name}.tar"
+    tar tvvf "../~{idx}"
   >>>
 
   runtime {
