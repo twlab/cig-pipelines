@@ -1,0 +1,7 @@
+{
+  "minibwa_build_idx.name": "{{NAME}}",
+  "minibwa_build_idx.fasta": "{{FASTA}}",
+  "minibwa_build_idx.docker": "ctomlins/minibwa:0.4-htslib1.24",
+  "minibwa_build_idx.cpu": 4,
+  "minibwa_build_idx.memory": 72
+}

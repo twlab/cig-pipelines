@@ -16,7 +16,12 @@ task run_build_idx {
   String fasta_bn = "~{name}.fasta"
 
   command <<<
-    set -euo pipefail
+    set -xeuo pipefail
+
+    if [ "~{runenv.cpu}" -lt 4 ]; then
+      echo "ERROR: runenv.cpu must provide at least 4 threads for minibwa indexing." >&2
+      exit 2
+    fi
 
     mkdir -p ref
     cd ref
@@ -62,7 +67,7 @@ task run_build_idx {
     done
 
     tar \
-      -cf "../~{name}.tar" \
+      vvcf "../~{name}.tar" \
       "~{name}.dict" \
       "~{fasta_bn}" \
       "~{fasta_bn}.fai" \
@@ -70,7 +75,7 @@ task run_build_idx {
       "~{fasta_bn}.l2b" \
       "~{fasta_bn}.mbw"
 
-    tar -tf "../~{name}.tar"
+    tar tvvf "../~{name}.tar"
   >>>
 
   runtime {
