@@ -12,6 +12,13 @@ import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/trimmers/fastp.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
+struct WgsConf {
+  String input_type # bam fastq
+  Boolean left_align_bam
+  Boolean realign_bam
+  Boolean markdup_bam
+}
+
 workflow genome_wgs {
   meta {
       author: "Eddie Belter"
@@ -21,11 +28,13 @@ workflow genome_wgs {
 
   input {
     String sample
-    Array[File] fastqs
+    Array[File] input_files
     File idx # tarred BWA index with DICT, FASTA, FAI
     String markdup_params = ""
-    Boolean generate_fastqc = false
-    Boolean realign_bam = true
+    Boolean generate_fastqc
+    Boolean left_align_bam
+    Boolean realign_bam
+    Boolean markdup_bam
     Int targets_expansion_bases = 160
     String? trimmer_name
     String? trimmer_params
@@ -110,53 +119,64 @@ workflow genome_wgs {
     runenv=utils_runenv,
   }
 
-  if ( generate_fastqc ) {
-    RunEnv runenv_fastqc = {
-      "docker": fastqc_docker,
-      "cpu": fastqc_cpu,
-      "memory": fastqc_memory,
-      "disks": 20,
-    }
-    call fastqc.run_fastqc { input:
-      seqfiles=fastqs,
-      runenv=runenv_fastqc,
-    }
-  }
+  String input_ext = sub(input_files[0], "^.*\\.", "")
 
-  if ( trimmer_name != "" ) {
-    RunEnv trimmer_runenv = {
-      "docker": trimmer_docker,
-      "cpu": trimmer_cpu,
-      "memory": trimmer_memory,
-      "disks": 20,
-    }
-    if ( trimmer_name == "fastp") {
-      call fastp.run_fastp as trimmer { input:
-        fastqs=fastqs,
-        params=trimmer_params,
-        runenv=trimmer_runenv,
+  if ( input_ext != "bam" ) {
+    Array[String] fastqs = input_files
+    if ( generate_fastqc ) {
+      RunEnv runenv_fastqc = {
+        "docker": fastqc_docker,
+        "cpu": fastqc_cpu,
+        "memory": fastqc_memory,
+        "disks": 20,
+      }
+      call fastqc.run_fastqc { input:
+        seqfiles=fastqs,
+        runenv=runenv_fastqc,
       }
     }
+
+    if ( trimmer_name != "" ) {
+      RunEnv trimmer_runenv = {
+        "docker": trimmer_docker,
+        "cpu": trimmer_cpu,
+        "memory": trimmer_memory,
+        "disks": 20,
+      }
+      if ( trimmer_name == "fastp") {
+        call fastp.run_fastp as trimmer { input:
+          fastqs=fastqs,
+          params=trimmer_params,
+          runenv=trimmer_runenv,
+        }
+      }
+    }
+
+    Array[File] trimmed_fastqs = select_first([trimmer.trimmed_fastqs, fastqs])
+
+    call align.run_bwamem_with_sort as align { input:
+      sample=sample,
+      library=sample+"-lib1",
+      rg_id=sample+"-lib1",
+      platform_unit=sample+"-lib1",
+      fastqs=trimmed_fastqs,
+      idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa],
+      runenv=bwa_runenv,
+    }
   }
 
-  Array[File] trimmed_fastqs = select_first([trimmer.trimmed_fastqs, fastqs])
+  File bam1 = select_first([align.bam, input_files[0]])
 
-  call align.run_bwamem_with_sort as align { input:
-    sample=sample,
-    library=sample+"-lib1",
-    rg_id=sample+"-lib1",
-    platform_unit=sample+"-lib1",
-    fastqs=trimmed_fastqs,
-    idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa],
-    runenv=bwa_runenv,
+  if ( left_align_bam ) {
+    call freebayes.run_left_align_bam as left_align { input:
+      in_bam_file=bam1,
+      in_reference_file=reference.fasta,
+      in_reference_index_file=reference.fai,
+      runenv=freebayes_renenv,
+    }
   }
 
-  call freebayes.run_left_align_bam as left_align { input:
-    in_bam_file=align.bam,
-    in_reference_file=reference.fasta,
-    in_reference_index_file=reference.fai,
-    runenv=freebayes_renenv,
-  }
+  File bam2 = select_first([left_align.output_bam_file, bam1])
 
   if ( realign_bam ) {
     RunEnv abra2_renenv = {
@@ -172,14 +192,14 @@ workflow genome_wgs {
       "disks": 20,
     }
 
-    call samtools.index as left_align_index { input:
-      bam=left_align.output_bam_file,
+    call samtools.index as bam2_idx { input:
+      bam=bam2,
       runenv=samtools_runenv,
     }
 
     call realigner_target_creator.run_realigner_target_creator as target_creator { input:
-      bam=left_align.output_bam_file,
-      bai=left_align_index.bai,
+      bam=bam2,
+      bai=bam2_idx.bai,
       reference_fasta=reference.fasta,
       reference_fai=reference.fai,
       reference_dict=reference.dict,
@@ -188,8 +208,8 @@ workflow genome_wgs {
     }
 
     call abra2.run_realigner as realign { input:
-      in_bam_file=left_align.output_bam_file,
-      in_bam_index_file=left_align_index.bai,
+      in_bam_file=bam2,
+      in_bam_index_file=bam2_idx.bai,
       in_reference_file=reference.fasta,
       in_reference_index_file=reference.fai,
       in_target_bed_file=target_creator.expanded_targets,
@@ -197,26 +217,32 @@ workflow genome_wgs {
     }
   }
 
-  call markdup.run_markdup as picard_markdup { input:
-    bam=select_first([realign.indel_realigned_bam, left_align.output_bam_file]),
-    params=markdup_params,
-    runenv=picard_runenv,
+  File bam3 = select_first([realign.indel_realigned_bam, bam2])
+
+  if ( markdup_bam ) {
+    call markdup.run_markdup as picard_markdup { input:
+      bam=bam3,
+      params=markdup_params,
+      runenv=picard_runenv,
+    }
   }
 
-  call samtools.index as markdup_index { input:
-    bam=picard_markdup.dedup_bam,
+  File bam4 = select_first([picard_markdup.dedup_bam, bam3])
+
+  call samtools.index as bam4_idx { input:
+    bam=bam4,
     runenv=samtools_runenv,
   }
 
   call samtools.stat as samtools_stat { input:
-    bam=picard_markdup.dedup_bam,
+    bam=bam4,
     runenv=samtools_runenv,
   } 
 
   call deepvariant.run_deepvariant as dv { input:
     sample=sample,
-    bam=picard_markdup.dedup_bam,
-    bai=markdup_index.bai,
+    bam=bam4,
+    bai=bam4_idx.bai,
     ref_fasta=reference.fasta,
     ref_fai=reference.fai,
     ref_dict=reference.dict,
@@ -224,8 +250,8 @@ workflow genome_wgs {
   }
 
   output {
-    File bam = picard_markdup.dedup_bam
-    File bai = markdup_index.bai
+    File bam = bam4
+    File bai = bam4_idx.bai
     File bam_stats = samtools_stat.stats
     File vcf = dv.vcf
     File vcf_tvi = dv.vcf_tbi
