@@ -12,9 +12,6 @@ import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/trimmers/fastp.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
-struct StepsConf {
-  Boolean realign_bam
-}
 struct Step {
   Boolean run
   String? params
@@ -38,6 +35,7 @@ workflow genome_wgs {
     StepsConf steps_conf
     Step fastqc
     Step left_align_bam
+    Step realign_bam
     Step markdup_bam
     Int targets_expansion_bases = 160
     String? trimmer_name
@@ -58,13 +56,6 @@ workflow genome_wgs {
     String utils_docker
     Int utils_cpu
     Int utils_memory
-    # realign resources
-    String? abra2_docker
-    Int? abra2_cpu
-    Int? abra2_memory
-    String? gatk_docker
-    Int? gatk_cpu
-    Int? gatk_memory
   }
 
   RunEnv bwa_runenv = {
@@ -166,17 +157,11 @@ workflow genome_wgs {
 
   File bam2 = select_first([left_align.output_bam_file, bam1])
 
-  if ( steps_conf.realign_bam ) {
-    RunEnv abra2_renenv = {
-      "docker": abra2_docker,
-      "cpu": abra2_cpu,
-      "memory": abra2_memory,
-      "disks": 20,
-    }
-    RunEnv gatk_renenv = {
-      "docker": gatk_docker,
-      "cpu": gatk_cpu,
-      "memory": gatk_memory,
+  if ( realign_bam.run ) {
+    RunEnv realign_bam_runenv = {
+      "docker": realign_bam.docker,
+      "cpu": realign_bam.cpu,
+      "memory": realign_bam.memory,
       "disks": 20,
     }
 
@@ -191,8 +176,8 @@ workflow genome_wgs {
       reference_fasta=reference.fasta,
       reference_fai=reference.fai,
       reference_dict=reference.dict,
-      expand_bases=targets_expansion_bases,
-      runenv=gatk_renenv,
+      expand_bases=realign_bam.params,
+      runenv=realign_bam_runenv,
     }
 
     call abra2.run_realigner as realign { input:
@@ -201,7 +186,7 @@ workflow genome_wgs {
       in_reference_file=reference.fasta,
       in_reference_index_file=reference.fai,
       in_target_bed_file=target_creator.expanded_targets,
-      runenv=abra2_renenv,
+      runenv=realign_bam_runenv,
     }
   }
 

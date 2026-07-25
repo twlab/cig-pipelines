@@ -9,7 +9,7 @@ task run_realigner_target_creator {
     File reference_fasta
     File reference_fai
     File reference_dict
-    Int expand_bases = 0
+    String expand_bases = "0"
     RunEnv runenv
   }
 
