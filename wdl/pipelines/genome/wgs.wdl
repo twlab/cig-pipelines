@@ -32,28 +32,19 @@ workflow genome_wgs {
     Array[File] input_files
     File idx # tarred BWA index with DICT, FASTA, FAI
     Step trimmer
+    Step aligner
     Step fastqc
     Step left_align_bam
     Step realign_bam
     Step markdup_bam
     Int targets_expansion_bases = 160
     # resources
-    String bwa_docker
-    Int bwa_cpu
-    Int bwa_memory
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
-  }
-
-  RunEnv bwa_runenv = {
-    "docker": bwa_docker,
-    "cpu": bwa_cpu,
-    "memory": bwa_memory,
-    "disks": 20,
   }
 
   RunEnv dv_runenv = {
@@ -82,9 +73,7 @@ workflow genome_wgs {
     runenv=utils_runenv,
   }
 
-  String input_ext = sub(input_files[0], "^.*\\.", "")
-
-  if ( input_ext != "bam" ) {
+  if ( aligner.run ) {
     Array[String] fastqs = input_files
     if ( fastqc.run ) {
       RunEnv runenv_fastqc = {
@@ -115,6 +104,12 @@ workflow genome_wgs {
 
     Array[File] trimmed_fastqs = select_first([run_trimmer.trimmed_fastqs, fastqs])
 
+    RunEnv align_runenv = {
+      "docker": aligner.docker,
+      "cpu": aligner.cpu,
+      "memory": aligner.memory,
+      "disks": 20,
+    }
     call align.run_bwamem_with_sort as align { input:
       sample=sample,
       library=sample+"-lib1",
@@ -122,7 +117,7 @@ workflow genome_wgs {
       platform_unit=sample+"-lib1",
       fastqs=trimmed_fastqs,
       idx_files=[reference.fasta, reference.amb, reference.ann, reference.bwt, reference.pac, reference.sa],
-      runenv=bwa_runenv,
+      runenv=align_runenv,
     }
   }
 

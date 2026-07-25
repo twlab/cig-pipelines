@@ -9,6 +9,13 @@
     "cpu": 2,
     "memory": 16
   },
+  "genome_wgs.aligner": {
+    "run": false,
+    "params": "",
+    "docker": "mgibio/bwa:0.7.17",
+    "cpu": 8,
+    "memory": 48
+  },
   "genome_wgs.fastqc": {
     "run": false,
     "params": "",
@@ -37,9 +44,6 @@
     "cpu": 4,
     "memory": 20
   },
-  "genome_wgs.bwa_docker": "mgibio/bwa:0.7.17",
-  "genome_wgs.bwa_cpu": 8,
-  "genome_wgs.bwa_memory": 48, 
   "genome_wgs.deepvariant_docker": "google/deepvariant:1.8.0",
   "genome_wgs.deepvariant_cpu": 20,
   "genome_wgs.deepvariant_memory": 96,
