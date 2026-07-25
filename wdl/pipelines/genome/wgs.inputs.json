@@ -45,8 +45,5 @@
   "genome_wgs.deepvariant_memory": 96,
   "genome_wgs.samtools_docker": "mgibio/samtools:v1.21-noble",
   "genome_wgs.samtools_cpu": 1,
-  "genome_wgs.samtools_memory": 4, 
-  "genome_wgs.utils_docker": "mgibio/linux-tk:latest",
-  "genome_wgs.utils_cpu": 1,
-  "genome_wgs.utils_memory": 4 
+  "genome_wgs.samtools_memory": 4
 }

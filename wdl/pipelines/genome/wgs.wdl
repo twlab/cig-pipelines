@@ -31,7 +31,6 @@ workflow genome_wgs {
     String sample
     Array[File] input_files
     File idx # tarred BWA index with DICT, FASTA, FAI
-    String markdup_params = ""
     Step trimmer
     Step fastqc
     Step left_align_bam
@@ -48,9 +47,6 @@ workflow genome_wgs {
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
-    String utils_docker
-    Int utils_cpu
-    Int utils_memory
   }
 
   RunEnv bwa_runenv = {
@@ -75,9 +71,9 @@ workflow genome_wgs {
   }
 
   RunEnv utils_runenv = {
-    "docker": utils_docker,
-    "cpu": utils_cpu,
-    "memory": utils_memory,
+    "docker": samtools_docker,
+    "cpu": 1,
+    "memory": 4,
     "disks": 20,
   }
 
