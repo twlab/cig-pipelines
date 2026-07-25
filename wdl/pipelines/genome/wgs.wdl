@@ -13,11 +13,14 @@ import "wdl/tasks/trimmers/fastp.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
 struct StepsConf {
-  #String input_type # bam fastq
-  Boolean generate_fastqc
-  Boolean left_align_bam
   Boolean realign_bam
   Boolean markdup_bam
+}
+struct Step {
+  Boolean run
+  String docker
+  Int cpu
+  Int memory
 }
 
 workflow genome_wgs {
@@ -33,6 +36,8 @@ workflow genome_wgs {
     File idx # tarred BWA index with DICT, FASTA, FAI
     String markdup_params = ""
     StepsConf steps_conf
+    Step fastqc
+    Step left_align_bam
     Int targets_expansion_bases = 160
     String? trimmer_name
     String? trimmer_params
@@ -43,12 +48,6 @@ workflow genome_wgs {
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
-    String? fastqc_docker
-    Int? fastqc_cpu
-    Int? fastqc_memory
-    String freebayes_docker
-    Int freebayes_cpu
-    Int freebayes_memory
     String picard_docker
     Int picard_cpu
     Int picard_memory
@@ -84,13 +83,6 @@ workflow genome_wgs {
     "disks": 20,
   }
 
-  RunEnv freebayes_renenv = {
-    "docker": freebayes_docker,
-    "cpu": freebayes_cpu,
-    "memory": freebayes_memory,
-    "disks": 20,
-  }
-
   RunEnv picard_runenv = {
     "docker": picard_docker,
     "cpu": picard_cpu,
@@ -121,11 +113,11 @@ workflow genome_wgs {
 
   if ( input_ext != "bam" ) {
     Array[String] fastqs = input_files
-    if ( steps_conf.generate_fastqc ) {
+    if ( fastqc.run ) {
       RunEnv runenv_fastqc = {
-        "docker": fastqc_docker,
-        "cpu": fastqc_cpu,
-        "memory": fastqc_memory,
+        "docker": fastqc.docker,
+        "cpu": fastqc.cpu,
+        "memory": fastqc.memory,
         "disks": 20,
       }
       call fastqc.run_fastqc { input:
@@ -165,12 +157,19 @@ workflow genome_wgs {
 
   File bam1 = select_first([align.bam, input_files[0]])
 
-  if ( steps_conf.left_align_bam ) {
+  if ( left_align_bam.run ) {
+    RunEnv left_align_renenv = {
+     "docker": left_align_bam.docker,
+     "cpu": left_align_bam.cpu,
+     "memory": left_align_bam.memory,
+     "disks": 20,
+    }
+
     call freebayes.run_left_align_bam as left_align { input:
       in_bam_file=bam1,
       in_reference_file=reference.fasta,
       in_reference_index_file=reference.fai,
-      runenv=freebayes_renenv,
+      runenv=left_align_renenv,
     }
   }
 
