@@ -32,14 +32,12 @@ workflow genome_wgs {
     Array[File] input_files
     File idx # tarred BWA index with DICT, FASTA, FAI
     String markdup_params = ""
-    StepsConf steps_conf
+    Step trimmer
     Step fastqc
     Step left_align_bam
     Step realign_bam
     Step markdup_bam
     Int targets_expansion_bases = 160
-    String? trimmer_name
-    String? trimmer_params
     # resources
     String bwa_docker
     Int bwa_cpu
@@ -50,9 +48,6 @@ workflow genome_wgs {
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
-    String? trimmer_docker
-    Int? trimmer_cpu
-    Int? trimmer_memory
     String utils_docker
     Int utils_cpu
     Int utils_memory
@@ -108,23 +103,21 @@ workflow genome_wgs {
       }
     }
 
-    if ( trimmer_name != "" ) {
+    if ( trimmer.run ) {
       RunEnv trimmer_runenv = {
-        "docker": trimmer_docker,
-        "cpu": trimmer_cpu,
-        "memory": trimmer_memory,
+        "docker": trimmer.docker,
+        "cpu": trimmer.cpu,
+        "memory": trimmer.memory,
         "disks": 20,
       }
-      if ( trimmer_name == "fastp") {
-        call fastp.run_fastp as trimmer { input:
-          fastqs=fastqs,
-          params=trimmer_params,
-          runenv=trimmer_runenv,
-        }
+      call fastp.run_fastp as run_trimmer { input: # need if statement if new trimmer
+        fastqs=fastqs,
+        params=trimmer.params,
+        runenv=trimmer_runenv,
       }
     }
 
-    Array[File] trimmed_fastqs = select_first([trimmer.trimmed_fastqs, fastqs])
+    Array[File] trimmed_fastqs = select_first([run_trimmer.trimmed_fastqs, fastqs])
 
     call align.run_bwamem_with_sort as align { input:
       sample=sample,

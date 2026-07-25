@@ -2,19 +2,23 @@
   "genome_wgs.sample": "{{SAMPLE}}",
   "genome_wgs.input_files": ["{{INPUT_FILES}}"],
   "genome_wgs.idx": "{{IDX}}",
-  "genome_wgs.steps_conf": {
-    "left_align_bam": false,
-    "realign_bam": false,
-    "markdup_bam": false
+  "genome_wgs.trimmer": {
+    "run": false,
+    "params": "",
+    "docker": "mgibio/fastp:v0.23.4-noble",
+    "cpu": 2,
+    "memory": 16
   },
   "genome_wgs.fastqc": {
     "run": false,
+    "params": "",
     "docker": "mgibio/fastqc:v0.12.1-noble",
     "cpu": 2,
     "memory": 16
   },
   "genome_wgs.left_align_bam": {
     "run": false,
+    "params": "",
     "docker": "mgibio/freebayes:1.3.6-focal",
     "cpu": 1,
     "memory": 4
@@ -33,8 +37,6 @@
     "cpu": 4,
     "memory": 20
   },
-  "genome_wgs.trimmer_name": "fastp",
-  "genome_wgs.trimmer_params": "",
   "genome_wgs.bwa_docker": "mgibio/bwa:0.7.17",
   "genome_wgs.bwa_cpu": 8,
   "genome_wgs.bwa_memory": 48, 
@@ -44,9 +46,6 @@
   "genome_wgs.samtools_docker": "mgibio/samtools:v1.21-noble",
   "genome_wgs.samtools_cpu": 1,
   "genome_wgs.samtools_memory": 4, 
-  "genome_wgs.trimmer_docker": "mgibio/fastp:v0.23.4-noble",
-  "genome_wgs.trimmer_cpu": 2,
-  "genome_wgs.trimmer_memory": 16,
   "genome_wgs.utils_docker": "mgibio/linux-tk:latest",
   "genome_wgs.utils_cpu": 1,
   "genome_wgs.utils_memory": 4 
