@@ -19,7 +19,13 @@
     "cpu": 1,
     "memory": 4
   },
-  "genome_wgs.markdup_params": "--SORTING_COLLECTION_SIZE_RATIO .15",
+  "genome_wgs.markdup_bam": {
+    "run": false,
+    "params": "--SORTING_COLLECTION_SIZE_RATIO .15",
+    "docker": "mgibio/picard:v3.3.0-noble",
+    "cpu": 4,
+    "memory": 20
+  },
   "genome_wgs.targets_expansion_bases": 160,
   "genome_wgs.trimmer_name": "fastp",
   "genome_wgs.trimmer_params": "",
@@ -35,9 +41,6 @@
   "genome_wgs.gatk_docker": "broadinstitute/gatk3:3.5-0",
   "genome_wgs.gatk_cpu": 4,
   "genome_wgs.gatk_memory": 24, 
-  "genome_wgs.picard_docker": "mgibio/picard:v3.3.0-noble",
-  "genome_wgs.picard_cpu": 4,
-  "genome_wgs.picard_memory": 20,
   "genome_wgs.samtools_docker": "mgibio/samtools:v1.21-noble",
   "genome_wgs.samtools_cpu": 1,
   "genome_wgs.samtools_memory": 4, 

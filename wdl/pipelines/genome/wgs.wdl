@@ -14,10 +14,10 @@ import "wdl/tasks/vcallers/deepvariant.wdl"
 
 struct StepsConf {
   Boolean realign_bam
-  Boolean markdup_bam
 }
 struct Step {
   Boolean run
+  String? params
   String docker
   Int cpu
   Int memory
@@ -38,6 +38,7 @@ workflow genome_wgs {
     StepsConf steps_conf
     Step fastqc
     Step left_align_bam
+    Step markdup_bam
     Int targets_expansion_bases = 160
     String? trimmer_name
     String? trimmer_params
@@ -48,9 +49,6 @@ workflow genome_wgs {
     String deepvariant_docker
     Int deepvariant_cpu
     Int deepvariant_memory
-    String picard_docker
-    Int picard_cpu
-    Int picard_memory
     String samtools_docker
     Int samtools_cpu
     Int samtools_memory
@@ -80,13 +78,6 @@ workflow genome_wgs {
     "docker": deepvariant_docker,
     "cpu": deepvariant_cpu,
     "memory": deepvariant_memory,
-    "disks": 20,
-  }
-
-  RunEnv picard_runenv = {
-    "docker": picard_docker,
-    "cpu": picard_cpu,
-    "memory": picard_memory,
     "disks": 20,
   }
 
@@ -216,11 +207,18 @@ workflow genome_wgs {
 
   File bam3 = select_first([realign.indel_realigned_bam, bam2])
 
-  if ( steps_conf.markdup_bam ) {
+  if ( markdup_bam.run ) {
+    RunEnv markdup_bam_runenv = {
+      "docker": markdup_bam.docker,
+      "cpu": markdup_bam.cpu,
+      "memory": markdup_bam.memory,
+      "disks": 20,
+    }
+
     call markdup.run_markdup as picard_markdup { input:
       bam=bam3,
-      params=markdup_params,
-      runenv=picard_runenv,
+      params=markdup_bam.params,
+      runenv=markdup_bam_runenv,
     }
   }
 
