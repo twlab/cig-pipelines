@@ -12,8 +12,9 @@ import "wdl/tasks/samtools.wdl"
 import "wdl/tasks/trimmers/fastp.wdl"
 import "wdl/tasks/vcallers/deepvariant.wdl"
 
-struct WgsConf {
-  String input_type # bam fastq
+struct StepsConf {
+  #String input_type # bam fastq
+  Boolean generate_fastqc
   Boolean left_align_bam
   Boolean realign_bam
   Boolean markdup_bam
@@ -31,10 +32,7 @@ workflow genome_wgs {
     Array[File] input_files
     File idx # tarred BWA index with DICT, FASTA, FAI
     String markdup_params = ""
-    Boolean generate_fastqc
-    Boolean left_align_bam
-    Boolean realign_bam
-    Boolean markdup_bam
+    StepsConf steps_conf
     Int targets_expansion_bases = 160
     String? trimmer_name
     String? trimmer_params
@@ -123,7 +121,7 @@ workflow genome_wgs {
 
   if ( input_ext != "bam" ) {
     Array[String] fastqs = input_files
-    if ( generate_fastqc ) {
+    if ( steps_conf.generate_fastqc ) {
       RunEnv runenv_fastqc = {
         "docker": fastqc_docker,
         "cpu": fastqc_cpu,
@@ -167,7 +165,7 @@ workflow genome_wgs {
 
   File bam1 = select_first([align.bam, input_files[0]])
 
-  if ( left_align_bam ) {
+  if ( steps_conf.left_align_bam ) {
     call freebayes.run_left_align_bam as left_align { input:
       in_bam_file=bam1,
       in_reference_file=reference.fasta,
@@ -178,7 +176,7 @@ workflow genome_wgs {
 
   File bam2 = select_first([left_align.output_bam_file, bam1])
 
-  if ( realign_bam ) {
+  if ( steps_conf.realign_bam ) {
     RunEnv abra2_renenv = {
       "docker": abra2_docker,
       "cpu": abra2_cpu,
@@ -219,7 +217,7 @@ workflow genome_wgs {
 
   File bam3 = select_first([realign.indel_realigned_bam, bam2])
 
-  if ( markdup_bam ) {
+  if ( steps_conf.markdup_bam ) {
     call markdup.run_markdup as picard_markdup { input:
       bam=bam3,
       params=markdup_params,

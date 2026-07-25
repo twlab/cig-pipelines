@@ -1,13 +1,15 @@
 {
   "genome_wgs.sample": "{{SAMPLE}}",
-  "genome_wgs.input_files": [{{INPUT_FILES}}],
-  "genome_wgs.left_align_bam": false,
-  "genome_wgs.realign_bam": false,
-  "genome_wgs.markdup_bam": false,
+  "genome_wgs.input_files": ["{{INPUT_FILES}}"],
   "genome_wgs.idx": "{{IDX}}",
+  "genome_wgs.steps_conf": {
+    "generate_fastqc": false,
+    "left_align_bam": false,
+    "realign_bam": false,
+    "markdup_bam": false
+  },
   "genome_wgs.markdup_params": "--SORTING_COLLECTION_SIZE_RATIO .15",
   "genome_wgs.targets_expansion_bases": 160,
-  "genome_wgs.generate_fastqc": false,
   "genome_wgs.trimmer_name": "fastp",
   "genome_wgs.trimmer_params": "",
   "genome_wgs.abra2_docker": "mgibio/abra2:v2.23-focal",
