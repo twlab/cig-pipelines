@@ -86,7 +86,7 @@ task run_build_idx {
   }
 
   output {
-    File idx = "~{name}.tar"
+    File idx = "~{idx}"
     File dict = "ref/~{name}.dict"
     File fai = "ref/~{fasta_bn}.fai"
     File FASTA = "ref/~{fasta_bn}"

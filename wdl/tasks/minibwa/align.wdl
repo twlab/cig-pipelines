@@ -9,16 +9,14 @@ task run_minibwa {
     String rg_id
     String platform = "ILLUMINA"
     String platform_unit
-
     Array[File] fastqs
     Array[File] idx_files # fasta l2b mbw
     String minibwa_params = ""
-
-    Int bam_compression_level = 6
+    String output_fn
+    Int compression_level = 6
     RunEnv runenv
   }
 
-  String bam = "~{sample}.sorted.bam"
   String reference_fasta_bn = basename(idx_files[0])
 
   # Minibwa uses -t worker threads plus up to two additional I/O threads.
@@ -46,12 +44,10 @@ task run_minibwa {
     fi
 
     mkdir -p ref
-
-    ln -sf "~{idx_files[0]}" "ref/~{basename(idx_files[0])}"
+    reference_fasta="ref/~{reference_fasta_bn}"
+    ln -sf "~{idx_files[0]}" "${reference_fasta}"
     ln -sf "~{idx_files[1]}" "ref/~{basename(idx_files[1])}"
     ln -sf "~{idx_files[2]}" "ref/~{basename(idx_files[2])}"
-
-    reference_fasta="ref/~{reference_fasta_bn}"
 
     for required_file in \
       "${reference_fasta}" \
@@ -78,14 +74,15 @@ task run_minibwa {
     | samtools sort \
         -@ ~{sort_cpu} \
         -m "~{sort_memory}"G \
-        -l ~{bam_compression_level} \
+        -l ~{compression_level} \
         -T "~{sample}.sorttmp" \
-        -O BAM \
-        -o "~{bam}" \
+        -o "~{output_fn}" \
+        --reference "${reference_fasta}" \
         -
 
-    samtools quickcheck -v "~{bam}"
+    samtools quickcheck -v "~{output_fn}"
   >>>
+        #~{if (output_format == "cram") then "--reference ref/~{reference_fasta_bn} -" else "-"}
 
   runtime {
     docker: runenv.docker
@@ -94,6 +91,6 @@ task run_minibwa {
   }
 
   output {
-    File bam = "~{bam}"
+    File output_fn = "~{output_fn}"
   }
 }

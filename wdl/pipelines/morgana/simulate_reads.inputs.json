@@ -1,0 +1,15 @@
+{
+  "morgana_simulate_reads.ref_idx": "{{REF_IDX}}",
+  "morgana_simulate_reads.query_fasta": "{{QUERY_FASTA}}",
+  "morgana_simulate_reads.coverage": 60,
+  "morgana_simulate_reads.wgsim_base_error": 0,
+  "morgana_simulate_reads.wgsim_out_distance": 356,
+  "morgana_simulate_reads.wgsim_stdev": 88,
+  "morgana_simulate_reads.wgsim_read1_length": 151,
+  "morgana_simulate_reads.wgsim_read2_length": 151,
+  "morgana_simulate_reads.wgsim_mutation_rate": 0,
+  "morgana_simulate_reads.wgsim_fraction_indels": 0,
+  "morgana_simulate_reads.wgsim_prob_indel_extentsion": 0,
+  "morgana_simulate_reads.wgsim_seed": 0,
+  "morgana_simulate_reads.morgana_docker": "mgibio/morgana:v0.1"
+}
