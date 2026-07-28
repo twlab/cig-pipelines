@@ -4,22 +4,23 @@ import "../../structs/runenv.wdl"
 
 task run_tar {
   input {
-    String name
+    String output_file
     Array[File] files
     RunEnv runenv
   }
 
   command <<<
+    set -e
     mkdir working
     cd working
     for f in ~{sep=" " files}; do
       ln ${f} .
     done
-    tar cvvf ../~{name}.tar *
+    tar cvvf ../~{output_fn} *
   >>>
 
   output {
-    File tar_file = glob("~{name}.tar")[0]
+    File tar_file = output_file
   }
 
   runtime {

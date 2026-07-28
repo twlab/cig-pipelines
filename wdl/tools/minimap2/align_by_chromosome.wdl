@@ -53,8 +53,8 @@ workflow mm2_align_by_chromosome {
   String query_name = basename(query_fasta, ".fasta")
   String ref_name = basename(ref_fasta, ".fasta")
   call tar.run_tar as tarred_alignments { input:
-    name="~{ref_name}.~{query_name}.chr-mm2-aln",
     files=align.paf,
+    output_file="~{ref_name}.~{query_name}.chr-mm2-aln.tar",
     runenv=mm2_runenv,
   }
 

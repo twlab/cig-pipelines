@@ -148,8 +148,8 @@ workflow morgana_simulate_reads {
 
   # TAR alignments
   call tar.run_tar as tar_simulated_reads { input:
-    name="~{query_name}.~{ref_name}.simreads.tar",
     files=flatten([align_to_ref.output_fn, align_to_query.output_fn, [query_to_ref_paf.alignments, refract_rfx.rfx]]),
+    output_file="~{query_name}.~{ref_name}.simreads.tar",
     runenv=morgana_runenv_1cpu_4G,
   }
 

@@ -52,8 +52,8 @@ workflow bwa_build_idx_by_chr {
 
   # TAR the CHR IDXs
   call tar.run_tar as tarred_indexes { input:
-    name="~{name}.chr-bwa-idx",
     files=run_build_idx.idx,
+    output_file="~{name}.chr-bwa-idx.tar",
     runenv=bwa_runenv,
   }
 
