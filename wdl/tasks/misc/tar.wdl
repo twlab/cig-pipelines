@@ -16,7 +16,7 @@ task run_tar {
     for f in ~{sep=" " files}; do
       ln ${f} .
     done
-    tar cvvf ../~{output_fn} *
+    tar cvvf ../~{output_file} *
   >>>
 
   output {

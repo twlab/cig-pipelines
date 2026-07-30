@@ -61,7 +61,7 @@ workflow morgana_simulate_reads {
   }
 
   # Create QUERY minibwa index
-  String query_name = basename(query_fasta, ".fasta.gz")
+  String query_name = sub(basename(query_fasta), "\\..*", "")
   call minibwa_idx.run_build_idx as query { input:
     name=query_name,
     fasta=query_fasta,
@@ -69,11 +69,11 @@ workflow morgana_simulate_reads {
   }
 
   # QUERY to REF alignment - minimap2 PAF
-  String ref_name = basename(ref.fasta, ".fasta.gz")
+  String ref_name = sub(basename(ref.fasta), "\\..*", "")
   call minimap2_align.run_align as query_to_ref_paf { input:
     query=query.FASTA,
     target=ref.fasta,
-    output_fn="~{ref_name}.~{query_name}.alignments",
+    output_fn="~{ref_name}.~{query_name}.paf",
     params="-x asm5 -L -c --cs=long",
     runenv=minimap2_runenv,
   }
@@ -115,7 +115,7 @@ workflow morgana_simulate_reads {
       mutation_rate=wgsim_mutation_rate,
       fraction_indels=wgsim_fraction_indels,
       prob_indel_extentsion=wgsim_prob_indel_extentsion,
-      seed=wgsim_seed+coverage,
+      seed=wgsim_seed,
       runenv=morgana_runenv_1cpu_4G,
     }
 
@@ -129,7 +129,7 @@ workflow morgana_simulate_reads {
       platform_unit="ILLUMINA",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       idx_files=[ref.fasta, ref.l2b, ref.mbw], 
-      output_fn="~{ref_name}.~{chr[0]}.sorted.cram",
+      output_fn="~{ref_name}.~{chr[0]}.sorted.bam",
       runenv=minibwa_align_runenv,
     }
 
@@ -141,7 +141,7 @@ workflow morgana_simulate_reads {
       platform_unit="ILLUMINA",
       fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
       idx_files=[query.FASTA, query.l2b, query.mbw],
-      output_fn="~{query_name}.~{chr[0]}.sorted.cram",
+      output_fn="~{query_name}.~{chr[0]}.sorted.bam",
       runenv=minibwa_align_runenv,
     }
   }
