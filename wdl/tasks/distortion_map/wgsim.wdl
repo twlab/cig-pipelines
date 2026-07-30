@@ -101,3 +101,42 @@ task calc_read_pairs_needed {
     #disks : select_first([runenv.disks,"local-disk 100 SSD"])
   }
 }
+
+task calculate_read_pairs_needed {
+  input {
+    File fai
+    Int coverage
+    Int read_length
+    RunEnv runenv
+  }
+
+  command <<<
+    set -e
+    sequence_length=$(awk '{sum += $2} END {print sum}' ~{fai})
+    bases_needed=$(perl -e "printf('%i', (~{coverage} * ${sequence_length}))")
+    read_pairs_needed=$(perl -e "printf('%i', ${bases_needed} / (~{read_length} * 2))")
+    estimated_coverage=$(perl -e "printf('%.2f', (${read_pairs_needed} * ~{read_length} * 2) / ${sequence_length})")
+
+    printf "Coverage:           %i\n" "~{coverage}"
+    printf "Read length:        %i\n" "~{read_length}"
+    printf "Sequence length:    %i\n" "${sequence_length}"
+    printf "Bases needed:       %i\n" "${bases_needed}"
+    printf "Read Pairs needed:  %i\n" "${read_pairs_needed}"
+    printf "Est coverage:       %.2f\n" "${estimated_coverage}"
+
+    echo "${read_pairs_needed}" > read_pairs_needed
+    printf "Wrote read pairs needed to file: read_pairs_needed\n"
+    sleep 30s
+  >>>
+
+  output {
+    Int read_pairs_needed = read_int("read_pairs_needed")
+  }
+
+  runtime {
+    docker: runenv.docker
+    cpu: runenv.cpu
+    memory: runenv.memory + " GB"
+    #disks : select_first([runenv.disks,"local-disk 100 SSD"])
+  }
+}
