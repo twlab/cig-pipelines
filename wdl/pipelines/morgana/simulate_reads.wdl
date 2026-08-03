@@ -36,7 +36,7 @@ workflow morgana_simulate_reads {
   RunEnv minibwa_align_runenv = {
     "docker": morgana_docker,
     "cpu": 12,
-    "memory": 72,
+    "memory": 96,
     "disks": 20,
   }
 
