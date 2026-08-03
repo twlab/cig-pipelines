@@ -14,6 +14,7 @@ workflow morgana_simulate_reads {
     File ref_idx                # minibwa index tar with FASTA, fai, minibwa index files, etc
     File query_fasta            # query FASTA
     Int coverage
+    String sam_type             # format to save minibwa alignments
     Float wgsim_base_error
     Int wgsim_out_distance
     Int wgsim_stdev
@@ -119,7 +120,7 @@ workflow morgana_simulate_reads {
     platform_unit="ILLUMINA",
     fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
     idx_files=[ref.fasta, ref.l2b, ref.mbw],
-    output_fn="~{ref_name}.sorted.bam",
+    output_fn="~{ref_name}.sorted.~{sam_type}",
     runenv=minibwa_align_runenv,
   }
 
@@ -131,7 +132,7 @@ workflow morgana_simulate_reads {
     platform_unit="ILLUMINA",
     fastqs=[run_wgsim.simulated_r1_fastq, run_wgsim.simulated_r2_fastq],
     idx_files=[query.FASTA, query.l2b, query.mbw],
-    output_fn="~{query_name}.sorted.bam",
+    output_fn="~{query_name}.sorted.~{sam_type}",
     runenv=minibwa_align_runenv,
   }
 

@@ -2,6 +2,7 @@
   "morgana_simulate_reads.ref_idx": "{{REF_IDX}}",
   "morgana_simulate_reads.query_fasta": "{{QUERY_FASTA}}",
   "morgana_simulate_reads.coverage": 60,
+  "morgana_simulate_reads.sam_type": "bam",
   "morgana_simulate_reads.wgsim_base_error": 0,
   "morgana_simulate_reads.wgsim_out_distance": 356,
   "morgana_simulate_reads.wgsim_stdev": 88,
