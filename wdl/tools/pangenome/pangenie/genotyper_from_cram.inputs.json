@@ -1,0 +1,10 @@
+{
+    "pangenie_genotyper.sample": "{{SAMPLE}}",
+    "pangenie_genotyper.cram": "{{CRAM}}",
+    "pangenie_genotyper.reference": "{{REF}}",
+    "pangenie_genotyper.index": "{{INDEX}}",
+    "pangenie_genotyper.params": "{{PARAMS}}",
+    "pangenie_genotyper.docker": "mgibio/pangenie:v4.2.1",
+    "pangenie_genotyper.cpu": 8,
+    "pangenie_genotyper.memory": 60
+}

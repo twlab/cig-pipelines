@@ -1,12 +1,13 @@
 version development
 
 import "wdl/structs/runenv.wdl"
-import "wdl/tasks/misc/cat.wdl"
+import "wdl/tasks/samtools/fastq.wdl"
 import "wdl/tasks/pangenome/pangenie.wdl"
 
 workflow pangenie_genotyper {
   input {
-    Array[File] fastqs
+    File cram
+    File reference
     File index
     String sample
     String params = ""
@@ -15,10 +16,10 @@ workflow pangenie_genotyper {
     Int memory
   }
 
-  RunEnv runenv_combine_fastq = {
+  RunEnv runenv_cram2fastq = {
     "docker": docker,
-    "cpu": 1,
-    "memory": 4,
+    "cpu": 8,
+    "memory": 32,
     "disks": 20,
   }
 
@@ -29,15 +30,16 @@ workflow pangenie_genotyper {
     "disks": 20,
   }
 
-  call cat.run_zcat as combined_fastq { input:
-    files=fastqs,
-    out="combined.fastq",
-    runenv=runenv_combine_fastq,
+  call fastq.run_sam_to_fastq { input:
+    sam=cram,
+    reference=reference,
+    params="-F 0x900",
+    runenv=runenv_cram2fastq,
   }
 
   call pangenie.run_genotyper { input:
     sample=sample,
-    fastq=combined_fastq.concatenated_file,
+    fastq=run_sam_to_fastq.fastq,
     index=index,
     params=params,
     runenv=runenv_pangenie,
