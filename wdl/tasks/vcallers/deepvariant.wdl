@@ -10,6 +10,7 @@ task run_deepvariant {
     File ref_fasta
     File ref_fai
     File ref_dict
+    Boolean generate_gvcf = true
     String model_type = "WGS"
     RunEnv runenv
   }
@@ -30,7 +31,7 @@ task run_deepvariant {
       --ref=~{basename(ref_fasta)} \
       --reads=~{basename(bam)} \
       --output_vcf=~{output_vcf} \
-      --output_gvcf=~{output_gvcf} \
+      ~{if (generate_gvcf) then "--output_gvcf=~{output_gvcf}}" else ""} \
       --num_shards=~{runenv.cpu}
     set +e
     printf "Validating VCF: %s\n" "~{output_vcf}" 1>&2
@@ -38,10 +39,12 @@ task run_deepvariant {
     rv=$?
     test "${rv}" != "0" && ( printf "VCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
     printf "VCF PASS\n" 1>&2
-    printf "Validating GVCF: %s\n" "~{output_gvcf}" 1>&2
-    bcftools view "~{output_gvcf}" > /dev/null
-    rv=$?
-    test "${rv}" != "0" && ( printf "GVCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
+    if test -e "~{output_gvcf}"; then
+      printf "Validating GVCF: %s\n" "~{output_gvcf}" 1>&2
+      bcftools view "~{output_gvcf}" > /dev/null
+      rv=$?
+      test "${rv}" != "0" && ( printf "GVCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
+    fi
     printf "GVCF PASS\n" 1>&2
   >>>
 
