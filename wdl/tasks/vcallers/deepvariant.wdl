@@ -44,15 +44,15 @@ task run_deepvariant {
       bcftools view "~{output_gvcf}" > /dev/null
       rv=$?
       test "${rv}" != "0" && ( printf "GVCF is corrupted, exiting.\n" 1>&2; exit "${rv}" )
+      printf "GVCF PASS\n" 1>&2
     fi
-    printf "GVCF PASS\n" 1>&2
   >>>
 
   output {
-    String vcf = glob("~{output_vcf}")[0]
-    String vcf_tbi = glob("~{output_vcf}.tbi")[0]
-    String gvcf = glob("~{output_gvcf}")[0]
-    String gvcf_tbi = glob("~{output_gvcf}.tbi")[0]
+    File vcf = output_vcf
+    File vcf_tbi = "~{output_vcf}.tbi"
+    File? gvcf = output_gvcf
+    File? gvcf_tbi = "~{output_gvcf}.tbi"
   }
 
   runtime {
