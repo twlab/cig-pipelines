@@ -6,8 +6,8 @@
   "minibwa_align.rg_id": "{{RG_ID}}",
   "minibwa_align.platform_unit": "{{PU}}",
   "minibwa_align.platform": "ILLUMINA",
-  "minibwa_align.bam_compression_level": 6,
-  "minibwa_align.docker": "ctomlins/minibwa:0.4-htslib1.24",
+  "minibwa_align.output_sam": "{{OUTPUT_SAM}}",
+  "minibwa_align.docker": "mgibio/minibwa:0.4",
   "minibwa_align.cpu": 12,
   "minibwa_align.memory": 72
 }

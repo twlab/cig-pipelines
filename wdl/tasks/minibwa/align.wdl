@@ -12,7 +12,7 @@ task run_minibwa {
     Array[File] fastqs
     Array[File] idx_files # fasta l2b mbw
     String minibwa_params = ""
-    String output_fn
+    String output_sam
     Int compression_level = 6
     RunEnv runenv
   }
@@ -76,13 +76,12 @@ task run_minibwa {
         -m "~{sort_memory}"G \
         -l ~{compression_level} \
         -T "~{sample}.sorttmp" \
-        -o "~{output_fn}" \
+        -o "~{output_sam}" \
         --reference "${reference_fasta}" \
         -
 
-    samtools quickcheck -v "~{output_fn}"
+    samtools quickcheck -v "~{output_sam}" ~{if (output_format == "cram") then "--reference ${reference_fasta} -" else "-"}
   >>>
-        #~{if (output_format == "cram") then "--reference ref/~{reference_fasta_bn} -" else "-"}
 
   runtime {
     docker: runenv.docker
@@ -91,6 +90,6 @@ task run_minibwa {
   }
 
   output {
-    File output_fn = "~{output_fn}"
+    File output_sam = "~{output_sam}"
   }
 }

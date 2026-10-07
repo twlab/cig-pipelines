@@ -19,7 +19,7 @@ workflow minibwa_align {
     String? platform_unit
     String platform = "ILLUMINA"
     String params = ""
-    Int bam_compression_level
+    String output_sam
     String docker
     Int cpu
     Int memory
@@ -45,11 +45,11 @@ workflow minibwa_align {
       fastqs=fastqs,
       idx_files=idx_files,
       minibwa_params=params,
-      bam_compression_level=bam_compression_level,
+      output_sam=outpus_fn,
       runenv=runenv,
   }
 
   output {
-    File bam = run_minibwa.bam
+    File output_sam = run_minibwa.output_sam
   }
 }
