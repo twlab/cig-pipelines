@@ -45,7 +45,7 @@ workflow minibwa_align {
       fastqs=fastqs,
       idx_files=idx_files,
       minibwa_params=params,
-      output_sam=outpus_fn,
+      output_sam=output_sam,
       runenv=runenv,
   }
 
