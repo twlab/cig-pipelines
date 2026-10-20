@@ -71,6 +71,7 @@ workflow phase_merge_call_cpg {
     "disks": 20,
   }
 
+  # Phase and Sort
   scatter(haplotype_crams in zip(haplotype1_crams, haplotype2_crams)) {
     call phase.run_phase_crams { input:
       haplotype1_cram=haplotype_crams.left,
@@ -81,15 +82,15 @@ workflow phase_merge_call_cpg {
     }
 
     call samtools_sort.run_sort_cram as haplotype1_sorted_cram { input:
-      cram=run_phase_crams.haplotype1_phased_cram,
-      output_cram_fn=basename(run_phase_crams.haplotype1_phased_cram, ".cram") + ".sorted.cram",
+      cram=run_phase_crams.phased_crams[0],
+      output_cram_fn=basename(run_phase_crams.phased_crams[0], ".cram") + ".sorted.cram",
       reference=haplotype1_reference,
       runenv=sort_runenv,
     }
 
     call samtools_sort.run_sort_cram as hapltype2_sorted_cram { input:
-      cram=run_phase_crams.haplotype2_phased_cram,
-      output_cram_fn=basename(run_phase_crams.haplotype2_phased_cram, ".cram") + ".sorted.cram",
+      cram=run_phase_crams.phased_crams[1],
+      output_cram_fn=basename(run_phase_crams.phased_crams[1], ".cram") + ".sorted.cram",
       reference=haplotype2_reference,
       runenv=sort_runenv,
     }
@@ -121,18 +122,18 @@ workflow phase_merge_call_cpg {
     runenv=stats_runenv,
   }
 
-  call cpg.run_cpg_cram as haplotype1_cpg { input:
-    cram=merge_haplotype1_crams.merged_cram,
-    crai=merge_haplotype1_crams.merged_crai,
-    reference=haplotype1_reference,
+  call cpg.run_cpg as haplotype1_cpg { input:
+    alignments=merge_haplotype1_crams.merged_cram,
+    alignments_idx=merge_haplotype1_crams.merged_crai,
+    reference_fasta=haplotype1_reference,
     params=pbcpg_params,
     runenv=pbcpg_runenv,
   }
 
-  call cpg.run_cpg_cram as haplotype2_cpg { input:
-    cram=merge_haplotype2_crams.merged_cram,
-    crai=merge_haplotype2_crams.merged_crai,
-    reference=haplotype2_reference,
+  call cpg.run_cpg as haplotype2_cpg { input:
+    alignments=merge_haplotype2_crams.merged_cram,
+    alignments_idx=merge_haplotype2_crams.merged_crai,
+    reference_fasta=haplotype2_reference,
     params=pbcpg_params,
     runenv=pbcpg_runenv,
   }

@@ -6,24 +6,26 @@ task run_phase_crams {
   meta {
     author: "Eddie Belter"
     version: "1.0"
-    description: "Merge CRAMs."
   }
 
   input {
-    Array[File] crams 
-    File reference
-    File phased_reads_fof
+    File haplotype1_cram
+    File haplotype2_cram
+    String haplotype1_reference
+    String haplotype2_reference
     RunEnv runenv
   }
 
+  String haplotype1_cram_bn = basename(haplotype1_cram)
+  String haplotype2_cram_bn = basename(haplotype2_cram)
   command <<<
     set -e
-    for cram in ~{sep=' ' crams}; do
-      ln "${cram}" ./
-      cram_bn=$(basename "${cram}")
-      echo "${cram_bn}" >> crams.fof
-    done
-    /usr/local/bin/phase-reads -c crams.fof -r ~{reference} -p ~{phased_reads_fof}
+    touch crams_and_refs.tsv
+    ln "~{haplotype1_cram}" "~{haplotype1_cram_bn}"
+    ln "~{haplotype2_cram}" "~{haplotype2_cram_bn}"
+    printf "%s\t%s\n" "~{haplotype1_cram_bn}" "~{haplotype1_reference}" >> crams_and_refs.tsv
+    printf "%s\t%s\n" "~{haplotype2_cram_bn}" "~{haplotype2_reference}" >> crams_and_refs.tsv
+    /usr/local/bin/phase-reads crams_and_refs.tsv
   >>>
 
   output {
@@ -37,5 +39,3 @@ task run_phase_crams {
     memory: "~{runenv.memory} GB"
   }
 }
-
-

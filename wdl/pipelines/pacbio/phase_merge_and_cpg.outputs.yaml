@@ -1,5 +1,5 @@
 phase_merge_call_cpg.run_phase_crams:
-  - stats
+  - yamls
 phase_merge_call_cpg.merge_haplotype1_crams:
  - merged_cram
  - merged_crai
