@@ -12,7 +12,7 @@ workflow pbcpg {
   input {
     File alignments       # BAM or CRAM
     File alignments_idx   # BAI or CRAI
-    File reference_fasta  # for CRAM
+    File? reference_fasta  # for CRAM
     String pbcpg_params   # cpg params
     String pbcpg_docker
     Int pbcpg_cpu
